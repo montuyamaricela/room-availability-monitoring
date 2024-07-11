@@ -5,9 +5,8 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
-import DiscordProvider from "next-auth/providers/discord";
+import CredentialsProvider from "next-auth/providers/credentials";
 
-import { env } from "~/env";
 import { db } from "~/server/db";
 
 /**
@@ -30,7 +29,10 @@ declare module "next-auth" {
   //   // role: UserRole;
   // }
 }
-
+// interface CustomCredentials {
+//   email: string;
+//   password: string;
+// }
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
@@ -48,20 +50,29 @@ export const authOptions: NextAuthOptions = {
   },
   adapter: PrismaAdapter(db) as Adapter,
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
+    CredentialsProvider({
+      type: "credentials",
+      credentials: {},
+
+      async authorize(credentials, req) {
+        // Add logic here to look up the user from the credentials supplied
+        const user = { id: "1", name: "J Smith", email: "jsmith@example.com" };
+
+        if (user) {
+          // Any object returned will be saved in `user` property of the JWT
+          return user;
+        } else {
+          // If you return null then an error will be displayed advising the user to check their details.
+          return null;
+
+          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
+        }
+      },
     }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
   ],
+  pages: {
+    signIn: "/sign-in",
+  },
 };
 
 /**
