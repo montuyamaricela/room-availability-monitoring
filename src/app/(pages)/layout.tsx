@@ -1,8 +1,15 @@
 import "~/styles/globals.css";
 
-import { GeistSans } from "geist/font/sans";
-
 import { TRPCReactProvider } from "~/trpc/react";
+import Topbar from "~/components/common/Topbar";
+import { Poppins } from "next/font/google";
+
+const poppins = Poppins({
+  weight: ["300", "400", "500", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  fallback: ["Arial", "sans-serif"],
+});
 
 export const metadata = {
   title: "BulSu - Room Availability Monitoring",
@@ -16,8 +23,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
+    <html lang="en" className={`${poppins.className}`}>
       <body>
+        <Topbar />
         <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>
