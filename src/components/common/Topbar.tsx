@@ -1,8 +1,19 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 export default function Topbar() {
+  const pathname = usePathname();
+
   return (
-    <div className="bg-primary-green text-white">
+    <div
+      className={`bg-primary-green text-white ${pathname.includes("signup") || pathname.includes("signin") ? "hidden" : "block"}`}
+    >
       <div className="container mx-auto py-5">
-        <p className="font-bold">BULACAN STATE UNIVERSITY</p>
+        <Link href="/" className="font-bold">
+          BULACAN STATE UNIVERSITY
+        </Link>
       </div>
     </div>
   );
