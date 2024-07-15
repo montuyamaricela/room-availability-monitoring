@@ -63,6 +63,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   activityLogs  ActivityLogs[]
+  post          Post[]
 }
 
 model VerificationToken {
@@ -116,4 +117,16 @@ model Feedbacks {
   department String
   message    String
   status     String
+}
+
+model Post {
+    id        Int      @id @default(autoincrement())
+    name      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdById String
+
+    @@index([name])
 }
