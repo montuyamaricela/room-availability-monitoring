@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      - 'prisma/migrations/**'  # Only run this workflow when migrations are updated
+
   pull_request:
     branches:
       - main
@@ -31,11 +33,17 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
-          
+
       - name: Deploy to Vercel
         run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
 
+      - name: Check for Prisma Migrations Changes
+        id: prisma_changes
+        run: |
+          echo "::set-output name=changes::$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^prisma/migrations/')"
+
       - name: Run Prisma Migrate Deploy
+        if: ${{ steps.prisma_changes.outputs.changes != '' }}
         run: npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}  # Ensure DATABASE_URL is set in your repo secrets
