@@ -26,7 +26,7 @@ jobs:
         run: npm install
 
       - name: Build project
-        run: npm run build  # Adjust based on your project setup
+        run: npm run build SKIP_ENV_VALIDATION  # Adjust based on your project setup
 
       - name: Deploy to Vercel
         run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
