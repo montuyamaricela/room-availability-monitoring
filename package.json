@@ -11,7 +11,7 @@
     "db:studio": "prisma studio",
     "dev": "next dev",
     "postinstall": "prisma generate",
-    "postbuild": "npx prisma migrate deploy"
+    "postbuild": "prisma migrate deploy"
     "lint": "next lint",
     "start": "next start"
   },
