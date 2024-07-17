@@ -60,6 +60,9 @@ const config = {
         },
         'gray-dark': '#353535',
         'green-dark': '#1B5E30',
+        'green-light': '#38A35A',
+        'gray-light': '#ACACAC',
+        'custom-gray': '#F2F2F2',
 
       },
       borderRadius: {
