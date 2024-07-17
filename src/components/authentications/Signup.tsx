@@ -28,17 +28,93 @@ export default function Signup() {
             eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
           </div>
           <div className="bg-white rounded-r-2xl w-1/2 md:block hidden">
-            <div className="lg:p-10">
+            <div className="p-8 ">
               <form>
-
-                <div className="flex justify-center mb-4 gap-5">
+                <div className="lg:flex justify-center mb-2 gap-5">
                   <div>
                     <Label htmlFor="id" className="text-gray-dark">ID</Label>
-                    <Input type="text" id="id" placeholder="ID"/>
+                    <Input type="text" id="id" placeholder="ID" required/>
+                  </div>
+                  <div className="flex gap-5">
+                    <div>
+                      <Label className="text-gray-dark">Role</Label>
+                      <Select required>
+                        <SelectTrigger className="w-[130px]">
+                          <SelectValue placeholder="Select" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Role</SelectLabel>
+                            <SelectItem value="admin">Admin</SelectItem>
+                            <SelectItem value="guard">Security Guard</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-gray-dark">Department</Label>
+                      <Select required>
+                        <SelectTrigger className="w-[130px]">
+                          <SelectValue placeholder="Select" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Department</SelectLabel>
+                            <SelectItem value="cba">CBA</SelectItem>
+                            <SelectItem value="cics">CICS</SelectItem>
+                            <SelectItem value="coed">CoED</SelectItem>
+                            <SelectItem value="cit">CIT</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-center mb-2 gap-5">
+                  <div>
+                    <Label htmlFor="firstName" className="text-gray-dark">First Name</Label>
+                    <Input type="text" id="firstName" placeholder="First Name" required/>
+                  </div>
+                  <div>
+                    <Label htmlFor="lastName" className="text-gray-dark">Last Name</Label>
+                    <Input type="text" id="lastName" placeholder="Last Name" required/>
+                  </div>
+                </div>
+
+                <Label htmlFor="email" className="text-gray-dark">Email</Label>
+                <Input type="email" id="email" placeholder="Email" className="mb-2" required/>
+
+                <Label htmlFor="password" className="text-gray-dark">Password</Label>
+                <Input type="password" id="password" placeholder="Password" className="mb-2" required/>
+
+                <Label htmlFor="confirmPassword" className="text-gray-dark">Confirm Password</Label>
+                <Input type="password" id="confirmPassword" placeholder="Confirm Password" className="mb-2" required/>
+
+                <h3 className="text-gray-dark font-medium mb-10 text-xs">
+                By clicking Create, you agree to our 
+                <Link href="#" className="text-green-dark font-semibold"> Terms of Service </Link>
+                and that you have read our  
+                <Link href="#" className="text-green-dark font-semibold"> Privacy Policy</Link>
+                </h3>
+                <div className="flex justify-center">
+                  <Button className="bg-green-dark font-bold w-2/6 hover:bg-green-900 items-center">CREATE</Button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl w-full block md:hidden">
+            <div className="p-10 ">
+              <form>
+                <div className="flex mb-2 gap-5">
+                  <div>
+                    <Label htmlFor="id" className="text-gray-dark">ID</Label>
+                    <Input type="text" id="id" placeholder="ID" required/>
                   </div>
                   <div>
                     <Label className="text-gray-dark">Role</Label>
-                    <Select>
+                    <Select required>
                       <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
@@ -53,7 +129,7 @@ export default function Signup() {
                   </div>
                   <div>
                     <Label className="text-gray-dark">Department</Label>
-                    <Select>
+                    <Select required>
                       <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
@@ -70,29 +146,29 @@ export default function Signup() {
                   </div>
                 </div>
 
-                <div className="flex justify-center mb-4 gap-5">
+                <div className="flex mb-2 gap-5">
                   <div>
                     <Label htmlFor="firstName" className="text-gray-dark">First Name</Label>
-                    <Input type="text" id="firstName" placeholder="First Name"/>
+                    <Input type="text" id="firstName" placeholder="First Name" required/>
                   </div>
                   <div>
                     <Label htmlFor="lastName" className="text-gray-dark">Last Name</Label>
-                    <Input type="text" id="lastName" placeholder="Last Name"/>
+                    <Input type="text" id="lastName" placeholder="Last Name" required/>
                   </div>
                 </div>
 
                 <Label htmlFor="email" className="text-gray-dark">Email</Label>
-                <Input type="email" id="email" placeholder="Email" className="mb-4"/>
+                <Input type="email" id="email" placeholder="Email" className="mb-2" required/>
 
                 <Label htmlFor="password" className="text-gray-dark">Password</Label>
-                <Input type="password" id="password" placeholder="Password" className="mb-4"/>
+                <Input type="password" id="password" placeholder="Password" className="mb-2" required/>
 
                 <Label htmlFor="confirmPassword" className="text-gray-dark">Confirm Password</Label>
-                <Input type="password" id="confirmPassword" placeholder="Confirm Password" className="mb-2"/>
+                <Input type="password" id="confirmPassword" placeholder="Confirm Password" className="mb-2" required/>
 
                 <h3 className="text-gray-dark font-medium mb-10 text-xs">
-                By clicking Sign Up, you agree to our 
-                <Link href="#" className="text-green-dark font-semibold"> Terms of Service </Link><br></br>
+                By clicking Create, you agree to our 
+                <Link href="#" className="text-green-dark font-semibold"> Terms of Service </Link>
                 and that you have read our  
                 <Link href="#" className="text-green-dark font-semibold"> Privacy Policy</Link>
                 </h3>
