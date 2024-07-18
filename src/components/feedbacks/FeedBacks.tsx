@@ -40,13 +40,13 @@ export default function FeedBacks() {
   return (
     <Container>
       <div className="flex justify-center items-center mb-5">
-        <div className="w-4/6">
+        <div className="lg:w-4/6 md:w-5/6 w-full">
           <p className="text-gray-dark font-semibold text-2xl">Feedback</p>
         </div>
       </div>
       
       <div className="flex justify-center items-center">
-        <div className="bg-custom-gray rounded shadow-lg drop-shadow-md w-4/6 p-10">
+        <div className="bg-custom-gray rounded shadow-lg drop-shadow-md lg:w-4/6 md:w-5/6 w-full p-10">
             <div>
               <p className="text-gray-dark font-semibold">Unread</p>
               {unreadFeedbacks.map(feedback => (

@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import Image from "next/image";
 import avatar from "/public/images/avatar/image.png";
 import icon from "/public/images/icon/image.png";
+import SelectDepartment from "../common/SelectDepartment";
 
 export default function ProfileSettings() {
   return (
@@ -19,7 +20,7 @@ export default function ProfileSettings() {
                     <Input id="picture" type="file" className="mt-2"/>
                 </div>
                 <div className="flex gap-2 items-center lg:mt-0 mt-2">
-                    <Image src={icon} alt="Avatar" width={20} />
+                    <Image src={icon} alt="Information" width={20} />
                     <p className="text-green-light text-xs">Note! Only .jpeg, .jpg and .png images are accepted </p>
                 </div>
             </div>
@@ -39,7 +40,7 @@ export default function ProfileSettings() {
                 </div>
                 <div>
                     <Label htmlFor="department" className="text-gray-dark text-semibold">Department</Label>
-                    <Input type="text" id="department" required/>
+                    <SelectDepartment />
                 </div>
                 <div>
                     <Label htmlFor="email" className="text-gray-dark text-semibold">Email</Label>
