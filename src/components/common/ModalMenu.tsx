@@ -31,7 +31,7 @@ import Link from "next/link";
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <Link href="#">Manage Account</Link>
+            <Link href="/accountmanagement">Manage Account</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Link href="/activitylog">Activity Log</Link>

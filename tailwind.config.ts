@@ -64,6 +64,7 @@ const config = {
         'gray-light': '#ACACAC',
         'custom-gray': '#F2F2F2',
         'table-gray': '#F3F3F3',
+        'red-light': '#C54F4F',
 
       },
       borderRadius: {
