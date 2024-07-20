@@ -60,6 +60,11 @@ const config = {
         },
         'gray-dark': '#353535',
         'green-dark': '#1B5E30',
+        'green-light': '#38A35A',
+        'gray-light': '#ACACAC',
+        'custom-gray': '#F2F2F2',
+        'table-gray': '#F3F3F3',
+        'red-light': '#C54F4F',
 
       },
       borderRadius: {
