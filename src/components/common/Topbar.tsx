@@ -8,7 +8,7 @@ export default function Topbar() {
 
   return (
     <div
-      className={`bg-primary-green text-white ${pathname.includes("signup") || pathname.includes("signin") ? "hidden" : "block"}`}
+      className={`bg-primary-green text-white ${pathname.includes("signup") || pathname.includes("signin") || pathname.includes("resetpassword") ? "hidden" : "block"}`}
     >
       <div className="container mx-auto py-5">
         <Link href="/" className="font-bold">
