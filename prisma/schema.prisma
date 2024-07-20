@@ -14,6 +14,111 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+enum Status {
+  AVAILABLE
+  VACANT
+}
+
+enum Building {
+  PANCHO_HALL
+  BSBA
+  MPG
+  OLD_CANTEEN
+  HANGAR
+}
+
+// Necessary for Next auth
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? // @db.Text
+  access_token             String? // @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? // @db.Text
+  session_state            String?
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refresh_token_expires_in Int?
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  activityLogs  ActivityLogs[]
+  post          Post[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  @@unique([identifier, token])
+}
+
+model Room {
+  id                     String   @id @default(cuid())
+  roomName               String
+  building               Building @default(PANCHO_HALL)
+  floor                  String
+  isLecture              Boolean
+  isLaboratory           Boolean
+  isAirconed             Boolean
+  capacity               Int
+  electricFans           Int
+  functioningComputers   Int
+  notFunctioningComputers Int
+  status                 Status @default(AVAILABLE)
+  schedule               RoomSchedule[]
+}
+
+model RoomSchedule {
+  id         String   @id @default(cuid())
+  roomId     String
+  room       Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  facultyName String
+  courseCode  String
+  section    String
+  day        DateTime
+  beginTime  DateTime
+  endTime    DateTime
+}
+
+model ActivityLogs {
+  id          Int      @id @default(autoincrement())
+  dateTime    DateTime @default(now())
+  facultyName String
+  roomId      String
+  loggedBy    String
+  user        User     @relation(fields: [loggedBy], references: [name])
+  activity    String
+}
+
+model Feedbacks {
+  id         Int      @id @default(autoincrement())
+  dateTime   DateTime @default(now())
+  department String
+  message    String
+  status     String
+}
+
 model Post {
     id        Int      @id @default(autoincrement())
     name      String
@@ -24,51 +129,4 @@ model Post {
     createdById String
 
     @@index([name])
-}
-
-// Necessary for Next auth
-model Account {
-    id                       String  @id @default(cuid())
-    userId                   String
-    type                     String
-    provider                 String
-    providerAccountId        String
-    refresh_token            String? // @db.Text
-    access_token             String? // @db.Text
-    expires_at               Int?
-    token_type               String?
-    scope                    String?
-    id_token                 String? // @db.Text
-    session_state            String?
-    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    refresh_token_expires_in Int?
-
-    @@unique([provider, providerAccountId])
-}
-
-model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
-    posts         Post[]
-}
-
-model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
-
-    @@unique([identifier, token])
 }
