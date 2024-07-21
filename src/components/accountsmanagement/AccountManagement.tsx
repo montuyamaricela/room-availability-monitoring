@@ -2,6 +2,7 @@ import { Container } from "../common/Container";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
+import { Accounts } from "../../app/SampleData";
 import {
     Table,
     TableBody,
@@ -9,35 +10,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-  } from "../ui/table"
-
-const Accounts = [
-  { id: 20000000, 
-    name: "Raul Tolentino", 
-    role:"Security", 
-    department: "",
-  },
-  { id: 20000001, 
-    name: "Princess Dimagiba", 
-    role:"Security", 
-    department: "",
-  },
-  { id: 20000002, 
-    name: "Maira Bermudez", 
-    role:"Admin", 
-    department: "CBA",
-  },
-  { id: 20000003, 
-    name: "Juan Dela Cruz", 
-    role:"Admin", 
-    department: "COE",
-  },
-  { id: 20000004, 
-    name: "Maribel Garcia", 
-    role:"Admin", 
-    department: "CICS",
-  },
-];
+  } from "../ui/table";
 
 export default function AccountManagement() {
   const security = Accounts.filter(accounts => accounts.role === 'Security');
@@ -56,13 +29,13 @@ export default function AccountManagement() {
             <div className="mt-10">
             <Tabs defaultValue="account">
                 <TabsList>
-                    <TabsTrigger value="security" className="md:px-16 px-10">SECURITY</TabsTrigger>
-                    <TabsTrigger value="admin" className="md:px-20 px-12">ADMIN</TabsTrigger>
+                    <TabsTrigger value="security" className="md:px-16 px-10 rounded-t-2xl border-2 border-green-dark">SECURITY</TabsTrigger>
+                    <TabsTrigger value="admin" className="md:px-20 px-12 rounded-t-2xl border-2 border-green-dark">ADMIN</TabsTrigger>
                 </TabsList>
                 <TabsContent value="security">
                   <Table>
                     <TableHeader>
-                        <TableRow className="border-t">
+                        <TableRow className="border-t-2">
                             <TableHead>ID</TableHead>
                             <TableHead>Name</TableHead>
                             <TableHead>Role</TableHead>
@@ -71,7 +44,7 @@ export default function AccountManagement() {
                     </TableHeader>
                     <TableBody>
                         {security.map((account) => (
-                        <TableRow key={account.id}>
+                        <TableRow key={account.id} className="odd:bg-table-gray">
                             <TableCell>{account.id}</TableCell>
                             <TableCell>{account.name}</TableCell>
                             <TableCell>{account.role}</TableCell>
@@ -95,7 +68,7 @@ export default function AccountManagement() {
                 <TabsContent value="admin">
                 <Table>
                     <TableHeader>
-                        <TableRow className="border-t">
+                        <TableRow className="border-t-2">
                             <TableHead>ID</TableHead>
                             <TableHead>Name</TableHead>
                             <TableHead>Role</TableHead>
@@ -104,7 +77,7 @@ export default function AccountManagement() {
                     </TableHeader>
                     <TableBody>
                         {admin.map((account) => (
-                        <TableRow key={account.id}>
+                        <TableRow key={account.id} className="odd:bg-table-gray">
                             <TableCell>{account.id}</TableCell>
                             <TableCell>{account.name}</TableCell>
                             <TableCell>{account.role}</TableCell>

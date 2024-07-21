@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import SelectDepartment from "../common/SelectDepartment";
 
 export default function Signup() {
   return (
@@ -53,20 +54,7 @@ export default function Signup() {
                     </div>
                     <div>
                       <Label className="text-gray-dark">Department</Label>
-                      <Select required>
-                        <SelectTrigger className="w-[130px]">
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Department</SelectLabel>
-                            <SelectItem value="cba">CBA</SelectItem>
-                            <SelectItem value="cics">CICS</SelectItem>
-                            <SelectItem value="coed">CoED</SelectItem>
-                            <SelectItem value="cit">CIT</SelectItem>
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
+                      <SelectDepartment />
                     </div>
                   </div>
                 </div>

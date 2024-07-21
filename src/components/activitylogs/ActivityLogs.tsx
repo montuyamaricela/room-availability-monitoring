@@ -1,38 +1,15 @@
 import { Container } from "../common/Container";
 import { Input } from "../ui/input";
 import { DatePickerDemo } from "../common/DatePicker";
+import { ActivityLog } from "../../app/SampleData";
 import {
     Table,
     TableBody,
     TableCell,
-    TableFooter,
     TableHead,
     TableHeader,
     TableRow,
   } from "../ui/table"
-
-const ActivityLog = [
-  { id: 20000000, 
-    dateTime: "May 2, 2024 15:34:25 PM", 
-    activities:"Maira Bermudez timed in at multimedia.", 
-  },
-  { id: 20000001, 
-    dateTime: "May 2, 2024 17:34:25 PM", 
-    activities:"Maira Bermudez timed out at multimedia.", 
-  },
-  { id: 20000002, 
-    dateTime: "May 4, 2024 13:34:25 PM", 
-    activities:"Maribel Garcia timed in at mpg2.", 
-  },
-  { id: 20000003, 
-    dateTime: "May 4, 2024 15:34:25 PM", 
-    activities:"Maribel Garcia timed out at mpg2.", 
-  },
-  { id: 20000004, 
-    dateTime: "May 5, 2024 13:34:25 PM", 
-    activities:"Juan Dela Cruz timed in at room 123.", 
-  },
-];
 
 export default function ActivityLogs() {
   return (
@@ -61,7 +38,7 @@ export default function ActivityLogs() {
                 </TableHeader>
                 <TableBody>
                     {ActivityLog.map((logs) => (
-                    <TableRow key={logs.id}>
+                    <TableRow key={logs.id} className="odd:bg-table-gray">
                         <TableCell className="font-medium">{logs.id}</TableCell>
                         <TableCell>{logs.dateTime}</TableCell>
                         <TableCell>{logs.activities}</TableCell>
