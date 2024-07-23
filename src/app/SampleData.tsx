@@ -11,3 +11,147 @@ export const Rooms = [
   { id: 10, RoomNumber: 108, floor: 1 },
   { id: 11, RoomNumber: 111, floor: 1 },
 ];
+
+export const FeedBack = [
+  { id: 1, 
+    dateTime: "05-05-24  11:49 AM", 
+    message:"Some of the computers in the lab 1 is not working.", 
+    status: "unread" 
+  },
+  { id: 2, 
+    dateTime: "04-26-24  11:49 AM", 
+    message:"1 electric fan in room 123 overheated.", 
+    status: "unread" 
+  },
+  { id: 3, 
+    dateTime: "04-26-24  11:49 AM", 
+    message:"1 electric fan in room 123 overheated.", 
+    status: "unread" 
+  },
+  { id: 4, 
+    dateTime: "05-05-24  11:49 AM", 
+    message:"Some of the computers in the lab 1 is not working.", 
+    status: "read" 
+  },
+  { id: 5, 
+    dateTime: "04-26-24  11:49 AM", 
+    message:"1 electric fan in room 123 overheated.", 
+    status: "read" 
+  },
+  { id: 6, 
+    dateTime: "04-26-24  11:49 AM", 
+    message:"1 electric fan in room 123 overheated.", 
+    status: "read" 
+  },
+];
+
+export const ActivityLog = [
+  { id: 20000000, 
+    dateTime: "May 2, 2024 15:34:25 PM", 
+    activities:"Maira Bermudez timed in at multimedia.", 
+  },
+  { id: 20000001, 
+    dateTime: "May 2, 2024 17:34:25 PM", 
+    activities:"Maira Bermudez timed out at multimedia.", 
+  },
+  { id: 20000002, 
+    dateTime: "May 4, 2024 13:34:25 PM", 
+    activities:"Maribel Garcia timed in at mpg2.", 
+  },
+  { id: 20000003, 
+    dateTime: "May 4, 2024 15:34:25 PM", 
+    activities:"Maribel Garcia timed out at mpg2.", 
+  },
+  { id: 20000004, 
+    dateTime: "May 5, 2024 13:34:25 PM", 
+    activities:"Juan Dela Cruz timed in at room 123.", 
+  },
+];
+
+export const Notification = [
+  { id: 1, 
+    dateTime: "05-05-24  11:49 AM", 
+    message:"You have feedback. Check it now.", 
+    status: "unread" 
+  },
+  { id: 2, 
+    dateTime: "05-04-24  11:49 AM", 
+    message:"You have feedback. Check it now.", 
+    status: "unread" 
+  },
+  { id: 3, 
+    dateTime: "05-03-24  11:49 AM", 
+    message:"You have feedback. Check it now.", 
+    status: "unread" 
+  },
+  { id: 4, 
+    dateTime: "04-26-24  11:49 AM", 
+    message:"You have feedback. Check it now.", 
+    status: "read" 
+  },
+  { id: 5, 
+    dateTime: "04-25-24  11:49 AM", 
+    message:"You have feedback. Check it now.", 
+    status: "read" 
+  },
+  { id: 6, 
+    dateTime: "04-23-24  11:49 AM", 
+    message:"You have feedback. Check it now.", 
+    status: "read" 
+  },
+];
+
+export const Accounts = [
+  { id: 20000000, 
+    name: "Raul Tolentino", 
+    role:"Security", 
+    department: "",
+  },
+  { id: 20000001, 
+    name: "Princess Dimagiba", 
+    role:"Security", 
+    department: "",
+  },
+  { id: 20000002, 
+    name: "Maira Bermudez", 
+    role:"Admin", 
+    department: "CBA",
+  },
+  { id: 20000003, 
+    name: "Juan Dela Cruz", 
+    role:"Admin", 
+    department: "COE",
+  },
+  { id: 20000004, 
+    name: "Maribel Garcia", 
+    role:"Admin", 
+    department: "CICS",
+  },
+];
+
+export const sched = [
+  { id: 1,
+    name: "Raul Tolentino", 
+    couseCode: "",
+    section:"", 
+    day: "Monday",
+    beginTime: "7:00 AM",
+    endTime: "6:00 PM",
+  },
+  { id: 2,
+    name: "Juan Dela Cruz", 
+    couseCode: "IT 101",
+    section:"BSIT 1A", 
+    day: "Tuesday",
+    beginTime: "8:00 AM",
+    endTime: "11:00 AM",
+  },
+  { id: 3,
+    name: "Marc Alfaro", 
+    couseCode: "IT 401",
+    section:"BSIT 4D", 
+    day: "Tuesday",
+    beginTime: "1:00 PM",
+    endTime: "4:00 PM",
+  },
+];
