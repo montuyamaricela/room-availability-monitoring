@@ -19,6 +19,7 @@ enum Status {
   VACANT
 }
 
+
 enum Building {
   PANCHO_HALL
   BSBA
@@ -56,13 +57,17 @@ model Session {
 
 model User {
   id            String    @id @default(cuid())
-  name          String    @unique
+  firstName     String
+  middleName    String?
+  lastName      String  
   email         String?   @unique
+  role          String?
+  department    String?
   emailVerified DateTime?
+  password      String  
   image         String?
   accounts      Account[]
   sessions      Session[]
-  activityLogs  ActivityLogs[]
   post          Post[]
 }
 
@@ -107,7 +112,6 @@ model ActivityLogs {
   facultyName String
   roomId      String
   loggedBy    String
-  user        User     @relation(fields: [loggedBy], references: [name])
   activity    String
 }
 
@@ -124,7 +128,6 @@ model Post {
     name      String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-
     createdBy   User   @relation(fields: [createdById], references: [id])
     createdById String
 

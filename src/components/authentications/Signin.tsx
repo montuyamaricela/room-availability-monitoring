@@ -1,64 +1,101 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import logo from "/public/images/logo/image.png";
 import { Container } from "../common/Container";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { Button } from "../ui/button";
+import * as authSchema from "../../validations/authValidationSchema";
+import { signIn } from "next-auth/react";
+import { useForm } from "react-hook-form";
+import { Form } from "../ui/form";
+import { FormInput } from "../ui/form-components";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Signin() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm({
+    resolver: authSchema.SigninResolver,
+    defaultValues: authSchema.SigninDefaultValues,
+  });
+
+  const onSubmit = async (data: authSchema.ILogin) => {
+    setIsLoading(true);
+
+    const signInData = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    });
+
+    if (signInData?.error) {
+      toast.error(signInData.error);
+    } else {
+      toast.success("Signed in successfully!");
+      setTimeout(() => {
+        form.reset();
+        router.push("/");
+      }, 3000); // 3 seconds delay before redirecting
+    }
+    setIsLoading(false);
+  };
+
   return (
-    <Container className="h-screen bg-primary-green">
-      <div className="flex justify-center items-center ">
-        <div className="flex rounded-lg shadow-lg md:w-3/4 w-4/4">
-          <div className="bg-gradient-to-b from-green-400 to-green-800 drop-shadow-md rounded-l-2xl w-1/2 p-16 md:block hidden">
-            <Image src={logo} alt="BulSULogo" width={150}/>
-            <p className="text-white font-bold text-4xl mt-16">LOGIN</p>
-            <p className="text-white font-500 text-xs mt-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    <Container className="my-auto flex h-screen items-center bg-primary-green">
+      <div className="flex items-center justify-center ">
+        <div className="flex w-full flex-col rounded-lg shadow-lg md:flex-row xl:w-4/5">
+          <div className="flex flex-col items-center gap-2 rounded-t-2xl bg-gradient-to-b from-green-400 to-green-800 p-8 drop-shadow-md sm:gap-5 sm:p-10 md:w-1/2 md:items-start md:rounded-l-2xl md:rounded-tr-none lg:p-16">
+            <Image
+              src={logo}
+              alt="BulSULogo"
+              width={150}
+              className="w-28 sm:w-32 md:w-44"
+            />
+            <p className="text-2xl font-bold text-white sm:text-3xl md:text-4xl">
+              LOGIN
+            </p>
+            <p className="font-500 text-center text-sm text-white md:text-left">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </p>
           </div>
-          <div className="bg-white rounded-r-2xl w-1/2 md:block hidden">
-            <div className="lg:p-20 md:pt-32 md:pb-20 p-10 ">
-              <form>
-                <Label htmlFor="email" className="text-gray-dark">Email</Label>
-                <Input type="email" id="email" placeholder="Email" className="mb-7"/>
+          <div className="rounded-b-2xl  bg-white md:w-1/2 md:rounded-r-2xl md:rounded-bl-none">
+            <div className="flex h-full w-full  items-center justify-center p-8 sm:p-10">
+              <Form {...form}>
+                <form
+                  className="w-full space-y-5"
+                  onSubmit={form.handleSubmit(onSubmit)}
+                >
+                  <FormInput form={form} name="email" label="Email" />
+                  <FormInput
+                    form={form}
+                    name="password"
+                    type="password"
+                    label="Password"
+                  />
 
-                <Label htmlFor="password" className="text-gray-dark">Password</Label>
-                <Input type="password" id="password" placeholder="Password" className="mb-5"/>
-
-                <h3 className="text-gray-dark font-medium text-right mb-10 text-sm">
-                  Forgot password? 
-                  <Link href="#" className="text-green-dark underline"> Click here</Link>
-                </h3>
-                <div className="flex justify-center pt-5">
-                  <Button className="bg-green-dark font-bold w-2/6 hover:bg-green-900 items-center">LOGIN</Button>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl md:w-full block md:hidden">
-            <div className="p-20">
-              <form>
-                <Label htmlFor="email" className="text-gray-dark">Email</Label>
-                <Input type="email" id="email" placeholder="Email" className="mb-7"/>
-
-                <Label htmlFor="password" className="text-gray-dark">Password</Label>
-                <Input type="password" id="password" placeholder="Password" className="mb-5"/>
-
-                <h3 className="text-gray-dark font-medium text-right mb-10">
-                  Forgot password? 
-                  <Link href="#" className="text-green-dark underline"> Click here</Link>
-                </h3>
-                <div className="flex justify-center pt-5">
-                  <Button className="bg-green-dark font-bold w-2/6 hover:bg-green-900 items-center">LOGIN</Button>
-                </div>
-              </form>
+                  <h3 className="text-right text-sm font-medium text-gray-dark">
+                    Forgot password?{" "}
+                    <Link href="#" className="text-green-dark underline">
+                      Click here
+                    </Link>
+                  </h3>
+                  <div className="flex justify-center">
+                    <Button className="w-3/4 items-center bg-green-dark hover:bg-green-900 sm:w-2/6">
+                      {isLoading ? "Logging In...." : "Login"}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
             </div>
           </div>
         </div>
       </div>
-      <div className="flex justify-center items-center gap-10 text-white text-sm md:mt-7 mt-14">
+      <div className="mt-7 flex items-center justify-center gap-10 text-sm text-white">
         <Link href="#">Terms of Service</Link>
         <Link href="#">Privacy Policy</Link>
       </div>

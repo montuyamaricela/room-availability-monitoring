@@ -3,6 +3,8 @@ import "~/styles/globals.css";
 import { TRPCReactProvider } from "~/trpc/react";
 import Topbar from "~/components/common/Topbar";
 import { Poppins } from "next/font/google";
+import { Toaster } from "react-hot-toast";
+import Provider from "~/components/common/Provider";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "700"],
@@ -25,8 +27,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.className}`}>
       <body>
-        <Topbar />
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <Provider>
+          <Topbar />
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <Toaster />
+        </Provider>
+    
       </body>
     </html>
   );

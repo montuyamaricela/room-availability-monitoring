@@ -1,33 +1,44 @@
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-  } from "../ui/dropdown-menu"
+"use client";
 
-import {Avatar} from "../ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+
+import { Avatar } from "../ui/avatar";
 import Image from "next/image";
 import avatar from "/public/images/avatar/image.png";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { Button } from "../ui/button";
+import { signOut } from "next-auth/react";
 
-  export function ModalMenu(){
-    return (
-        <DropdownMenu>
-        <DropdownMenuTrigger>
-            <div className="flex flex-col gap-1 p-5 cursor-pointer menu-toggle">
-                <div className="w-7 h-1 bg-white rounded-2xl"></div>
-                <div className="w-7 h-1 bg-white rounded-2xl"></div>
-                <div className="w-7 h-1 bg-white rounded-2xl"></div>
-            </div>
-        </DropdownMenuTrigger>
+export function ModalMenu() {
+  const session = useSession();
+  console.log(session);
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <div className="menu-toggle flex cursor-pointer flex-col gap-1 p-5">
+          <div className="h-1 w-7 rounded-2xl bg-white"></div>
+          <div className="h-1 w-7 rounded-2xl bg-white"></div>
+          <div className="h-1 w-7 rounded-2xl bg-white"></div>
+        </div>
+      </DropdownMenuTrigger>
+      {session.data ? (
         <DropdownMenuContent>
           <DropdownMenuLabel className="flex items-center gap-2">
             <Avatar>
-                <Image src={avatar} alt="Avatar"/>
+              <Image src={avatar} alt="Avatar" />
             </Avatar>
-            <div className="text-sm text-gray-dark">Welcome, Username</div>
+            <div className="text-sm text-gray-dark">
+              Welcome, {session.data.user.name}
+            </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
@@ -46,30 +57,23 @@ import Link from "next/link";
             <Link href="/changepassword">Password Settings</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="#">Logout</Link>
+            <Button
+              onClick={() => signOut()}
+              className="h-5 bg-transparent p-0 font-normal text-gray-dark hover:bg-transparent"
+            >
+              Logout
+            </Button>
           </DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>
-
-      // If hindi pa naka login ito yung irereturn
-      // <DropdownMenu>
-      //   <DropdownMenuTrigger>
-      //       <div className="flex flex-col gap-1 p-5 cursor-pointer menu-toggle">
-      //           <div className="w-7 h-1 bg-white rounded-2xl"></div>
-      //           <div className="w-7 h-1 bg-white rounded-2xl"></div>
-      //           <div className="w-7 h-1 bg-white rounded-2xl"></div>
-      //       </div>
-      //   </DropdownMenuTrigger>
-      //   <DropdownMenuContent>
-      //     <DropdownMenuLabel className="flex items-center gap-2">
-      //       <Avatar>
-      //           <Image src={avatar} alt="Avatar"/>
-      //       </Avatar>
-      //       <div className="text-sm text-gray-dark"><Link href="/signin">Sign In</Link></div>
-      //     </DropdownMenuLabel>
-      //   </DropdownMenuContent>
-      // </DropdownMenu>
-      
-    );
-  }
-  
+      ) : (
+        <DropdownMenuContent>
+          <DropdownMenuLabel className="flex items-center justify-center gap-2">
+            <div className="text-center text-sm text-gray-dark">
+              <Link href="/signin">Sign In</Link>
+            </div>
+          </DropdownMenuLabel>
+        </DropdownMenuContent>
+      )}
+    </DropdownMenu>
+  );
+}
