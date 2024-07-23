@@ -9,6 +9,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
 
 import { db } from "~/server/db";
+import { getUserByEmail } from "~/lib/user";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -98,6 +99,7 @@ export const authOptions: NextAuthOptions = {
         return {
           id: existingUser.id,
           email: existingUser.email,
+          name: existingUser.firstName,
         };
       },
     }),

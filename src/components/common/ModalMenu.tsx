@@ -19,61 +19,61 @@ import { signOut } from "next-auth/react";
 
 export function ModalMenu() {
   const session = useSession();
-  console.log(session);
-
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger>
-        <div className="menu-toggle flex cursor-pointer flex-col gap-1 p-5">
-          <div className="h-1 w-7 rounded-2xl bg-white"></div>
-          <div className="h-1 w-7 rounded-2xl bg-white"></div>
-          <div className="h-1 w-7 rounded-2xl bg-white"></div>
-        </div>
-      </DropdownMenuTrigger>
+    <>
       {session.data ? (
-        <DropdownMenuContent>
-          <DropdownMenuLabel className="flex items-center gap-2">
-            <Avatar>
-              <Image src={avatar} alt="Avatar" />
-            </Avatar>
-            <div className="text-sm text-gray-dark">
-              Welcome, {session.data.user.name}
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <div className="menu-toggle flex cursor-pointer flex-col gap-1 p-3">
+              <div className="h-0.5 w-7 rounded-2xl bg-white"></div>
+              <div className="h-0.5  w-7 rounded-2xl bg-white"></div>
+              <div className="h-0.5  w-7 rounded-2xl bg-white"></div>
             </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <Link href="/accountmanagement">Manage Account</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link href="/activitylog">Activity Log</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link href="/feedback">Feedback</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link href="/profilesetting">Profile Settings</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link href="/changepassword">Password Settings</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Button
-              onClick={() => signOut()}
-              className="h-5 bg-transparent p-0 font-normal text-gray-dark hover:bg-transparent"
-            >
-              Logout
-            </Button>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-full">
+            <DropdownMenuLabel className="flex items-center gap-2">
+              <Avatar>
+                <Image src={avatar} alt="Avatar" />
+              </Avatar>
+              <div className="text-sm text-gray-dark">
+                Welcome, {session.data.user.name}
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Link href="/accountmanagement">Manage Account</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/activitylog">Activity Log</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/feedback">Feedback</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/profilesetting">Profile Settings</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/changepassword">Password Settings</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Button
+                onClick={() => signOut()}
+                className="h-5 bg-transparent p-0 font-normal text-gray-dark hover:bg-transparent"
+              >
+                Logout
+              </Button>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       ) : (
-        <DropdownMenuContent>
-          <DropdownMenuLabel className="flex items-center justify-center gap-2">
-            <div className="text-center text-sm text-gray-dark">
-              <Link href="/signin">Sign In</Link>
-            </div>
-          </DropdownMenuLabel>
-        </DropdownMenuContent>
+        <div className="text-center text-sm text-gray-dark">
+          <Link href="/signin">
+            <Button className=" bg-transparent uppercase hover:bg-transparent ">
+              Sign In
+            </Button>
+          </Link>
+        </div>
       )}
-    </DropdownMenu>
+    </>
   );
 }
