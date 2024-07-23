@@ -2,40 +2,8 @@ import { Container } from "../common/Container";
 import Image from "next/image";
 import icon from "/public/images/icon/message.png";
 import del from "/public/images/icon/delete.png";
+import { Notification } from "../../app/SampleData";
 import { Button } from "../ui/button";
-
-const Notification = [
-  { id: 1, 
-    dateTime: "05-05-24  11:49 AM", 
-    message:"You have feedback. Check it now.", 
-    status: "unread" 
-  },
-  { id: 2, 
-    dateTime: "05-04-24  11:49 AM", 
-    message:"You have feedback. Check it now.", 
-    status: "unread" 
-  },
-  { id: 3, 
-    dateTime: "05-03-24  11:49 AM", 
-    message:"You have feedback. Check it now.", 
-    status: "unread" 
-  },
-  { id: 4, 
-    dateTime: "04-26-24  11:49 AM", 
-    message:"You have feedback. Check it now.", 
-    status: "read" 
-  },
-  { id: 5, 
-    dateTime: "04-25-24  11:49 AM", 
-    message:"You have feedback. Check it now.", 
-    status: "read" 
-  },
-  { id: 6, 
-    dateTime: "04-23-24  11:49 AM", 
-    message:"You have feedback. Check it now.", 
-    status: "read" 
-  },
-];
 
 export default function Notifications() {
   return (
@@ -45,10 +13,14 @@ export default function Notifications() {
           <p className="text-gray-dark font-semibold text-2xl">Notifications</p>
           <div className="flex gap-3 mr-8">
             <div>
-                <Image src={icon} alt="Message" width={25} className="cursor-pointer"/>
+                <Button className="bg-transparent hover:bg-transparent p-1">
+                  <Image src={icon} alt="Message" width={25}/>
+                </Button>
             </div>
             <div>
+              <Button className="bg-transparent hover:bg-transparent p-1">
                 <Image src={del} alt="Delete" width={25} className="cursor-pointer"/>
+              </Button>
             </div>
           </div>
         </div>

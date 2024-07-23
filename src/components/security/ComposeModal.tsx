@@ -12,7 +12,6 @@ import { Button } from "../ui/button"
 import Image from "next/image";
 import icon from "/public/images/icon/add.png";
 import SelectDepartment from "../common/SelectDepartment";
-import { exit } from "process";
 
 export default function ComposeFeedBack() {
   return (
