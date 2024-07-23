@@ -1,4 +1,4 @@
-import ProfileSettings from "~/components/profilesettings/ProfileSettings";
+import ProfileSettings from "~/components/common/ProfileSettings";
 
 export default function Page() {
   return <ProfileSettings />;

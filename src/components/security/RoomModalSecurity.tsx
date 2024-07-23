@@ -12,6 +12,15 @@ import { Button } from "../ui/button";
 import Time from "../common/Time";
 import { sched } from "../../app/SampleData";
 import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "../ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -47,7 +56,17 @@ const RoomModalSecurity = ({ ButtonTrigger, children }: ModalWrapperTypes) => {
                     <div className="grid grid-cols-3 md:gap-6 gap-4 mb-5">
                         <div>
                             <Label htmlFor="facultyName">Faculty Name</Label>
-                            <Input type="text" id="facultyName" placeholder="Faculty Name" required/>
+                            <Select required>
+                                <SelectTrigger className="w-[130px]">
+                                    <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Faculty Name</SelectLabel>
+                                        <SelectItem value="ma">Marc Alfaro</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                         </div>
                         <div>
                             <Label htmlFor="courseCode">Course Code</Label>
