@@ -15,12 +15,12 @@ export default function ActivityLogs() {
   return (
     <Container>
       <div className="flex justify-center items-center">
-        <div className="rounded shadow-md border border-gray-light drop-shadow-md w-4/5 p-8">
+        <div className="rounded shadow-md border border-gray-light drop-shadow-md lg:w-4/5 w-full p-8">
           <p className="text-gray-dark font-semibold text-xl">ACTIVITY LOGS</p>
           <hr className="mt-1 mb-7 border border-gray-light border-t-1"/>
           
-          <div className="md:flex justify-between mb-7">
-            <Input type="text" id="search" placeholder="Search" className="md:w-1/3 w-1/2 md:mb-0 mb-2" required/>
+          <div className="flex flex-col md:flex-row gap-5 justify-between mb-7">
+            <Input type="text" id="search" placeholder="Search" className="md:w-1/3 w-full md:mb-0 mb-2" required/>
             <div className="flex gap-2">
                 <DatePickerDemo />
                 <DatePickerDemo />

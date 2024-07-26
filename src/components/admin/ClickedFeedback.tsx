@@ -15,7 +15,7 @@ const ClickedFeedback = ({ ButtonTrigger, children }: ModalWrapperTypes) => {
   return (
     <Dialog>
       <DialogTrigger asChild>{ButtonTrigger}</DialogTrigger>
-      <DialogContent className="lg:max-w-[35%] md:max-w-[50%] max-w-[85%] bg-custom-gray">
+      <DialogContent className="md:max-w-4/5 w-[90%] bg-custom-gray">
         <div className="p-5">
             <div className="border border-2 border-gray-light rounded-2xl px-3 py-7 bg-white">
                 {children} 
