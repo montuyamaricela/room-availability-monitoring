@@ -4,6 +4,8 @@ import { hash } from "bcrypt";
 import { NextResponse } from "next/server";
 import { db } from "~/server/db";
 import { z } from "zod";
+import { randomUUID } from "crypto";
+import { sendVerificationEmail } from "~/utils/email";
 
 const signUpSchema = z.object({
   email: z.string().email("Invalid Email Address").min(1, "Email is required"),
@@ -15,12 +17,15 @@ const signUpSchema = z.object({
     .string()
     .min(1, "Password is Required")
     .min(8, "Password must have atleast 8 characters"),
+  status: z.string(),
 });
 
 export async function POST(req: Request) {
   try {
+    const token = randomUUID();
+    const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
     const body = await req.json();
-    const { email, password, firstName, lastName, department, role } =
+    const { email, password, firstName, lastName, department, role, status } =
       signUpSchema.parse(body);
 
     // check if email already exists
@@ -50,8 +55,19 @@ export async function POST(req: Request) {
         password: hashPassword,
         department,
         role,
+        status,
       },
     });
+
+    await db.verificationToken.create({
+      data: {
+        identifier: email,
+        token,
+        expires,
+      },
+    });
+
+    await sendVerificationEmail(email, token);
 
     const { password: newUserPassword, ...rest } = newUser;
 

@@ -13,15 +13,20 @@ import { Avatar } from "../ui/avatar";
 import Image from "next/image";
 import avatar from "/public/images/avatar/image.png";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import { Button } from "../ui/button";
 import { signOut } from "next-auth/react";
 
-export function ModalMenu() {
-  const session = useSession();
+type ModalProps = {
+  name?: string | null | undefined;
+  email?: string | null | undefined;
+  id?: string | undefined;
+  role?: string | undefined;
+};
+
+export function ModalMenu({ name, email, id, role }: ModalProps) {
   return (
     <>
-      {session.data ? (
+      {id ? (
         <DropdownMenu>
           <DropdownMenuTrigger>
             <div className="menu-toggle flex cursor-pointer flex-col gap-1 p-3">
@@ -35,25 +40,26 @@ export function ModalMenu() {
               <Avatar>
                 <Image src={avatar} alt="Avatar" />
               </Avatar>
-              <div className="text-sm text-gray-dark">
-                Welcome, {session.data.user.name}
-              </div>
+              <div className="text-sm text-gray-dark">Welcome, {name}</div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            {role != "Security Guard" && (
+              <DropdownMenuItem>
+                <Link href="/admin/account-management">Manage Account</Link>
+              </DropdownMenuItem>
+            )}
+
             <DropdownMenuItem>
-              <Link href="/accountmanagement">Manage Account</Link>
+              <Link href="/admin/activity-log">Activity Log</Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Link href="/activitylog">Activity Log</Link>
+              <Link href="/admin/feedback">Feedback</Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Link href="/feedback">Feedback</Link>
+              <Link href="/admin/profile-setting">Profile Settings</Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Link href="/profilesetting">Profile Settings</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link href="/changepassword">Password Settings</Link>
+              <Link href="/admin/change-password">Password Settings</Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Button

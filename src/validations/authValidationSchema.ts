@@ -25,6 +25,7 @@ export const signUpSchema = z
       .min(1, "Password is Required")
       .min(8, "Password must have atleast 8 characters"),
     confirmPassword: z.string().min(1, "Confirm password is required"),
+    status: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
@@ -62,4 +63,5 @@ export const SignupDefaultValues = {
   lastName: "",
   role: "",
   department: "",
+  status: "Not Verified",
 };

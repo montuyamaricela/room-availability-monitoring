@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 "use client";
 
 import Link from "next/link";
@@ -13,6 +14,7 @@ import { FormInput } from "../ui/form-components";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { api } from "~/trpc/react";
 
 export default function Signin() {
   const router = useRouter();
@@ -23,25 +25,48 @@ export default function Signin() {
     defaultValues: authSchema.SigninDefaultValues,
   });
 
+  const getStatus = api.user.getUserStatus.useMutation({
+    onSuccess: (data) => {
+      if (data.status === "Verified") {
+        void handleSignIn();
+      } else {
+        toast.error("Email is not verified");
+        setIsLoading(false);
+      }
+    },
+    onError: (error) => {
+      toast.error("Error fetching user status.");
+      console.error("Error fetching user status:", error);
+      setIsLoading(false);
+    },
+  });
+  const handleSignIn = async () => {
+    try {
+      const signInData = await signIn("credentials", {
+        email: form.getValues("email"),
+        password: form.getValues("password"),
+        redirect: false,
+      });
+
+      if (signInData?.error) {
+        toast.error(signInData.error);
+      } else {
+        toast.success("Signed in successfully!");
+        setTimeout(() => {
+          form.reset();
+          router.push("/admin");
+        }, 1500);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      toast.error("An error occurred during sign-in.");
+      console.error("Error during sign-in:", error);
+    }
+  };
+
   const onSubmit = async (data: authSchema.ILogin) => {
     setIsLoading(true);
-
-    const signInData = await signIn("credentials", {
-      email: data.email,
-      password: data.password,
-      redirect: false,
-    });
-
-    if (signInData?.error) {
-      toast.error(signInData.error);
-    } else {
-      toast.success("Signed in successfully!");
-      setTimeout(() => {
-        form.reset();
-        router.push("/");
-      }, 3000); // 3 seconds delay before redirecting
-    }
-    setIsLoading(false);
+    getStatus.mutate({ email: data.email });
   };
 
   return (

@@ -39,6 +39,7 @@ export default function Signup() {
         role: data.role,
         department: data.department,
         password: data.password,
+        status: "Not Verified",
       }),
     });
     const responseData = await response.json();

@@ -28,47 +28,47 @@ enum Building {
   HANGAR
 }
 
-// Necessary for Next auth
-model Account {
-  id                       String  @id @default(cuid())
-  userId                   String
-  type                     String
-  provider                 String
-  providerAccountId        String
-  refresh_token            String? // @db.Text
-  access_token             String? // @db.Text
-  expires_at               Int?
-  token_type               String?
-  scope                    String?
-  id_token                 String? // @db.Text
-  session_state            String?
-  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  refresh_token_expires_in Int?
-  @@unique([provider, providerAccountId])
-}
+// // Necessary for Next auth
+// model Account {
+//   id                       String  @id @default(cuid())
+//   userId                   String
+//   type                     String
+//   provider                 String
+//   providerAccountId        String
+//   refresh_token            String? // @db.Text
+//   access_token             String? // @db.Text
+//   expires_at               Int?
+//   token_type               String?
+//   scope                    String?
+//   id_token                 String? // @db.Text
+//   session_state            String?
+//   user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   refresh_token_expires_in Int?
+//   @@unique([provider, providerAccountId])
+// }
 
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
+// model Session {
+//   id           String   @id @default(cuid())
+//   sessionToken String   @unique
+//   userId       String
+//   expires      DateTime
+//   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+// }
 
 model User {
-  id            String    @id @default(cuid())
-  firstName     String
-  middleName    String?
-  lastName      String  
-  email         String?   @unique
-  role          String?
-  department    String?
-  emailVerified DateTime?
-  password      String  
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  post          Post[]
+  id                  String    @id @default(cuid())
+  firstName           String
+  middleName          String?
+  lastName            String  
+  email               String?   @unique
+  role                String?
+  department          String?
+  emailVerified       DateTime?
+  password            String  
+  image               String?
+  status              String
+  // accounts      Account[]
+  // sessions      Session[]
 }
 
 model VerificationToken {
@@ -78,11 +78,20 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model CreationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  @@unique([identifier, token])
+}
+
+
 model Room {
   id                     String   @id @default(cuid())
   roomName               String
   building               Building @default(PANCHO_HALL)
   floor                  String
+  WithTv                 Boolean
   isLecture              Boolean
   isLaboratory           Boolean
   isAirconed             Boolean
@@ -95,15 +104,15 @@ model Room {
 }
 
 model RoomSchedule {
-  id         String   @id @default(cuid())
-  roomId     String
-  room       Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  facultyName String
-  courseCode  String
-  section    String
-  day        DateTime
-  beginTime  DateTime
-  endTime    DateTime
+  id            String   @id @default(cuid())
+  roomId        String
+  room          Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  facultyName   String
+  courseCode    String
+  section       String
+  day           DateTime
+  beginTime     DateTime
+  endTime       DateTime
 }
 
 model ActivityLogs {
@@ -113,6 +122,7 @@ model ActivityLogs {
   roomId      String
   loggedBy    String
   activity    String
+  careOf      String
 }
 
 model Feedbacks {
@@ -123,13 +133,4 @@ model Feedbacks {
   status     String
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    createdBy   User   @relation(fields: [createdById], references: [id])
-    createdById String
 
-    @@index([name])
-}
