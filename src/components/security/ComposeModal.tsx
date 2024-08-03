@@ -19,7 +19,7 @@ export default function ComposeFeedBack() {
       <DialogTrigger asChild>
         <Image src={icon} alt="Add" width={20} className="cursor-pointer"/>
       </DialogTrigger>
-      <DialogContent className="p-8">
+      <DialogContent className="md:max-w-4/5 w-[90%] p-8">
         <DialogHeader>
             <div className="flex justify-center mb-4">
                 <DialogTitle>COMPOSE FEEDBACK</DialogTitle>

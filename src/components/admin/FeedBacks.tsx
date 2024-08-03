@@ -11,10 +11,10 @@ export default function FeedBacks() {
   const readFeedbacks = FeedBack.filter(feedback => feedback.status === 'read');
   return (
     <Container>
-      <div className="flex justify-center items-center mb-5">
-        <div className="flex justify-between lg:w-4/6 md:w-5/6 w-full">
+      <div className="flex justify-center items-center md:mb-5">
+        <div className="flex flex-col md:flex-row justify-between lg:w-4/6 w-full">
           <p className="text-gray-dark font-semibold text-2xl">Feedback</p>
-          <div className="flex gap-3 mr-8">
+          <div className="flex ml-auto gap-3">
             <div>
               <Button className="bg-transparent hover:bg-green-light text-green-light hover:text-white p-1"> Acknowledge </Button>
             </div>
@@ -33,7 +33,7 @@ export default function FeedBacks() {
       </div>
       
       <div className="flex justify-center items-center">
-        <div className="bg-custom-gray rounded shadow-lg drop-shadow-md lg:w-4/6 md:w-5/6 w-full p-10">
+        <div className="bg-custom-gray rounded shadow-lg drop-shadow-md min-w-[367px] lg:w-4/6 w-full lg:p-10 p-5">
             <div>
               <p className="text-gray-dark font-semibold">Unread</p>
               {unreadFeedbacks.map((feedback, index) => (
@@ -47,7 +47,7 @@ export default function FeedBacks() {
                           <p className="text-sm text-gray-dark">{feedback.message}</p>
                         </div>
                         <div className="flex-shrink-0">
-                          <p className="text-xs text-gray-dark text-right">{feedback.dateTime}</p>
+                          <p className="text-xs text-gray-dark text-right sm:w-full w-[65px]">{feedback.dateTime}</p>
                         </div>
                       </div>
                     }
@@ -62,7 +62,7 @@ export default function FeedBacks() {
                 
               ))}
 
-              <p className="text-gray-dark font-semibold mt-5">Read</p>
+              <p className="text-gray-dark font-semibold mt-5">Other Feedback</p>
               {readFeedbacks.map((feedback, index) => (
                 <div key={index}>
                   <OpenFeedbackModal
@@ -74,7 +74,7 @@ export default function FeedBacks() {
                           <p className="text-sm text-gray-dark">{feedback.message}</p>
                         </div>
                         <div className="flex-shrink-0">
-                          <p className="text-xs text-gray-dark text-right">{feedback.dateTime}</p>
+                          <p className="text-xs text-gray-dark text-right sm:w-full w-[65px]">{feedback.dateTime}</p>
                         </div>
                       </div>
                     }

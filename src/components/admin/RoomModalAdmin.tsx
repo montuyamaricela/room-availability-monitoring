@@ -31,7 +31,7 @@ const RoomModalAdmin = ({ ButtonTrigger, children }: ModalWrapperTypes) => {
   return (
     <Dialog>
       <DialogTrigger asChild>{ButtonTrigger}</DialogTrigger>
-      <DialogContent className="md:max-w-[65%] max-h-[90%] max-w-[90%] overflow-y-scroll">
+      <DialogContent className="lg:max-w-[65%] max-h-[90%] max-w-[92%] overflow-y-scroll">
         <Tabs defaultValue="room">
             <DialogHeader className="rounded-t-2xl">
             <DialogTitle>
