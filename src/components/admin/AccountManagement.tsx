@@ -18,19 +18,17 @@ export default function AccountManagement() {
   return (
     <Container>
       <div className="flex justify-center items-center">
-        <div className="rounded shadow-md border border-gray-light drop-shadow-md w-4/5 px-8 py-3">
-            <div className="md:flex justify-between">
+        <div className="rounded shadow-md border border-gray-light drop-shadow-md min-w-[367px] lg:w-4/5 w-full px-8 py-3">
+            <div className="flex flex-col  sm:flex-row justify-between gap-5">
                 <p className="text-gray-dark font-semibold text-xl">ACCOUNT MANAGEMENT</p>
-                <div className="flex gap-2 md:mt-0 mt-2">
-                    <Button className="bg-green-light hover:bg-green-dark">CREATE ACCOUNT</Button>
-                    <Input type="text" id="search" placeholder="Search" required/>
-                </div>
+                <Button className="bg-green-light hover:bg-green-dark w-fit ml-auto">CREATE ACCOUNT</Button>
             </div>
-            <div className="mt-10">
+            <Input type="text" id="search" placeholder="Search" required className="sm:w-1/2 w-full my-5 float-right"/>
+            <div className="mt-24">
             <Tabs defaultValue="account">
                 <TabsList>
-                    <TabsTrigger value="security" className="md:px-16 px-10 rounded-t-2xl border-2 border-green-dark">SECURITY</TabsTrigger>
-                    <TabsTrigger value="admin" className="md:px-20 px-12 rounded-t-2xl border-2 border-green-dark">ADMIN</TabsTrigger>
+                    <TabsTrigger value="security" className="sm:px-16 px-8 rounded-t-2xl border-2 border-green-dark">SECURITY</TabsTrigger>
+                    <TabsTrigger value="admin" className="sm:px-20 px-10 rounded-t-2xl border-2 border-green-dark">ADMIN</TabsTrigger>
                 </TabsList>
                 <TabsContent value="security">
                   <Table>

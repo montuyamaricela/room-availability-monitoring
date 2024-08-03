@@ -2,61 +2,61 @@ import Link from "next/link";
 import Image from "next/image";
 import logo from "/public/images/logo/image.png";
 import { Container } from "../common/Container";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Button } from "../ui/button";
+// import { Form } from "../ui/form";
+// import { FormInput } from "../ui/form-components";
+// import { Button } from "../ui/button";
 
 export default function Resetpassword() {
   return (
-    <Container className="h-screen bg-primary-green">
+    <Container className="my-auto flex h-screen items-center bg-primary-green">
       <div className="flex justify-center items-center ">
-        <div className="flex rounded-lg shadow-lg md:w-3/4 w-4/4">
-          <div className="bg-gradient-to-b from-green-400 to-green-800 drop-shadow-md rounded-l-2xl w-1/2 lg:p-16 p-10 md:block hidden">
-            <Image src={logo} alt="BulSULogo" width={150}/>
-            <p className="text-white font-bold lg:text-4xl text-3xl mt-16">RESET PASSWORD</p>
-            <p className="text-white font-500 text-xs mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+         <div className="flex w-full flex-col rounded-lg shadow-lg md:flex-row xl:w-4/5">
+          <div className="flex flex-col items-center gap-2 rounded-t-2xl bg-gradient-to-b from-green-400 to-green-800 p-8 drop-shadow-md sm:gap-5 sm:p-10 md:w-1/2 md:items-start md:rounded-l-2xl md:rounded-tr-none lg:p-16">
+            <Image
+              src={logo}
+              alt="BulSULogo"
+              width={150}
+              className="w-28 sm:w-32 md:w-44"
+            />
+            <p className="text-2xl font-bold text-white sm:text-3xl md:text-4xl">
+              RESET PASSWORD
+            </p>
+            <p className="font-500 text-center text-sm text-white md:text-left">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </p>
           </div>
-          <div className="bg-white rounded-r-2xl w-1/2 md:block hidden">
-            <div className="lg:p-16 md:pt-14 p-10">
-              <form>
-                <Label htmlFor="email" className="text-gray-dark">Email</Label>
-                <Input type="email" id="email" placeholder="Email" className="mb-7"/>
+          <div className="rounded-b-2xl  bg-white md:w-1/2 md:rounded-r-2xl md:rounded-bl-none">
+            <div className="flex h-full w-full  items-center justify-center p-8 sm:p-10">
+              {/* Uncomment mo nalang pag gagamitin mo na */}
+              {/* <Form {...form}>
+                <form className="w-full space-y-5">
+                  <FormInput form={form} name="email" label="Email" />
 
-                <Label htmlFor="newpassword" className="text-gray-dark">New Password</Label>
-                <Input type="password" id="newpassword" placeholder="New Password" className="mb-7"/>
+                  <FormInput
+                    form={form}
+                    name="newpassword"
+                    type="password"
+                    label="New Password"
+                  />
 
-                <Label htmlFor="confirmpassword" className="text-gray-dark">Confirm Password</Label>
-                <Input type="password" id="confirmpassword" placeholder="Confirm Password" className="mb-5"/>
+                  <FormInput
+                    form={form}
+                    name="confirmpassword"
+                    type="password"
+                    label="Confirm Password"
+                  />
 
-                <div className="flex justify-center pt-5">
-                  <Button className="bg-green-dark font-bold w-2/6 hover:bg-green-900 items-center">RESET</Button>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl sm:mt-2 mt-5  md:w-full block md:hidden">
-            <div className="p-11">
-                <form>
-                    <Label htmlFor="email" className="text-gray-dark">Email</Label>
-                    <Input type="email" id="email" placeholder="Email" className="mb-7"/>
-
-                    <Label htmlFor="newpassword" className="text-gray-dark">New Password</Label>
-                    <Input type="password" id="newpassword" placeholder="New Password" className="mb-7"/>
-
-                    <Label htmlFor="confirmpassword" className="text-gray-dark">Confirm Password</Label>
-                    <Input type="password" id="confirmpassword" placeholder="Confirm Password" className="mb-5"/>
-
-                    <div className="flex justify-center pt-5">
-                    <Button className="bg-green-dark font-bold w-2/6 hover:bg-green-900 items-center">RESET</Button>
-                    </div>
+                  <div className="flex justify-center">
+                    <Button className="w-3/4 items-center bg-green-dark hover:bg-green-900 sm:w-2/6">RESET</Button>
+                  </div>
                 </form>
+              </Form> */}
             </div>
           </div>
         </div>
       </div>
-      <div className="flex justify-center items-center gap-10 text-white text-sm md:mt-7 sm:mt-14 mt-24">
+      <div className="mt-7 flex items-center justify-center gap-10 text-sm text-white">
         <Link href="#">Terms of Service</Link>
         <Link href="#">Privacy Policy</Link>
       </div>

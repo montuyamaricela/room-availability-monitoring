@@ -44,7 +44,7 @@ const RoomModalSecurity = ({ ButtonTrigger, children }: ModalWrapperTypes) => {
   return (
     <Dialog>
       <DialogTrigger asChild>{ButtonTrigger}</DialogTrigger>
-      <DialogContent className="md:max-w-[65%] max-h-[90%] max-w-[90%] overflow-y-scroll">
+      <DialogContent className="lg:max-w-[65%] max-h-[90%] max-w-[92%] overflow-y-scroll">
             <DialogHeader className="rounded-t-2xl bg-primary-green py-3">
             <DialogTitle className="text-center text-2xl font-medium uppercase text-white">
                 Log
