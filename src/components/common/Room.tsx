@@ -27,6 +27,7 @@ export function RoomLayout() {
           return (
             <div key={index}>
               <ModalWrapper
+                title="Room Details"
                 ButtonTrigger={
                   <div className="flex h-20 items-center justify-center border border-gray-300 bg-green-200">
                     Room {room?.RoomNumber}

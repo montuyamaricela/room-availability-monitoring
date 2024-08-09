@@ -1,75 +1,85 @@
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-  } from "../ui/dropdown-menu"
+"use client";
 
-import {Avatar} from "../ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+
+import { Avatar } from "../ui/avatar";
 import Image from "next/image";
 import avatar from "/public/images/avatar/image.png";
 import Link from "next/link";
+import { Button } from "../ui/button";
+import { signOut } from "next-auth/react";
 
-  export function ModalMenu(){
-    return (
+type ModalProps = {
+  name?: string | null | undefined;
+  email?: string | null | undefined;
+  id?: string | undefined;
+  role?: string | undefined;
+};
+
+export function ModalMenu({ name, email, id, role }: ModalProps) {
+  return (
+    <>
+      {id ? (
         <DropdownMenu>
-        <DropdownMenuTrigger>
-            <div className="flex flex-col gap-1 p-5 cursor-pointer menu-toggle">
-                <div className="w-7 h-1 bg-white rounded-2xl"></div>
-                <div className="w-7 h-1 bg-white rounded-2xl"></div>
-                <div className="w-7 h-1 bg-white rounded-2xl"></div>
+          <DropdownMenuTrigger>
+            <div className="menu-toggle flex cursor-pointer flex-col gap-1 p-3">
+              <div className="h-0.5 w-7 rounded-2xl bg-white"></div>
+              <div className="h-0.5  w-7 rounded-2xl bg-white"></div>
+              <div className="h-0.5  w-7 rounded-2xl bg-white"></div>
             </div>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel className="flex items-center gap-2">
-            <Avatar>
-                <Image src={avatar} alt="Avatar"/>
-            </Avatar>
-            <div className="text-sm text-gray-dark">Welcome, Username</div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <Link href="/accountmanagement">Manage Account</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link href="/activitylog">Activity Log</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link href="/feedback">Feedback</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link href="/profilesetting">Profile Settings</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link href="/changepassword">Password Settings</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link href="#">Logout</Link>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-full">
+            <DropdownMenuLabel className="flex items-center gap-2">
+              <Avatar>
+                <Image src={avatar} alt="Avatar" />
+              </Avatar>
+              <div className="text-sm text-gray-dark">Welcome, {name}</div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {role != "Security Guard" && (
+              <DropdownMenuItem>
+                <Link href="/admin/account-management">Manage Account</Link>
+              </DropdownMenuItem>
+            )}
 
-      // If hindi pa naka login ito yung irereturn
-      // <DropdownMenu>
-      //   <DropdownMenuTrigger>
-      //       <div className="flex flex-col gap-1 p-5 cursor-pointer menu-toggle">
-      //           <div className="w-7 h-1 bg-white rounded-2xl"></div>
-      //           <div className="w-7 h-1 bg-white rounded-2xl"></div>
-      //           <div className="w-7 h-1 bg-white rounded-2xl"></div>
-      //       </div>
-      //   </DropdownMenuTrigger>
-      //   <DropdownMenuContent>
-      //     <DropdownMenuLabel className="flex items-center gap-2">
-      //       <Avatar>
-      //           <Image src={avatar} alt="Avatar"/>
-      //       </Avatar>
-      //       <div className="text-sm text-gray-dark"><Link href="/signin">Sign In</Link></div>
-      //     </DropdownMenuLabel>
-      //   </DropdownMenuContent>
-      // </DropdownMenu>
-      
-    );
-  }
-  
+            <DropdownMenuItem>
+              <Link href="/admin/activity-log">Activity Log</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/admin/feedback">Feedback</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/admin/profile-setting">Profile Settings</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/admin/change-password">Password Settings</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <div
+                onClick={() => signOut()}
+                className="h-5 w-full  font-normal text-gray-dark hover:cursor-pointer"
+              >
+                Logout
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : (
+        <div className="text-center text-sm text-gray-dark">
+          <Link href="/signin">
+            <Button className=" bg-transparent uppercase hover:bg-transparent ">
+              Sign In
+            </Button>
+          </Link>
+        </div>
+      )}
+    </>
+  );
+}

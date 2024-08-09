@@ -11,6 +11,12 @@ export function Legends() {
           </div>
         );
       })}
+      <div className="hidden">
+        <div className={`h-5 w-5 bg-secondary-available`} />
+        <div className={`h-5 w-5 bg-secondary-occupied`} />
+        <div className={`h-5 w-5 bg-secondary-other`} />
+        <div className={`h-5 w-5 bg-secondary-filtered`} />
+      </div>
     </div>
   );
 }

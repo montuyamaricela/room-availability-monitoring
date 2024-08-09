@@ -1,177 +1,227 @@
-import * as React from "react";
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "/public/images/logo/image.png";
 import { Container } from "../common/Container";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { Button } from "../ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import SelectDepartment from "../common/SelectDepartment";
+import { useForm } from "react-hook-form";
+import * as authSchema from "~/validations/authValidationSchema";
+import { FormCombobox, FormInput } from "../ui/form-components";
+import { Form } from "../ui/form";
+import { useRouter, useSearchParams } from "next/navigation";
+import toast from "react-hot-toast";
+import { api } from "~/trpc/react";
+import Spinner from "../common/Spinner";
 
 export default function Signup() {
+  const [isLoading, setIsLoading] = useState(true); // Initially loading
+  const [formLoading, setFormLoading] = useState(false);
+  const [isTokenValid, setIsTokenValid] = useState(false);
+  const [token, setToken] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const form = useForm({
+    resolver: authSchema.SignupResolver,
+    defaultValues: authSchema.SignupDefaultValues,
+  });
+
+  const getData = api.user.getCreationData.useMutation({
+    onSuccess: (data) => {
+      setIsTokenValid(true);
+      form.setValue("role", data.role);
+      form.setValue("department", data.department || "");
+      form.setValue("firstName", data.firstName);
+      form.setValue("lastName", data.lastName);
+      form.setValue("email", data.email);
+      setIsLoading(false);
+    },
+    onError: () => {
+      setIsTokenValid(false);
+      setIsLoading(false);
+    },
+  });
+
+  useEffect(() => {
+    // Get the token from the URL
+    const token = searchParams.get("token");
+
+    if (token) {
+      setToken(token);
+      getData.mutate({ token });
+    } else {
+      // No token present in the URL
+      setIsTokenValid(false);
+      setIsLoading(false);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isTokenValid) {
+        toast.error("Invalid or missing token");
+        setTimeout(() => {
+          router.push("/");
+        }, 3000); // 3 seconds delay before redirecting
+      }
+    }
+  }, [isLoading, isTokenValid, router]);
+
+  const onSubmit = async (data: authSchema.ISignUp) => {
+    setFormLoading(true);
+    const response = await fetch(`/api/user?token=${token}`, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        role: data.role,
+        department: data.department,
+        password: data.password,
+        status: "Not Verified",
+      }),
+    });
+    const responseData = await response.json();
+
+    if (response.ok) {
+      toast.success("Account created successfully!");
+      form.reset();
+      setTimeout(() => {
+        router.push("/signin");
+      }, 1500); // 1.5 seconds delay before redirecting
+    } else {
+      toast.error(responseData?.message || "Something went wrong");
+    }
+    setFormLoading(false);
+  };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (!isTokenValid) {
+    // If token is invalid or missing, we will handle this in the useEffect
+    return null;
+  }
+
   return (
-    <Container className="h-screen bg-primary-green">
-      <div className="flex justify-center items-center ">
-        <div className="flex rounded-lg shadow-lg md:w-3/4 w-4/4">
-          <div className="bg-gradient-to-b from-green-400 to-green-800 drop-shadow-md rounded-l-2xl w-1/2 p-16 md:block hidden">
-            <Image src={logo} alt="BulSULogo" width={150} className="mt-5"/>
-            <p className="text-white font-bold text-4xl mt-20">CREATE ACCOUNT</p>
-            <p className="text-white font-500 text-xs mt-7">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    <Container className="my-auto flex items-center bg-primary-green md:h-screen">
+      <div className="flex items-center justify-center ">
+        <div className="flex w-full flex-col rounded-lg shadow-lg md:flex-row xl:w-4/5">
+          <div className="flex flex-col items-center justify-center gap-2 rounded-t-2xl bg-gradient-to-b from-green-400 to-green-800 p-8 drop-shadow-md sm:gap-5 sm:p-10 md:w-1/2 md:items-start md:rounded-l-2xl md:rounded-tr-none lg:p-16">
+            <Image
+              src={logo}
+              alt="BulSULogo"
+              width={150}
+              className="w-28 sm:w-32 md:w-44"
+            />
+            <p className="text-2xl font-bold text-white sm:text-3xl md:text-4xl">
+              CREATE ACCOUNT
+            </p>
+            <p className="font-500 text-center text-sm text-white md:text-left">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </p>
           </div>
-          <div className="bg-white rounded-r-2xl w-1/2 md:block hidden">
-            <div className="p-8 ">
-              <form>
-                <div className="lg:flex justify-center mb-2 gap-5">
-                  <div>
-                    <Label htmlFor="id" className="text-gray-dark">ID</Label>
-                    <Input type="text" id="id" placeholder="ID" required/>
-                  </div>
-                  <div className="flex gap-5">
-                    <div>
-                      <Label className="text-gray-dark">Role</Label>
-                      <Select required>
-                        <SelectTrigger className="w-[130px]">
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Role</SelectLabel>
-                            <SelectItem value="admin">Admin</SelectItem>
-                            <SelectItem value="guard">Security Guard</SelectItem>
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
+          <div className="rounded-b-2xl bg-white md:w-1/2 md:rounded-r-2xl md:rounded-bl-none">
+            <div className="flex h-full w-full items-center justify-center p-8 sm:p-10">
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                  <div className="flex flex-col gap-3 sm:grid sm:grid-cols-2">
+                    <FormCombobox
+                      label="Role"
+                      form={form}
+                      placeholder="Select Role"
+                      name={"role"}
+                      data={role}
+                      disabled
+                    />
+                    <FormCombobox
+                      label="Department"
+                      form={form}
+                      placeholder="Select Department"
+                      name={"department"}
+                      data={departments}
+                      disabled
+                    />
+                    <FormInput
+                      form={form}
+                      name="firstName"
+                      label="First Name"
+                    />
+                    <FormInput form={form} name="lastName" label="Last Name" />
+                    <div className="col-span-2">
+                      <FormInput
+                        form={form}
+                        name="email"
+                        label="Email"
+                        disabled
+                      />
                     </div>
-                    <div>
-                      <Label className="text-gray-dark">Department</Label>
-                      <SelectDepartment />
-                    </div>
+                    <FormInput
+                      form={form}
+                      type="password"
+                      name="password"
+                      label="Password"
+                    />
+                    <FormInput
+                      form={form}
+                      type="password"
+                      name="confirmPassword"
+                      label="Confirm Password"
+                    />
                   </div>
-                </div>
 
-                <div className="flex justify-center mb-2 gap-5">
-                  <div>
-                    <Label htmlFor="firstName" className="text-gray-dark">First Name</Label>
-                    <Input type="text" id="firstName" placeholder="First Name" required/>
+                  <h3 className="my-5 text-xs font-medium text-gray-dark">
+                    By clicking Create, you agree to our
+                    <Link href="#" className="font-semibold text-green-dark">
+                      {" "}
+                      Terms of Service{" "}
+                    </Link>
+                    and that you have read our
+                    <Link href="#" className="font-semibold text-green-dark">
+                      {" "}
+                      Privacy Policy
+                    </Link>
+                  </h3>
+                  <div className="flex justify-center">
+                    <Button className="w-2/6 items-center bg-green-dark hover:bg-green-900">
+                      {formLoading ? "Submitting...." : "Submit"}
+                    </Button>
                   </div>
-                  <div>
-                    <Label htmlFor="lastName" className="text-gray-dark">Last Name</Label>
-                    <Input type="text" id="lastName" placeholder="Last Name" required/>
-                  </div>
-                </div>
-
-                <Label htmlFor="email" className="text-gray-dark">Email</Label>
-                <Input type="email" id="email" placeholder="Email" className="mb-2" required/>
-
-                <Label htmlFor="password" className="text-gray-dark">Password</Label>
-                <Input type="password" id="password" placeholder="Password" className="mb-2" required/>
-
-                <Label htmlFor="confirmPassword" className="text-gray-dark">Confirm Password</Label>
-                <Input type="password" id="confirmPassword" placeholder="Confirm Password" className="mb-2" required/>
-
-                <h3 className="text-gray-dark font-medium mb-10 text-xs">
-                By clicking Create, you agree to our 
-                <Link href="#" className="text-green-dark font-semibold"> Terms of Service </Link>
-                and that you have read our  
-                <Link href="#" className="text-green-dark font-semibold"> Privacy Policy</Link>
-                </h3>
-                <div className="flex justify-center">
-                  <Button className="bg-green-dark font-bold w-2/6 hover:bg-green-900 items-center">CREATE</Button>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl w-full block md:hidden">
-            <div className="p-10 ">
-              <form>
-                <div className="flex mb-2 gap-5">
-                  <div>
-                    <Label htmlFor="id" className="text-gray-dark">ID</Label>
-                    <Input type="text" id="id" placeholder="ID" required/>
-                  </div>
-                  <div>
-                    <Label className="text-gray-dark">Role</Label>
-                    <Select required>
-                      <SelectTrigger className="w-[130px]">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Role</SelectLabel>
-                          <SelectItem value="admin">Admin</SelectItem>
-                          <SelectItem value="guard">Security Guard</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label className="text-gray-dark">Department</Label>
-                    <Select required>
-                      <SelectTrigger className="w-[130px]">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Department</SelectLabel>
-                          <SelectItem value="cba">CBA</SelectItem>
-                          <SelectItem value="cics">CICS</SelectItem>
-                          <SelectItem value="coed">CoED</SelectItem>
-                          <SelectItem value="cit">CIT</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="flex mb-2 gap-5">
-                  <div>
-                    <Label htmlFor="firstName" className="text-gray-dark">First Name</Label>
-                    <Input type="text" id="firstName" placeholder="First Name" required/>
-                  </div>
-                  <div>
-                    <Label htmlFor="lastName" className="text-gray-dark">Last Name</Label>
-                    <Input type="text" id="lastName" placeholder="Last Name" required/>
-                  </div>
-                </div>
-
-                <Label htmlFor="email" className="text-gray-dark">Email</Label>
-                <Input type="email" id="email" placeholder="Email" className="mb-2" required/>
-
-                <Label htmlFor="password" className="text-gray-dark">Password</Label>
-                <Input type="password" id="password" placeholder="Password" className="mb-2" required/>
-
-                <Label htmlFor="confirmPassword" className="text-gray-dark">Confirm Password</Label>
-                <Input type="password" id="confirmPassword" placeholder="Confirm Password" className="mb-2" required/>
-
-                <h3 className="text-gray-dark font-medium mb-10 text-xs">
-                By clicking Create, you agree to our 
-                <Link href="#" className="text-green-dark font-semibold"> Terms of Service </Link>
-                and that you have read our  
-                <Link href="#" className="text-green-dark font-semibold"> Privacy Policy</Link>
-                </h3>
-                <div className="flex justify-center">
-                  <Button className="bg-green-dark font-bold w-2/6 hover:bg-green-900 items-center">CREATE</Button>
-                </div>
-              </form>
+                </form>
+              </Form>
             </div>
           </div>
         </div>
       </div>
-      <div className="flex justify-center items-center gap-10 text-white text-sm md:mt-7 mt-14">
+      <div className="mt-7 flex items-center justify-center gap-10 text-sm text-white">
         <Link href="#">Terms of Service</Link>
         <Link href="#">Privacy Policy</Link>
       </div>
     </Container>
   );
 }
+
+export const role = [
+  { label: "Admin", value: "Admin" },
+  { label: "Security Guard", value: "Security Guard" },
+];
+
+export const departments = [
+  { label: "IE", value: "IE" },
+  { label: "CE", value: "CE" },
+  { label: "CIT", value: "CIT" },
+  { label: "CICS", value: "CICS" },
+  { label: "BA", value: "BA" },
+  { label: "COED", value: "COED" },
+  { label: "LSS", value: "LSS" },
+];
