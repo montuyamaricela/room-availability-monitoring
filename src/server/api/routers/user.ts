@@ -26,7 +26,7 @@ export const userRouter = createTRPCRouter({
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       return ctx.db.user.delete({
-        where: { id: input?.id },
+        where: { id: input.id },
       });
     }),
 
@@ -44,6 +44,26 @@ export const userRouter = createTRPCRouter({
       return {
         status: user.status,
         email: user.email,
+      };
+    }),
+
+  getCreationData: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.creationToken.findUnique({
+        where: { token: input.token },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      return {
+        email: user.identifier,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        department: user.department,
+        role: user.role,
       };
     }),
 });

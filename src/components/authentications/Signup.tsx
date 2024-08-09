@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "/public/images/logo/image.png";
@@ -13,21 +13,68 @@ import { useForm } from "react-hook-form";
 import * as authSchema from "~/validations/authValidationSchema";
 import { FormCombobox, FormInput } from "../ui/form-components";
 import { Form } from "../ui/form";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
+import { api } from "~/trpc/react";
+import Spinner from "../common/Spinner";
 
 export default function Signup() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Initially loading
+  const [formLoading, setFormLoading] = useState(false);
+  const [isTokenValid, setIsTokenValid] = useState(false);
+  const [token, setToken] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const form = useForm({
     resolver: authSchema.SignupResolver,
     defaultValues: authSchema.SignupDefaultValues,
   });
 
+  const getData = api.user.getCreationData.useMutation({
+    onSuccess: (data) => {
+      setIsTokenValid(true);
+      form.setValue("role", data.role);
+      form.setValue("department", data.department || "");
+      form.setValue("firstName", data.firstName);
+      form.setValue("lastName", data.lastName);
+      form.setValue("email", data.email);
+      setIsLoading(false);
+    },
+    onError: () => {
+      setIsTokenValid(false);
+      setIsLoading(false);
+    },
+  });
+
+  useEffect(() => {
+    // Get the token from the URL
+    const token = searchParams.get("token");
+
+    if (token) {
+      setToken(token);
+      getData.mutate({ token });
+    } else {
+      // No token present in the URL
+      setIsTokenValid(false);
+      setIsLoading(false);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isTokenValid) {
+        toast.error("Invalid or missing token");
+        setTimeout(() => {
+          router.push("/");
+        }, 3000); // 3 seconds delay before redirecting
+      }
+    }
+  }, [isLoading, isTokenValid, router]);
+
   const onSubmit = async (data: authSchema.ISignUp) => {
-    setIsLoading(true);
-    const response = await fetch("/api/user", {
+    setFormLoading(true);
+    const response = await fetch(`/api/user?token=${token}`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -45,18 +92,25 @@ export default function Signup() {
     const responseData = await response.json();
 
     if (response.ok) {
-      // delay
       toast.success("Account created successfully!");
+      form.reset();
       setTimeout(() => {
-        form.reset();
         router.push("/signin");
-      }, 3000); // 3 seconds delay before redirecting
+      }, 1500); // 1.5 seconds delay before redirecting
     } else {
       toast.error(responseData?.message || "Something went wrong");
-      console.error("Registration failed");
     }
-    setIsLoading(false);
+    setFormLoading(false);
   };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (!isTokenValid) {
+    // If token is invalid or missing, we will handle this in the useEffect
+    return null;
+  }
 
   return (
     <Container className="my-auto flex items-center bg-primary-green md:h-screen">
@@ -77,17 +131,18 @@ export default function Signup() {
               eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </p>
           </div>
-          <div className="rounded-b-2xl  bg-white md:w-1/2 md:rounded-r-2xl md:rounded-bl-none">
-            <div className="flex h-full w-full  items-center justify-center p-8 sm:p-10">
+          <div className="rounded-b-2xl bg-white md:w-1/2 md:rounded-r-2xl md:rounded-bl-none">
+            <div className="flex h-full w-full items-center justify-center p-8 sm:p-10">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <div className="flex flex-col gap-3 sm:grid  sm:grid-cols-2">
+                  <div className="flex flex-col gap-3 sm:grid sm:grid-cols-2">
                     <FormCombobox
                       label="Role"
                       form={form}
                       placeholder="Select Role"
                       name={"role"}
                       data={role}
+                      disabled
                     />
                     <FormCombobox
                       label="Department"
@@ -95,6 +150,7 @@ export default function Signup() {
                       placeholder="Select Department"
                       name={"department"}
                       data={departments}
+                      disabled
                     />
                     <FormInput
                       form={form}
@@ -103,7 +159,12 @@ export default function Signup() {
                     />
                     <FormInput form={form} name="lastName" label="Last Name" />
                     <div className="col-span-2">
-                      <FormInput form={form} name="email" label="Email" />
+                      <FormInput
+                        form={form}
+                        name="email"
+                        label="Email"
+                        disabled
+                      />
                     </div>
                     <FormInput
                       form={form}
@@ -133,7 +194,7 @@ export default function Signup() {
                   </h3>
                   <div className="flex justify-center">
                     <Button className="w-2/6 items-center bg-green-dark hover:bg-green-900">
-                      {isLoading ? "Submitting...." : "Submit"}
+                      {formLoading ? "Submitting...." : "Submit"}
                     </Button>
                   </div>
                 </form>
@@ -150,12 +211,12 @@ export default function Signup() {
   );
 }
 
-const role = [
+export const role = [
   { label: "Admin", value: "Admin" },
   { label: "Security Guard", value: "Security Guard" },
 ];
 
-const departments = [
+export const departments = [
   { label: "IE", value: "IE" },
   { label: "CE", value: "CE" },
   { label: "CIT", value: "CIT" },

@@ -35,7 +35,7 @@ export default function Signin() {
       }
     },
     onError: (error) => {
-      toast.error("Error fetching user status.");
+      toast.error(error.message);
       console.error("Error fetching user status:", error);
       setIsLoading(false);
     },

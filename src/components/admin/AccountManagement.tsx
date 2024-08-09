@@ -16,48 +16,101 @@ import { api } from "~/trpc/react";
 import Spinner from "../common/Spinner";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import Link from "next/link";
+import CreateAccount from "./CreateAccount";
+import toast from "react-hot-toast";
 
 export default function AccountManagement() {
   const session = useSession();
-
-  const { data, isLoading, error } = api.user.getAllUser.useQuery();
+  const { data, isLoading, error, refetch } = api.user.getAllUser.useQuery();
   const [search, setSearch] = useState("");
-  const filteredUsers = (role: string) => {
-    return data?.filter(
+
+  const { mutate: deleteUser } = api.user.deleteUser.useMutation({
+    onSuccess: () => {
+      toast.success("Successfully Deleted.");
+      void refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const handleDelete = (id: string) => deleteUser({ id: id });
+
+  if (isLoading) return <Spinner />;
+  if (error) return <div>Error: {error.message}</div>;
+
+  const filteredUsers = (role: string) =>
+    data?.filter(
       (account) =>
         account.role === role &&
         (account.firstName.toLowerCase().includes(search.toLowerCase()) ||
           account.lastName.toLowerCase().includes(search.toLowerCase()) ||
           account.id.toLowerCase().includes(search.toLowerCase())),
     );
-  };
-  // Filter users based on role
-  const security = data?.filter((account) => account.role === "Security Guard");
-  const admin = data?.filter((account) => account.role === "Admin");
 
-  if (isLoading) {
-    return <Spinner />;
-  }
+  const renderTable = (role: string, columns: string[]) => (
+    <Table className="text-xs sm:text-sm">
+      <TableHeader>
+        <TableRow className="border-t-2">
+          {columns.map((col) => (
+            <TableHead key={col}>{col}</TableHead>
+          ))}
+          {session.data?.user.role === "Super Admin" && (
+            <TableHead>Action</TableHead>
+          )}
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {filteredUsers(role)?.map((account, index) => (
+          <TableRow key={account.id} className="odd:bg-table-gray">
+            <TableCell className="w-10">{index + 1}</TableCell>
+            <TableCell>{account.firstName + " " + account.lastName}</TableCell>
+            <TableCell>{account.email}</TableCell>
+            <TableCell>{account.role}</TableCell>
+            {role === "Admin" && <TableCell>{account.department}</TableCell>}
+            <TableCell>{account.status}</TableCell>
+            {session.data?.user.role === "Super Admin" && (
+              <TableCell className="flex items-center gap-5">
+                <Button className="h-5 bg-transparent p-0 text-red-light hover:bg-transparent">
+                  Block
+                </Button>
+                <Button className="hover:bg-grtransparent h-5 bg-transparent p-0 text-green-light">
+                  Unblock
+                </Button>
+                <Button
+                  onClick={() => handleDelete(account.id)}
+                  className="h-5 bg-transparent p-0 text-red-light hover:bg-transparent"
+                >
+                  Delete
+                </Button>
+              </TableCell>
+            )}
+          </TableRow>
+        ))}
+        {filteredUsers(role)?.length === 0 && (
+          <TableCell
+            colSpan={
+              columns.length +
+              (session.data?.user.role === "Super Admin" ? 1 : 0)
+            }
+            className="text-center text-base text-red-light"
+          >
+            No Data Available
+          </TableCell>
+        )}
+      </TableBody>
+    </Table>
+  );
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
   return (
     <Container>
       <div className="flex items-center justify-center">
-        <div className="w-full min-w-[367px] rounded border border-gray-light p-8 shadow-md drop-shadow-md lg:w-4/5">
-          <div className="flex flex-col  items-center justify-between gap-5 sm:flex-row">
+        <div className="w-full min-w-[367px] rounded border border-gray-light p-8 shadow-md drop-shadow-md">
+          <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
             <h1 className="text-2xl font-semibold text-gray-dark">
               ACCOUNT MANAGEMENT
             </h1>
-            {session.data?.user.role === "Super Admin" && (
-              <div>
-                <Button className="ml-auto w-fit bg-green-light hover:bg-green-dark">
-                  CREATE ACCOUNT
-                </Button>
-              </div>
-            )}
+            {session.data?.user.role === "Super Admin" && <CreateAccount />}
           </div>
           <Input
             type="text"
@@ -85,82 +138,23 @@ export default function AccountManagement() {
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="security">
-                <Table className="text-xs sm:text-sm">
-                  <TableHeader>
-                    <TableRow className="border-t-2">
-                      <TableHead>ID</TableHead>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {security?.map((account) => (
-                      <TableRow
-                        key={account?.id}
-                        className="odd:bg-table-gray "
-                      >
-                        <TableCell className="w-10">{account?.id}</TableCell>
-                        <TableCell>
-                          {account?.firstName + " " + account.lastName}
-                        </TableCell>
-                        <TableCell>{account?.role}</TableCell>
-                        <TableCell className="flex items-center gap-5">
-                          <Button className="h-5 bg-transparent p-0 text-red-light hover:bg-red-light hover:bg-transparent ">
-                            Block
-                          </Button>
-                          <Button className=" h-5 bg-transparent p-0 text-green-light hover:bg-green-light hover:bg-transparent  ">
-                            Unblock
-                          </Button>
-                          <Button className="h-5  bg-transparent p-0 text-red-light hover:bg-red-light hover:bg-transparent  ">
-                            Delete
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                {renderTable("Security Guard", [
+                  "ID",
+                  "Name",
+                  "Email",
+                  "Role",
+                  "Status",
+                ])}
               </TabsContent>
-
               <TabsContent value="admin">
-                <Table className="text-xs sm:text-sm">
-                  <TableHeader>
-                    <TableRow className="border-t-2">
-                      <TableHead>ID</TableHead>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Department</TableHead>
-                      {session.data?.user.role === "Super Admin" && (
-                        <TableHead>Action</TableHead>
-                      )}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {admin?.map((account) => (
-                      <TableRow key={account?.id} className="odd:bg-table-gray">
-                        <TableCell className="w-10">{account?.id}</TableCell>
-                        <TableCell>
-                          {account?.firstName + " " + account.lastName}
-                        </TableCell>
-                        <TableCell>{account?.role}</TableCell>
-                        <TableCell>{account?.department}</TableCell>
-                        {session.data?.user.role === "Super Admin" && (
-                          <TableCell className="flex items-center gap-5">
-                            <Button className="h-5 bg-transparent p-0 text-red-light hover:bg-red-light hover:bg-transparent ">
-                              Block
-                            </Button>
-                            <Button className=" h-5 bg-transparent p-0 text-green-light hover:bg-green-light hover:bg-transparent  ">
-                              Unblock
-                            </Button>
-                            <Button className="h-5  bg-transparent p-0 text-red-light hover:bg-red-light hover:bg-transparent  ">
-                              Delete
-                            </Button>
-                          </TableCell>
-                        )}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                {renderTable("Admin", [
+                  "ID",
+                  "Name",
+                  "Email",
+                  "Role",
+                  "Department",
+                  "Status",
+                ])}
               </TabsContent>
             </Tabs>
           </div>

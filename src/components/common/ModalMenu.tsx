@@ -62,12 +62,12 @@ export function ModalMenu({ name, email, id, role }: ModalProps) {
               <Link href="/admin/change-password">Password Settings</Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Button
+              <div
                 onClick={() => signOut()}
-                className="h-5 bg-transparent p-0 font-normal text-gray-dark hover:bg-transparent"
+                className="h-5 w-full  font-normal text-gray-dark hover:cursor-pointer"
               >
                 Logout
-              </Button>
+              </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
