@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { ModalMenu } from "../common/ModalMenu";
 import Image from "next/image";
 import logo from "/public/images/logo/image.png";
+import bell from "/public/images/icon/bell.png";
 import { useSession } from "next-auth/react";
 
 export default function Topbar() {
@@ -22,7 +23,17 @@ export default function Topbar() {
           <Image src={logo} alt="logo" className="h-12 w-12" />
           BULACAN STATE UNIVERSITY
         </Link>
-        <ModalMenu {...session?.data?.user} />
+
+        <div className="flex gap-5">
+          <Link
+          className={session.data ? "block" : "hidden"}
+          href="/admin/notification"
+          >
+            <Image src={bell} alt="logo" className="h-8 w-8" />
+          </Link>
+          <ModalMenu {...session?.data?.user} />
+        </div>
+        
       </div>
     </div>
   );

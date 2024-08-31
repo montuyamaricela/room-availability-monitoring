@@ -110,6 +110,9 @@ const RoomModalAdmin = ({ ButtonTrigger, children }: ModalWrapperTypes) => {
               <form>
                 <div className="flex justify-center">
                   <div className="grid grid-cols-2 gap-4 items-center">
+                    <Label htmlFor="disable ">Disable Room</Label>
+                    <Input type="checkbox" id="disable " className="h-4"/>
+
                     <Label htmlFor="lecture">Lecture</Label>
                     <Input type="checkbox" id="lecture" className="h-4"/>
 
