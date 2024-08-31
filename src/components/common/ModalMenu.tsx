@@ -43,6 +43,11 @@ export function ModalMenu({ name, email, id, role }: ModalProps) {
               <div className="text-sm text-gray-dark">Welcome, {name}</div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+
+            <DropdownMenuItem>
+              <Link href="/admin">Home</Link>
+            </DropdownMenuItem>
+
             {role != "Security Guard" && (
               <DropdownMenuItem>
                 <Link href="/admin/account-management">Manage Account</Link>
