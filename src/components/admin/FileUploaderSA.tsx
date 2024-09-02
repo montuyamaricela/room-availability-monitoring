@@ -33,6 +33,7 @@ export default function FileUploader() {
                 FILE MANAGEMENT
             </h1>
             <hr className="mt-1 mb-7 border border-gray-light border-t-1"/>
+            {/* Nagtry ako gayahin sa ginagawa mo sa form kaya may ganyan hehehe  */}
             {/* <Form {...form}> */}
                 <form>
                     <div className="flex flex-col items-center justify-between gap-5 md:flex-row">
