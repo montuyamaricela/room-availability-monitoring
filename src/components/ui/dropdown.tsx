@@ -14,26 +14,13 @@ import {
 } from "./command";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { ArrowUpDownIcon, CheckIcon } from "lucide-react";
-
-const buildings = [
-  {
-    value: "Pancho Hall",
-    label: "Pancho Hall",
-  },
-  {
-    value: "BSBA Building",
-    label: "BSBA Building",
-  },
-  {
-    value: "Hangar",
-    label: "Hangar",
-  },
-];
+import { type BuildingName } from "../rooms/getBuildingComponent";
+import { useBuildingStore } from "~/store/useBuildingStore";
 
 export function ComboboxDemo() {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("Pancho Hall");
-
+  const [value, setValue] = React.useState<BuildingName>("BSBA");
+  const { setSelectedBuilding } = useBuildingStore();
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -44,7 +31,7 @@ export function ComboboxDemo() {
           className="w-[200px] justify-between"
         >
           {value
-            ? buildings.find((building) => building.value === value)?.label
+            ? buildingsList.find((building) => building.value === value)?.label
             : "Select Building..."}
           <ArrowUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -55,12 +42,13 @@ export function ComboboxDemo() {
           <CommandEmpty>No framework found.</CommandEmpty>
           <CommandList>
             <CommandGroup>
-              {buildings.map((building) => (
+              {buildingsList.map((building) => (
                 <CommandItem
                   key={building.value}
                   value={building.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                    setSelectedBuilding(currentValue as BuildingName);
+                    setValue(currentValue as BuildingName);
                     setOpen(false);
                   }}
                 >
@@ -80,3 +68,17 @@ export function ComboboxDemo() {
     </Popover>
   );
 }
+const buildingsList = [
+  {
+    value: "PANCHO_HALL",
+    label: "Pancho Hall",
+  },
+  {
+    value: "BSBA",
+    label: "CBA Building",
+  },
+  {
+    value: "HANGAR",
+    label: "Hangar",
+  },
+];

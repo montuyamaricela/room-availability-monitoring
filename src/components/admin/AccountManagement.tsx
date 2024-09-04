@@ -18,6 +18,15 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import CreateAccount from "./CreateAccount";
 import toast from "react-hot-toast";
+import DeleteConfirmation from "../common/DeleteConfirmation";
+import {
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
 
 export default function AccountManagement() {
   const session = useSession();
@@ -77,12 +86,14 @@ export default function AccountManagement() {
                 <Button className="hover:bg-grtransparent h-5 bg-transparent p-0 text-green-light">
                   Unblock
                 </Button>
-                <Button
-                  onClick={() => handleDelete(account.id)}
-                  className="h-5 bg-transparent p-0 text-red-light hover:bg-transparent"
-                >
-                  Delete
-                </Button>
+                <DeleteConfirmation
+                  deleteHandler={() => handleDelete(account.id)}
+                  ButtonTrigger={
+                    <Button className="h-5 bg-transparent p-0 text-red-light hover:bg-transparent">
+                      Delete
+                    </Button>
+                  }
+                />
               </TableCell>
             )}
           </TableRow>

@@ -7,13 +7,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "../../ui/dropdown-menu";
 
-import { Avatar } from "../ui/avatar";
+import { Avatar } from "../../ui/avatar";
 import Image from "next/image";
 import avatar from "/public/images/avatar/image.png";
 import Link from "next/link";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { signOut } from "next-auth/react";
 
 type ModalProps = {
@@ -66,6 +66,11 @@ export function ModalMenu({ name, email, id, role }: ModalProps) {
             <DropdownMenuItem>
               <Link href="/admin/change-password">Password Settings</Link>
             </DropdownMenuItem>
+            {role === "Super Admin" && (
+              <DropdownMenuItem>
+                <Link href="/admin/upload">Data Import</Link>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem>
               <div
                 onClick={() => signOut()}

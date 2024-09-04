@@ -4,7 +4,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ModalWrapper from "../common/ModalWrapper";
+import ModalWrapper from "../common/Modal/ModalWrapper";
 import { Button } from "../ui/button";
 import { Form } from "../ui/form";
 import { FormCombobox, FormInput } from "../ui/form-components";

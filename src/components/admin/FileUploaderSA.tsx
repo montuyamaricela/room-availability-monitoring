@@ -13,8 +13,14 @@ import { useForm } from "react-hook-form";
 import * as csvSchema from "../../validations/csvDataSchema";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Spinner from "../common/Spinner";
+import NotAllowed from "../common/NotAllowed";
 
 export default function FileUploader() {
+  const router = useRouter();
+  const session = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [dataUploaded, setDataUploaded] = useState(null);
   const [headers, setHeaders] = useState<Header[]>([]); // Initialize with the correct type
@@ -66,7 +72,12 @@ export default function FileUploader() {
       console.error("An error occurred during the file upload", error);
     }
   };
-
+  if (session.status === "loading") {
+    return <Spinner />;
+  }
+  if (session.data?.user.role != "Super Admin") {
+    return <NotAllowed />;
+  }
   return (
     <Container>
       <div className="flex items-center justify-center">
