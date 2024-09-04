@@ -14,20 +14,6 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-enum Status {
-  AVAILABLE
-  VACANT
-}
-
-
-enum Building {
-  PANCHO_HALL
-  BSBA
-  MPG
-  OLD_CANTEEN
-  HANGAR
-}
-
 // // Necessary for Next auth
 // model Account {
 //   id                       String  @id @default(cuid())
@@ -89,35 +75,44 @@ model CreationToken {
   @@unique([identifier, token])
 }
 
-
 model Room {
-  id                     String   @id @default(cuid())
+  id                     Int    @id @default(autoincrement())
   roomName               String
-  building               Building @default(PANCHO_HALL)
+  building               String
   floor                  String
-  WithTv                 Boolean
-  isLecture              Boolean
-  isLaboratory           Boolean
-  isAirconed             Boolean
+  withTv                 Boolean   @default(false)
+  isLecture              Boolean   @default(false)
+  isLaboratory           Boolean   @default(false)
+  isAirconed             Boolean   @default(false)
   capacity               Int
   electricFans           Int
   functioningComputers   Int
   notFunctioningComputers Int
-  status                 Status @default(AVAILABLE)
+  status                 String
+  disable                Boolean   @default(false)
   schedule               RoomSchedule[]
 }
 
 model RoomSchedule {
-  id            String   @id @default(cuid())
-  roomId        String
-  room          Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  facultyName   String
-  courseCode    String
-  section       String
-  day           DateTime
-  beginTime     DateTime
-  endTime       DateTime
+  id          Int    @id @default(autoincrement())
+  roomId      Int
+  room        Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  faculties   Faculty[] @relation("ScheduleFaculties")
+  facultyName String
+  courseCode  String
+  section     String
+  day         DateTime
+  beginTime   DateTime
+  endTime     DateTime
 }
+
+model Faculty {
+  id          Int           @id @default(autoincrement())
+  facultyName String
+  department  String
+  schedules   RoomSchedule[] @relation("ScheduleFaculties")
+}
+
 
 model ActivityLogs {
   id          Int      @id @default(autoincrement())
@@ -136,5 +131,6 @@ model Feedbacks {
   message    String
   status     String
 }
+
 
 

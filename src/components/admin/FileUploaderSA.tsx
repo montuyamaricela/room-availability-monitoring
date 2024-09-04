@@ -1,127 +1,127 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/unbound-method */
 "use client";
 
 import { Container } from "../common/Container";
 import { Input } from "../ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "../ui/select";
-import { FormCombobox} from "../ui/form-components";
+import { FormCombobox } from "../ui/form-components";
 import { Form } from "../ui/form";
 import { Button } from "../ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
-import { roomHeader } from "../../app/SampleData";
-import { roomDetails } from "../../app/SampleData";
+import DynamicTable, { type Header } from "../common/DynamicTable";
 import { useForm } from "react-hook-form";
+import * as csvSchema from "../../validations/csvDataSchema";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function FileUploader() {
-    return (
-        <Container>
-        <div className="flex items-center justify-center">
-            <div className="w-full min-w-[367px] rounded border border-gray-light p-8 shadow-md drop-shadow-md">
-            <h1 className="text-2xl font-semibold text-gray-dark">
-                FILE MANAGEMENT
-            </h1>
-            <hr className="mt-1 mb-7 border border-gray-light border-t-1"/>
-            {/* Nagtry ako gayahin sa ginagawa mo sa form kaya may ganyan hehehe  */}
-            {/* <Form {...form}> */}
-                <form>
-                    <div className="flex flex-col items-center justify-between gap-5 md:flex-row">
-                        <div className="flex flex-row gap-5">
-                            <div className="w-[50%]">
-                                <h1 className="text-lg font-semibold text-gray-dark">
-                                    File Category
-                                </h1>
-                                <Select>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select Category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Faculty">Faculty</SelectItem>
-                                        <SelectItem value="Room">Room</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
+  const [isLoading, setIsLoading] = useState(false);
+  const [dataUploaded, setDataUploaded] = useState(null);
+  const [headers, setHeaders] = useState<Header[]>([]); // Initialize with the correct type
+  const [isSubmitted, setSubmitted] = useState(false);
+  const form = useForm({
+    resolver: csvSchema.csvDataResolver,
+    defaultValues: csvSchema.csvDataDefaultValues,
+  });
 
-                            <div className="w-[50%]">
-                                <h1 className="text-lg font-semibold text-gray-dark">
-                                    File Attachment
-                                </h1>
-                                <Input id="files" type="file" className="w-[100%]"/>
-                            </div>
-                        </div>
-                        <Input
-                            type="text"
-                            id="search"
-                            placeholder="Search"
-                            required
-                            className="float-right my-5 w-full md:w-1/3"
-                            // value={search}
-                            // onChange={(e) => setSearch(e.target.value)}
-                        />
-                    
-                    </div>
-                    <div className="mt-8">
-                        <h1 className="text-lg font-semibold text-green-light">
-                        File Content
-                        </h1>
-                        <div className="max-h-[300px] overflow-y-auto">
-                            <Table>
-                            <TableHeader>
-                              <TableRow>
-                                {roomHeader.map((roomHeader) => (
-                                    <TableHead key={roomHeader.id}>
-                                        {roomHeader.headers}
-                                    </TableHead>
-                                ))}
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {roomDetails.map((details) => (
-                                <TableRow key={details.id}>
-                                    <TableCell>{details.roomName}</TableCell>
-                                    <TableCell>{details.building}</TableCell>
-                                    <TableCell>{details.floor}</TableCell>
-                                    <TableCell>{details.WithTv}</TableCell>
-                                    <TableCell>{details.isLecture}</TableCell>
-                                    <TableCell>{details.isLaboratory}</TableCell>
-                                    <TableCell>{details.isAirconed}</TableCell>
-                                    <TableCell>{details.capacity}</TableCell>
-                                    <TableCell>{details.electricFans}</TableCell>
-                                    <TableCell>{details.functioningComputers}</TableCell>
-                                    <TableCell>{details.notFunctioningComputers}</TableCell>
-                                    <TableCell>{details.status}</TableCell>
-                                    <TableCell>{details.disable}</TableCell>
-                                </TableRow>
-                                ))}
-                            </TableBody>
-                            </Table>
-                        </div>
-                    </div>
-                    <div className="flex justify-end mt-5">
-                    <Button className="px-10 items-center bg-green-light hover:bg-green-900">
-                    SUBMIT
-                    </Button>
+  const onSubmit = async (data: csvSchema.IcsvData) => {
+    try {
+      setIsLoading(true);
+      const formData = new FormData();
+      formData.append("category", data.category);
+
+      // Append the actual file
+      if (data.file?.[0]) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        formData.append("file", data?.file[0]);
+      }
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        toast.success(responseData?.message);
+        setDataUploaded(responseData?.data);
+        if (responseData?.data.length > 0) {
+          // Extract headers dynamically from the first item in the data
+          const keys = Object.keys(responseData.data[0]);
+          const headers = keys.map((key) => ({
+            id: key,
+            label:
+              key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, " "), // Format header labels
+          }));
+          setHeaders(headers);
+        }
+        form.reset();
+      } else {
+        toast.error("File upload failed");
+        console.error("File upload failed");
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error("An error occurred during the file upload", error);
+    }
+  };
+
+  return (
+    <Container>
+      <div className="flex items-center justify-center">
+        <div className="w-full min-w-[367px] rounded border border-gray-light p-8 shadow-md drop-shadow-md">
+          <h1 className="text-2xl font-semibold text-gray-dark">
+            FILE MANAGEMENT
+          </h1>
+          <hr className="border-t-1 mb-7 mt-1 border border-gray-light" />
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="flex flex-col items-center justify-between gap-5 md:flex-row">
+                <div className="grid grid-cols-2 gap-5">
+                  <div className="">
+                    <h1 className="text-lg font-semibold text-gray-dark">
+                      File Category
+                    </h1>
+                    <FormCombobox
+                      label=""
+                      form={form}
+                      placeholder="Select File Category"
+                      name="category"
+                      data={category}
+                    />
                   </div>
-                </form>
-            {/* </Form> */}
-            </div>
+
+                  <div className="space-y-2">
+                    <h1 className="text-lg font-semibold text-gray-dark">
+                      File Attachment
+                    </h1>
+                    <Input
+                      id="files"
+                      type="file"
+                      accept=".csv"
+                      className="w-[100%]"
+                      {...form.register("file")}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-5">
+                <Button className="items-center bg-green-light px-10 hover:bg-green-900">
+                  {isLoading ? "SUBMITTING..." : "SUBMIT"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+          <DynamicTable headers={headers} data={dataUploaded} />
         </div>
-        </Container>
-    );
+      </div>
+    </Container>
+  );
 }
 
 export const category = [
-    { label: "Faculty", value: "Faculty" },
-    { label: "Room", value: "Room" },
+  { label: "Faculty", value: "Faculty" },
+  { label: "Room", value: "Room" },
 ];
