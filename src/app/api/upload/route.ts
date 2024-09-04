@@ -42,22 +42,22 @@ export async function POST(request: NextRequest) {
             } else if (category?.toLowerCase() === "room") {
               await db.room.createMany({
                 data: results.map((row) => ({
-                  roomName: row["roomName "],
-                  building: row["building "],
-                  floor: row["floor "],
+                  roomName: row.roomName,
+                  building: row.building,
+                  floor: row.floor,
                   withTv: row.WithTv === "TRUE",
                   isLecture: row.isLecture === "TRUE",
                   isLaboratory: row.isLaboratory === "TRUE",
                   isAirconed: row.isAirconed === "TRUE",
                   capacity: parseInt(row.capacity, 10),
-                  electricFans: parseInt(row["electricFans "], 10),
+                  electricFans: parseInt(row.electricFans, 10),
                   functioningComputers: parseInt(row.functioningComputers, 10),
                   notFunctioningComputers: parseInt(
                     row.notFunctioningComputers,
                     10,
                   ),
                   status: row.status,
-                  disable: row["disable "] === "TRUE",
+                  disable: row.disable === "TRUE",
                 })),
               });
             }

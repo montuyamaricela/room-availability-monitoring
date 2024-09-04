@@ -1,3 +1,4 @@
+"use client";
 import { Container } from "../common/Container";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -6,8 +7,11 @@ import Image from "next/image";
 import avatar from "/public/images/avatar/image.png";
 import icon from "/public/images/icon/image.png";
 import SelectDepartment from "../common/SelectDepartment";
+import { useSession } from "next-auth/react";
 
 export default function ProfileSettings() {
+  const session = useSession();
+  console.log(session);
   return (
     <Container>
       <div className="flex items-center justify-center">
@@ -46,7 +50,12 @@ export default function ProfileSettings() {
                 >
                   First Name
                 </Label>
-                <Input type="text" id="firstName" required />
+                <Input
+                  type="text"
+                  id="firstName"
+                  value={session?.data?.user.name}
+                  required
+                />
               </div>
               <div>
                 <Label

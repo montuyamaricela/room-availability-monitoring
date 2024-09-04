@@ -74,22 +74,24 @@ export default function DynamicTable({
             ))}
           </TableBody>
         </Table>
-        <div className="mt-5 flex justify-end gap-5">
-          <Button
-            onClick={handlePreviousPage}
-            disabled={currentPage === 1}
-            className="items-center bg-primary-green px-5 hover:bg-primary-green"
-          >
-            Previous
-          </Button>
-          <Button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-            className="items-center bg-primary-green px-5 hover:bg-primary-green"
-          >
-            Next
-          </Button>
-        </div>
+        {currentItems && (
+          <div className="mt-5 flex justify-end gap-5">
+            <Button
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+              className="items-center bg-primary-green px-5 hover:bg-primary-green"
+            >
+              Previous
+            </Button>
+            <Button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="items-center bg-primary-green px-5 hover:bg-primary-green"
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
