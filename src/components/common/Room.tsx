@@ -1,55 +1,29 @@
-import React from "react";
-import { Rooms } from "../../app/SampleData";
-import ModalWrapper from "./ModalWrapper";
-
-const roomLayout = [
-  [1, 2, 3, 4, "H", 5],
-  ["H", "H", "H", "H", "H", 6],
-  [7, 8, 9, 10, "H", 11],
-];
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import React, { useState } from "react";
+import CBAROOM from "../rooms/Cba";
+import RoomModal from "./Modal/roomModal";
 
 export function RoomLayout() {
+  const [open, setOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<string>("");
+  const handleClick = (event: any) => {
+    if (event.target.tagName === "path") {
+      const roomId = event.target.getAttribute("id");
+      setOpen(true);
+      setSelectedRoom(roomId as string);
+      // Perform your logic based on the room ID
+    }
+  };
+
   return (
-    <div className="overflow-x-scroll pb-5 sm:overflow-x-hidden">
-      <div className="mt-10 grid w-max  grid-cols-6  gap-2 sm:w-full ">
-        {roomLayout.flat().map((cell, index) => {
-          if (cell === "H") {
-            return (
-              <div
-                key={index}
-                className="flex h-20 items-center justify-center border border-gray-300 bg-gray-200"
-              >
-                Hallway
-              </div>
-            );
-          }
-          const room = Rooms.find((r) => r.id === cell);
-          return (
-            <div key={index}>
-              <ModalWrapper
-                title="Room Details"
-                ButtonTrigger={
-                  <div className="flex h-20 items-center justify-center border border-gray-300 bg-green-200">
-                    Room {room?.RoomNumber}
-                  </div>
-                }
-              >
-                <div className="px-10 pb-10">
-                  <p className="text-center text-xl font-medium">
-                    Room {room?.RoomNumber}
-                  </p>
-                  <div className="mt-5 space-y-1 font-medium">
-                    <p>Laboratory</p>
-                    <p>Airconditioned</p>
-                    <p>With TV</p>
-                    <p>Capacity: 20</p>
-                    <p>Electric Fan: 20</p>
-                  </div>
-                </div>
-              </ModalWrapper>
-            </div>
-          );
-        })}
+    <div className="overflow-x-scroll sm:overflow-x-hidden">
+      <div className="flex items-center justify-center">
+        <div onClick={handleClick}>
+          <CBAROOM />
+        </div>
+        <RoomModal setOpen={setOpen} open={open} roomID={selectedRoom} />
       </div>
     </div>
   );
