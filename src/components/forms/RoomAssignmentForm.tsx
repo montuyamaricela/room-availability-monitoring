@@ -12,7 +12,7 @@ export default function RoomAssignmentForm() {
     return(
         <Form {...form}>
           <form>
-            <div className="mb-5 grid grid-cols-2 gap-4 sm:grid-cols-3 md:gap-6">
+            <div className="mb-5 grid grid-cols-3 gap-6">
               <FormInput form={form} name="facultyName" label="Faculty Name" />
               <FormInput form={form} name="courseCode" label="Course Code" />
               <FormInput form={form} name="section" label="Section" />

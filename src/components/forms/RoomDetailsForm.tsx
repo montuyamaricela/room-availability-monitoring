@@ -12,10 +12,10 @@ export default function RoomDetailsForm() {
     });
     const { selectedRoom } = useRoomStore();
     return(
-        <div className="max-h-[480px] overflow-y-auto">
+        <div>
           <Form {...form}>
             <form>
-              <div className="flex justify-center">
+              <div className="px-28">
                 <div className="grid grid-cols-2 items-center gap-6">
                   <FormInput 
                     form={form} 
