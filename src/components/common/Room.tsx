@@ -86,7 +86,7 @@ export function RoomLayout() {
         >
           {BuildingComponent}
         </div>
-        <RoomModal setOpen={setOpen} open={open} />
+        {/* <RoomModal setOpen={setOpen} open={open} /> */}
 
         {/* eto gagamitin natin para sa modal  */}
         {/* {pathname === "/" && <RoomModal setOpen={setOpen} open={open} />}
@@ -96,6 +96,15 @@ export function RoomLayout() {
         ) : (
           <RoomModalSecurity setOpen={setOpen} open={open} />
         )} */}
+
+        {pathname === "/admin" &&
+        session.data?.user.role != "Security Guard" ? (
+          <RoomModalAdmin setOpen={setOpen} open={open} />
+        ) : session.data?.user.role == "Security Guard" ? (
+          <RoomModalSecurity setOpen={setOpen} open={open} />
+        ) : (
+          <RoomModal setOpen={setOpen} open={open} />
+        )}
       </div>
     </div>
   );

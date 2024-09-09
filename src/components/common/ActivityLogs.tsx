@@ -1,6 +1,10 @@
+"use client";
+
 import { Container } from "../common/Container";
 import { Input } from "../ui/input";
-import { DatePickerDemo } from "../common/DatePicker";
+import { DatePickerDemo } from "../ui/DatePicker";
+import FormattingTable, { type TableColumn } from "../common/FormattingTable";
+import { useState } from "react";
 import { ActivityLog } from "../../app/SampleData";
 import {
     Table,
@@ -9,9 +13,31 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-  } from "../ui/table"
+} from "../ui/table";
 
 export default function ActivityLogs() {
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState<boolean>(true);
+  // const [smsLogs, setSmsLogs] = useState<PaginatedList<smsLogs>>(initialPaginatedList);
+
+  // const columns: TableColumn<smsLogs>[] = [
+  //   {
+  //     id: "transactaionNumber",
+  //     header: "Transaction #",
+  //     formatter: (row) => <span>{row.attributes.transactaionNumber}</span>,
+  //   },
+  //   {
+  //     id: "dateAndTime",
+  //     header: "Date and Time",
+  //     formatter: (row) => <span>{row.attributes.dateAndTime}</span>,
+  //   },
+  //   {
+  //     id: "activities",
+  //     header: "Activities",
+  //     formatter: (row) => <span>{row.attributes.activities}</span>,
+  //   },
+  // ];
+
   return (
     <Container>
       <div className="flex justify-center items-center">
@@ -28,24 +54,13 @@ export default function ActivityLogs() {
           </div>
 
           <div>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead className="w-[150px]">Transaction #</TableHead>
-                        <TableHead>Date and Time</TableHead>
-                        <TableHead>Activities</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {ActivityLog.map((logs) => (
-                    <TableRow key={logs.id} className="odd:bg-table-gray">
-                        <TableCell className="font-medium">{logs.id}</TableCell>
-                        <TableCell>{logs.dateTime}</TableCell>
-                        <TableCell>{logs.activities}</TableCell>
-                    </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+            {/* <FormattingTable<smsLogs>
+              loading={loading}
+              columns={columns}
+              records={smsLogs.data}
+              pagination={smsLogs.meta.pagination}
+              onChangePage={(page) => setPage(page)}
+            /> */}
           </div>
         </div>
       </div>

@@ -24,12 +24,12 @@ export default function Topbar() {
           BULACAN STATE UNIVERSITY
         </Link>
 
-        <div className="flex gap-5">
+        <div className="flex gap-2">
           <Link
             className={session.data ? "block" : "hidden"}
             href="/admin/notification"
           >
-            <Image src={bell} alt="logo" className="h-8 w-8" />
+            <Image src={bell} alt="notification" className="h-8 w-8" />
           </Link>
           <ModalMenu {...session?.data?.user} />
         </div>

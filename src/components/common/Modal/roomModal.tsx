@@ -18,7 +18,7 @@ export default function RoomModal({ open, setOpen }: roomModalProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="md:max-w-4/5 w-[90%] ">
-        <DialogHeader className="rounded-t-2xl bg-primary-green py-5">
+        <DialogHeader className={`rounded-t-2xl py-5 ${selectedRoom?.status === "OCCUPIED" ? "bg-[#FF8383]" : "bg-primary-green"}`}>
           <DialogTitle className="text-center text-xl font-medium uppercase text-white">
             Room Details
           </DialogTitle>

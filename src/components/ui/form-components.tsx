@@ -44,6 +44,7 @@ export const FormInput = ({
                 placeholder={placeholder}
                 disabled={disabled ?? false}
                 {...field}
+                className={type == "checkbox" ? "h-4" : ""}
               />
             </FormControl>
             <FormDescription>{description}</FormDescription>
