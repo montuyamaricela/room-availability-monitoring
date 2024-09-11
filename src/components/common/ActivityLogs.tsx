@@ -3,16 +3,16 @@
 import { Container } from "../common/Container";
 import { Input } from "../ui/input";
 import { DatePickerDemo } from "../ui/DatePicker";
-import FormattingTable, { type TableColumn } from "../common/FormattingTable";
+import FormattingTable, { type TableColumn } from "./Table/Table";
 import { useState } from "react";
 import { ActivityLog } from "../../app/SampleData";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "../ui/table";
 
 export default function ActivityLogs() {
@@ -40,16 +40,22 @@ export default function ActivityLogs() {
 
   return (
     <Container>
-      <div className="flex justify-center items-center">
-        <div className="rounded shadow-md border border-gray-light drop-shadow-md lg:w-4/5 w-full p-8">
-          <p className="text-gray-dark font-semibold text-xl">ACTIVITY LOGS</p>
-          <hr className="mt-1 mb-7 border border-gray-light border-t-1"/>
-          
-          <div className="flex flex-col md:flex-row gap-5 justify-between mb-7">
-            <Input type="text" id="search" placeholder="Search" className="md:w-1/3 w-full md:mb-0 mb-2" required/>
+      <div className="flex items-center justify-center">
+        <div className="w-full rounded border border-gray-light p-8 shadow-md drop-shadow-md lg:w-4/5">
+          <p className="text-xl font-semibold text-gray-dark">ACTIVITY LOGS</p>
+          <hr className="border-t-1 mb-7 mt-1 border border-gray-light" />
+
+          <div className="mb-7 flex flex-col justify-between gap-5 md:flex-row">
+            <Input
+              type="text"
+              id="search"
+              placeholder="Search"
+              className="mb-2 w-full md:mb-0 md:w-1/3"
+              required
+            />
             <div className="flex gap-2">
-                <DatePickerDemo />
-                <DatePickerDemo />
+              <DatePickerDemo />
+              <DatePickerDemo />
             </div>
           </div>
 

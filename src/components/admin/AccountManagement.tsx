@@ -18,15 +18,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import CreateAccount from "./CreateAccount";
 import toast from "react-hot-toast";
-import DeleteConfirmation from "../common/DeleteConfirmation";
-import {
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "../ui/alert-dialog";
+import DeleteConfirmation from "../common/Modal/DeleteConfirmation";
 
 export default function AccountManagement() {
   const session = useSession();

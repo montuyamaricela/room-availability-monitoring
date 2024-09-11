@@ -135,4 +135,5 @@ export default function FileUploader() {
 export const category = [
   { label: "Faculty", value: "Faculty" },
   { label: "Room", value: "Room" },
+  { label: "Schedule", value: "Schedule" },
 ];

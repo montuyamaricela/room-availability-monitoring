@@ -1,3 +1,5 @@
+/* eslint-disable prefer-const */
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 "use client";
@@ -11,31 +13,39 @@ export default function Page() {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!rooms.length) {
-      const fetchRooms = async () => {
-        try {
-          setLoading(true);
-          const response = await fetch("/api/rooms", {
-            method: "GET",
-          });
+    let intervalId: NodeJS.Timeout;
 
-          if (!response.ok) {
-            throw new Error("Failed to fetch rooms");
-          }
+    const fetchRooms = async () => {
+      try {
+        const response = await fetch("/api/rooms", {
+          method: "GET",
+        });
 
-          const data: Room[] = await response.json();
-
-          // Set the rooms in the Zustand store
-          setRooms(data);
-        } catch (error) {
-          console.error("Error fetching rooms:", error);
-        } finally {
-          setLoading(false); // Ensure loading is set to false in both success and error cases
+        if (!response.ok) {
+          throw new Error("Failed to fetch rooms");
         }
-      };
-      fetchRooms();
-    }
-  }, [rooms.length, setRooms]);
+
+        const data: Room[] = await response.json();
+
+        // Check if the new data is different before updating the state
+        if (JSON.stringify(data) !== JSON.stringify(rooms)) {
+          setRooms(data); // Only update if there's a change
+        }
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+      }
+    };
+
+    // First fetch on component mount
+    setLoading(true);
+    fetchRooms().finally(() => setLoading(false)); // Ensure loading is updated
+
+    // Set up polling every 1 second
+    intervalId = setInterval(fetchRooms, 5000);
+
+    // Cleanup interval on unmount
+    return () => clearInterval(intervalId);
+  }, [rooms, setRooms]); // Add rooms dependency to prevent unnecessary re-renders
 
   return <>{loading ? <Spinner /> : <Map />} </>;
 }

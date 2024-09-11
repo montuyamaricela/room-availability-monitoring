@@ -19,6 +19,7 @@ import {
 import { Input } from "./input";
 import { Textarea } from "./textarea";
 import { Button } from "./button";
+import { Checkbox } from "./checkbox";
 
 export const FormInput = ({
   form,
@@ -27,6 +28,7 @@ export const FormInput = ({
   label,
   description,
   onChange,
+  defaultValue,
   disabled,
   placeholder,
 }: FieldProps) => {
@@ -36,15 +38,15 @@ export const FormInput = ({
       name={name}
       render={({ field }) => {
         return (
-          <FormItem className="w-full">
-            <FormLabel className="text-sm">{label}</FormLabel>
+          <FormItem className="flex w-full flex-col space-y-2 ">
+            <FormLabel className="text-sm leading-[14px]">{label}</FormLabel>
             <FormControl>
               <Input
                 type={type}
                 placeholder={placeholder}
                 disabled={disabled ?? false}
                 {...field}
-                className={type == "checkbox" ? "h-4" : ""}
+                className={type == "checkbox" ? "h-4 w-full" : ""}
               />
             </FormControl>
             <FormDescription>{description}</FormDescription>
@@ -161,6 +163,44 @@ export const FormCombobox = ({
           </FormItem>
         );
       }}
+    />
+  );
+};
+
+export const FormCheckbox = ({
+  form,
+  name,
+  label,
+  hidden,
+  description,
+}: FieldProps) => {
+  return (
+    <FormField
+      control={form.control}
+      name={name}
+      render={({ field }) => (
+        <>
+          <FormItem
+            // style={{ display: "none" }}
+            className={`flex flex-row items-start space-x-1 space-y-0 ${
+              hidden ? "hidden" : ""
+            } `}
+          >
+            <FormControl>
+              <Checkbox
+                hidden={hidden}
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            </FormControl>
+            <div className="space-y-1 leading-none">
+              <FormLabel>{label}</FormLabel>
+              <FormDescription>{description}</FormDescription>
+            </div>
+          </FormItem>
+          <FormMessage />
+        </>
+      )}
     />
   );
 };
