@@ -1,29 +1,31 @@
 "use client";
 
-// import Pagination from "@/components/table/Pagination";
-// import { IPagination } from "@/types/Pagination";
+import { type IPagination } from "~/lib/types";
+import Pagination from "./Pagination";
 
 export interface TableColumn<T> {
   id: string;
   header: string;
+  width?: number;
   formatter?: (row: T) => JSX.Element;
 }
 
-// type RecordType = { [key: string]: any };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-indexed-object-style
+type RecordType = { [key: string]: any };
 
 export interface TableProps<T> {
   loading: boolean;
   columns: TableColumn<T>[];
   records: T[];
-//   pagination: IPagination;
+  pagination: IPagination;
   onChangePage: (page: number) => void;
 }
 
 const EmptyIndicator = () => {
-  return <p className="text-slate-500 tracking-widest text-sm">No Results</p>;
+  return <p className="text-sm tracking-widest text-slate-500">No Results</p>;
 };
 const LoadingIndicator = () => {
-  return <p className="text-slate-500 tracking-widest text-sm">Loading ...</p>;
+  return <p className="text-sm tracking-widest text-slate-500">Loading ...</p>;
 };
 
 function TableHeader<T>({ columns }: { columns: TableColumn<T>[] }) {
@@ -34,7 +36,7 @@ function TableHeader<T>({ columns }: { columns: TableColumn<T>[] }) {
           <th
             key={index}
             scope="col"
-            className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
+            className="py-3.5 pl-4 pr-3 text-center text-sm font-semibold text-gray-900 sm:pl-0"
           >
             {item.header}
           </th>
@@ -44,15 +46,15 @@ function TableHeader<T>({ columns }: { columns: TableColumn<T>[] }) {
   );
 }
 
-export default function FormattingTable<T>({
+export default function Table<T>({
   loading,
   columns,
   records,
-//   pagination,
+  pagination,
   onChangePage,
 }: TableProps<T>) {
   return (
-    <div className="p-4 w-full bg-white drop-shadow rounded">
+    <div className="w-full rounded bg-white p-4 drop-shadow">
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-300">
           <TableHeader<T> columns={columns} />
@@ -61,7 +63,7 @@ export default function FormattingTable<T>({
             {loading || records.length === 0 ? (
               <tr>
                 <td colSpan={columns.length}>
-                  <div className="h-24 flex justify-center items-center">
+                  <div className="flex h-24 items-center justify-center">
                     {loading ? <LoadingIndicator /> : <EmptyIndicator />}
                   </div>
                 </td>
@@ -70,10 +72,20 @@ export default function FormattingTable<T>({
               records.map((record, recordIndex) => (
                 <tr key={recordIndex}>
                   {columns.map((column, colIndex) => (
-                    <td key={colIndex} className="py-4 text-sm text-gray-500">
-                      {/* {column.formatter
+                    <td
+                      key={colIndex}
+                      className="py-4 text-center text-sm text-gray-500"
+                      // width={
+                      //   column.width
+                      //     ? column.width
+                      //     : column.id === "Action"
+                      //       ? 10
+                      //       : "auto"
+                      // }
+                    >
+                      {column.formatter
                         ? column.formatter(record)
-                        : (record as RecordType)[column.id]} */}
+                        : (record as RecordType)[column.id]}
                     </td>
                   ))}
                 </tr>
@@ -83,11 +95,11 @@ export default function FormattingTable<T>({
         </table>
       </div>
 
-      {/* <Pagination
+      <Pagination
         loading={loading}
         pagination={pagination}
         onChange={onChangePage}
-      /> */}
+      />
     </div>
   );
 }

@@ -7,10 +7,13 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import RoomLogsForm from "../forms/RoomLogsForm";
+import * as scheduleSchema from "../../validations/ScheduleSchema";
+import { api } from "~/trpc/react";
+
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { sched } from "../../app/SampleData";
-import FormattingTable, { type TableColumn } from "../common/FormattingTable";
+import FormattingTable, { type TableColumn } from "../common/Table/Table";
 // import { columns } from "../admin/RoomModalAdmin";
 import {
   Table,
@@ -21,6 +24,7 @@ import {
   TableRow,
 } from "../ui/table";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 type ModalWrapperTypes = {
   ButtonTrigger?: ReactNode;
@@ -36,17 +40,23 @@ const RoomModalSecurity = ({
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState<boolean>(true);
   // const [smsLogs, setSmsLogs] = useState<PaginatedList<smsLogs>>(initialPaginatedList);
+  const form = useForm({
+    resolver: scheduleSchema.ScheduleSchemaResolver,
+    defaultValues: scheduleSchema.ScheduleSchemaDefaultValues,
+  });
 
+  const { data, isLoading, error, refetch } = api.user.getAllUser.useQuery();
+  console.log(data);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{ButtonTrigger}</DialogTrigger>
-      <DialogContent className="max-h-[90%] max-w-[92%] overflow-y-scroll lg:max-w-[65%]">
+      <DialogContent className=" max-w-3xl">
         <DialogHeader className="rounded-t-2xl bg-primary-green py-3">
           <DialogTitle className="text-center text-2xl font-medium uppercase text-white">
             Log
           </DialogTitle>
         </DialogHeader>
-        <div className="p-5">
+        <div className="overflow-y-scroll  p-5">
           <RoomLogsForm />
           <Input
             type="text"

@@ -1,5 +1,4 @@
 import { NextResponse, type NextRequest } from "next/server";
-
 import { db } from "~/server/db";
 
 export async function GET(req: NextRequest) {

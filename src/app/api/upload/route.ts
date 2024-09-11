@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
             } else if (category?.toLowerCase() === "room") {
               await db.room.createMany({
                 data: results.map((row) => ({
+                  id: row.id,
                   roomName: row.roomName,
                   building: row.building,
                   floor: row.floor,
@@ -60,6 +61,53 @@ export async function POST(request: NextRequest) {
                   disable: row.disable === "TRUE",
                 })),
               });
+            } else if (category?.toLowerCase() === "schedule") {
+              const missingRooms = [];
+              const missingFaculties = [];
+
+              for (const row of results) {
+                const room = await db.room.findUnique({
+                  where: { id: row.roomID },
+                });
+
+                if (!room) {
+                  missingRooms.push(row.roomID);
+                  continue;
+                }
+
+                let faculty = await db.faculty.findUnique({
+                  where: { facultyName: row.facultyName },
+                });
+
+                if (!faculty) {
+                  faculty = await db.faculty.create({
+                    data: {
+                      facultyName: row.facultyName,
+                      department: row.department || "Unknown", // You can handle department dynamically if it exists in the row
+                    },
+                  });
+                }
+
+                // Step 4: Insert the room schedule and link it to the room and faculty
+                await db.roomSchedule.create({
+                  data: {
+                    roomId: room.id, // Use the found room id
+                    facultyName: row.facultyName,
+                    courseCode: row.courseCode,
+                    section: row.section,
+                    day: row.day,
+                    beginTime: row.beginTime,
+                    endTime: row.endTime,
+                    faculties: {
+                      connect: { id: faculty.id }, // Connect the schedule to the faculty
+                    },
+                  },
+                });
+              }
+
+              if (missingRooms.length > 0) {
+                console.error(`Missing rooms: ${missingRooms.join(", ")}`);
+              }
             }
 
             resolve(

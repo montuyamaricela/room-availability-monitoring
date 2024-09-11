@@ -76,7 +76,7 @@ model CreationToken {
 }
 
 model Room {
-  id                     Int    @id @default(autoincrement())
+  id                     String @unique
   roomName               String
   building               String
   floor                  String
@@ -95,20 +95,20 @@ model Room {
 
 model RoomSchedule {
   id          Int    @id @default(autoincrement())
-  roomId      Int
+  roomId      String
   room        Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
   faculties   Faculty[] @relation("ScheduleFaculties")
   facultyName String
   courseCode  String
   section     String
-  day         DateTime
-  beginTime   DateTime
-  endTime     DateTime
+  day         String
+  beginTime   String
+  endTime     String
 }
 
 model Faculty {
   id          Int           @id @default(autoincrement())
-  facultyName String
+  facultyName String @unique
   department  String
   schedules   RoomSchedule[] @relation("ScheduleFaculties")
 }

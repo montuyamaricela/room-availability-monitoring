@@ -49,11 +49,20 @@ export function ModalMenu({ name, email, id, role }: ModalProps) {
             </DropdownMenuItem>
 
             {role != "Security Guard" && (
+              <>
+                <DropdownMenuItem>
+                  <Link href="/admin/account-management">Manage Account</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/admin/schedule">Schedule</Link>
+                </DropdownMenuItem>
+              </>
+            )}
+            {role === "Super Admin" && (
               <DropdownMenuItem>
-                <Link href="/admin/account-management">Manage Account</Link>
+                <Link href="/admin/upload">Data Import</Link>
               </DropdownMenuItem>
             )}
-
             <DropdownMenuItem>
               <Link href="/admin/activity-log">Activity Log</Link>
             </DropdownMenuItem>
@@ -66,11 +75,7 @@ export function ModalMenu({ name, email, id, role }: ModalProps) {
             <DropdownMenuItem>
               <Link href="/admin/change-password">Password Settings</Link>
             </DropdownMenuItem>
-            {role === "Super Admin" && (
-              <DropdownMenuItem>
-                <Link href="/admin/upload">Data Import</Link>
-              </DropdownMenuItem>
-            )}
+
             <DropdownMenuItem>
               <div
                 onClick={() => signOut()}

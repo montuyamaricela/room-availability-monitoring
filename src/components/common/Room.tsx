@@ -25,6 +25,7 @@ export function RoomLayout() {
   const handleClick = (event: any) => {
     if (event.target.tagName === "path") {
       const roomId = event.target.getAttribute("id");
+
       filteredRoomsByBuilding.map((item: Room) => {
         if (item.roomName === roomId) {
           setOpen(true);
@@ -34,26 +35,20 @@ export function RoomLayout() {
     }
   };
   const { selectedBuilding } = useBuildingStore();
-
   const BuildingComponent = getBuildingComponent(selectedBuilding);
   const filteredRoomsByBuilding = filterRoomsByBuilding(
     rooms,
     selectedBuilding,
   );
-
   // Filter the rooms based on the active filters
   const filteredRooms = filteredRoomsByBuilding?.filter((room: any) => {
     if (filters.length >= 1) {
       return filters?.every((filter) => room[filter] === true);
     }
   });
-
-  // Use useEffect to change the fill and stroke color based on room status and filters
   useEffect(() => {
-    // First, set the colors based on room status
     filteredRoomsByBuilding?.forEach((room: Room) => {
       const pathElement = document.getElementById(room.roomName);
-
       if (pathElement) {
         if (room.status === "OCCUPIED") {
           pathElement.setAttribute("fill", "#FF8383");
@@ -65,7 +60,6 @@ export function RoomLayout() {
       }
     });
 
-    // Then, override the colors for rooms matching the filters
     if (filters.length !== 0) {
       filteredRooms?.forEach((room: Room) => {
         const pathElement = document.getElementById(room.roomName);
@@ -82,7 +76,7 @@ export function RoomLayout() {
       <div className="mt-10 flex items-center justify-center">
         <div
           onClick={handleClick}
-          className="cursor-pointer overflow-x-scroll sm:overflow-x-hidden"
+          className="cursor-pointer overflow-x-scroll pb-5 md:overflow-x-hidden"
         >
           {BuildingComponent}
         </div>

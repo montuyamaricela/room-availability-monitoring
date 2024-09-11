@@ -16,3 +16,18 @@ export interface FieldProps {
   data?: any[];
   onChange?: (e: any) => void;
 }
+
+export interface IPagination {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+}
+
+export interface PaginatedList<T> {
+  data: T[];
+}
+
+export const initialPaginatedList = {
+  data: [],
+};

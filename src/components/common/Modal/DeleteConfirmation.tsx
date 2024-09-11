@@ -9,7 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "../ui/alert-dialog";
+} from "../../ui/alert-dialog";
 
 type DeleteConfirmationTypes = {
   ButtonTrigger?: ReactNode;
@@ -26,11 +26,11 @@ const DeleteConfirmation = ({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Are you sure you want to delete this account?
+            Are you sure you want to continue?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the
-            account and remove the data from our servers.
+            This action cannot be undone. This will permanently delete and
+            remove the data from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

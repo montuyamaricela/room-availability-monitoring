@@ -18,9 +18,9 @@ import { type BuildingName } from "../rooms/getBuildingComponent";
 import { useBuildingStore } from "~/store/useBuildingStore";
 
 export function ComboboxDemo() {
+  const { selectedBuilding, setSelectedBuilding } = useBuildingStore();
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState<BuildingName>("BSBA");
-  const { setSelectedBuilding } = useBuildingStore();
+  const [value, setValue] = React.useState<BuildingName>(selectedBuilding);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -80,5 +80,9 @@ const buildingsList = [
   {
     value: "HANGAR",
     label: "Hangar",
+  },
+  {
+    value: "MPG_OLDCANTEEN",
+    label: "Mpg & Old Canteen",
   },
 ];
