@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import DeleteConfirmation from "../Modal/DeleteConfirmation";
 import { day, time } from "~/data/models/data";
+import { formatTimetoLocal } from "~/lib/timeSchedule";
 
 type roomModalProps = {
   open: boolean;
@@ -69,8 +70,8 @@ export default function ScheduleModal({
       form.setValue("CourseCode", selectedSchedule?.courseCode);
       form.setValue("Day", selectedSchedule?.day);
       form.setValue("Room", selectedSchedule?.room.roomName);
-      form.setValue("beginTime", selectedSchedule?.beginTime.toUpperCase());
-      form.setValue("endTime", selectedSchedule?.endTime.toUpperCase());
+      form.setValue("beginTime", formatTimetoLocal(selectedSchedule.beginTime));
+      form.setValue("endTime", formatTimetoLocal(selectedSchedule.endTime));
     }
   }, [form, selectedSchedule]);
 

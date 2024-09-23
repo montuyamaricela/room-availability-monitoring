@@ -76,20 +76,10 @@ export function RoomLayout() {
       <div className="mt-10 flex items-center justify-center">
         <div
           onClick={handleClick}
-          className="cursor-pointer overflow-x-scroll pb-5 md:overflow-x-hidden"
+          className="cursor-pointer overflow-x-scroll pb-5 lg:overflow-x-hidden"
         >
           {BuildingComponent}
         </div>
-        {/* <RoomModal setOpen={setOpen} open={open} /> */}
-
-        {/* eto gagamitin natin para sa modal  */}
-        {/* {pathname === "/" && <RoomModal setOpen={setOpen} open={open} />}
-        {pathname === "/admin" &&
-        session.data?.user.role != "Security Guard" ? (
-          <RoomModalAdmin setOpen={setOpen} open={open} />
-        ) : (
-          <RoomModalSecurity setOpen={setOpen} open={open} />
-        )} */}
 
         {pathname === "/admin" &&
         session.data?.user.role != "Security Guard" ? (

@@ -5,6 +5,7 @@ import CBAROOM from "./Cba";
 import Pancho from "./Pancho";
 import Hangar from "./Hangar";
 import GenRooms from "./GenRooms";
+import Icon from "./Test";
 
 export type BuildingName = "PANCHO_HALL" | "BSBA" | "HANGAR" | "MPG_OLDCANTEEN";
 type BuildingComponent = React.FC;
@@ -13,7 +14,7 @@ const buildingComponents: Record<BuildingName, BuildingComponent> = {
   PANCHO_HALL: Pancho,
   BSBA: CBAROOM,
   HANGAR: Hangar,
-  MPG_OLDCANTEEN: GenRooms,
+  MPG_OLDCANTEEN: Icon,
 };
 
 // Function to get the component based on building name

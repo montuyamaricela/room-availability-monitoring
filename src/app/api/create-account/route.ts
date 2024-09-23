@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-// app/api/verify/route.ts
 
 import { NextResponse } from "next/server";
 import { db } from "~/server/db";

@@ -21,6 +21,8 @@ import NotAllowed from "../common/NotAllowed";
 import { useSession } from "next-auth/react";
 import Spinner from "../common/Spinner";
 import Table from "../common/Table/Table";
+import { format, parse } from "date-fns";
+import { formatTimetoLocal } from "~/lib/timeSchedule";
 
 export default function Schedule({ loading }: { loading: boolean }) {
   const session = useSession();
@@ -42,12 +44,12 @@ export default function Schedule({ loading }: { loading: boolean }) {
         sched.facultyName.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
-    // Filter by department if selected
-    if (department) {
-      filteredData = filteredData.filter(
-        (sched) => sched.faculties[0].department === department,
-      );
-    }
+    // // Filter by department if selected
+    // if (department) {
+    //   filteredData = filteredData.filter(
+    //     (sched) => sched.faculties[0].department === department,
+    //   );
+    // }
 
     if (day) {
       filteredData = filteredData.filter((sched) => sched.day === day);
@@ -71,19 +73,19 @@ export default function Schedule({ loading }: { loading: boolean }) {
       id: "facultyName",
       header: "Faculty Name",
       width: 100,
-      formatter: (row) => <span>{row.facultyName}</span>,
+      formatter: (row) => <span>{row?.facultyName}</span>,
     },
-    {
-      id: "department",
-      header: "Department",
-      width: 60,
-      formatter: (row) => <span>{row.faculties[0].department}</span>,
-    },
+    // {
+    //   id: "department",
+    //   header: "Department",
+    //   width: 60,
+    //   formatter: (row) => <span>{row?.faculties[0]?.department}</span>,
+    // },
     {
       id: "section",
       header: "Section",
       width: 100,
-      formatter: (row) => <span>{row.section}</span>,
+      formatter: (row) => <span>{row?.section}</span>,
     },
     {
       id: "room",
@@ -101,7 +103,7 @@ export default function Schedule({ loading }: { loading: boolean }) {
               </span>
             </>
           ) : (
-            <span className="capitalize">{row.room.roomName}</span>
+            <span className="capitalize">{row?.room?.roomName}</span>
           )}
         </>
       ),
@@ -112,7 +114,8 @@ export default function Schedule({ loading }: { loading: boolean }) {
       width: 100,
       formatter: (row) => (
         <span>
-          {row.day} {row.beginTime} to {row.endTime}
+          {row.day} {formatTimetoLocal(row.beginTime)} to{" "}
+          {formatTimetoLocal(row.endTime)}
         </span>
       ),
     },

@@ -2,6 +2,7 @@ import React, { useState, type ReactNode } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -10,6 +11,7 @@ import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import TabContentWrapper from "../common/Tab/TabContentWrapper";
 import TabWrapper from "../common/Tab/TabWrapper";
 import { useRoomStore } from "~/store/useRoomStore";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
 type ModalWrapperTypes = {
   ButtonTrigger?: ReactNode;
@@ -30,8 +32,14 @@ const RoomModalAdmin = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{ButtonTrigger}</DialogTrigger>
-      <DialogContent className="w-[90%] max-w-3xl ">
-        <TabWrapper setActiveTab={setActiveTab}>
+      <DialogHeader>
+        <VisuallyHidden.Root>
+          <DialogDescription>Room Modal Admin</DialogDescription>
+          <DialogTitle>Room Modal Admin</DialogTitle>
+        </VisuallyHidden.Root>
+      </DialogHeader>
+      <DialogContent className="w-[90%] max-w-3xl">
+        <TabWrapper activeTab={activeTab} setActiveTab={setActiveTab}>
           <TabContentWrapper
             activeTab={activeTab}
             handleTabChange={handleTabChange}

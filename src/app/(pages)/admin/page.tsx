@@ -6,12 +6,15 @@
 import { useEffect, useState } from "react";
 import Map from "~/components/common/Map";
 import Spinner from "~/components/common/Spinner";
+import { type scheduleAttributes } from "~/data/models/schedule";
+import { type PaginatedList } from "~/lib/types";
 import { type Room, useRoomStore } from "~/store/useRoomStore";
+import { useScheduleStore } from "~/store/useScheduleStore";
 
 export default function Page() {
   const { rooms, setRooms } = useRoomStore();
   const [loading, setLoading] = useState<boolean>(false);
-
+  const { setSchedule } = useScheduleStore();
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
@@ -24,7 +27,16 @@ export default function Page() {
         if (!response.ok) {
           throw new Error("Failed to fetch rooms");
         }
+        const schedResp = await fetch("/api/schedule", {
+          method: "GET",
+        });
 
+        if (!schedResp.ok) {
+          throw new Error("Failed to fetch schedule");
+        }
+
+        const scheduleData = await schedResp.json();
+        setSchedule(scheduleData as PaginatedList<scheduleAttributes>);
         const data: Room[] = await response.json();
 
         // Check if the new data is different before updating the state
@@ -45,7 +57,7 @@ export default function Page() {
 
     // Cleanup interval on unmount
     return () => clearInterval(intervalId);
-  }, [rooms, setRooms]); // Add rooms dependency to prevent unnecessary re-renders
+  }, [rooms, setRooms, setSchedule]); // Add rooms dependency to prevent unnecessary re-renders
 
   return <>{loading ? <Spinner /> : <Map />} </>;
 }

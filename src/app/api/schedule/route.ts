@@ -1,7 +1,16 @@
+import { getServerSession } from "next-auth";
+import { getSession } from "next-auth/react";
 import { NextResponse, type NextRequest } from "next/server";
+import { authOptions } from "~/server/auth";
 import { db } from "~/server/db";
 
 export async function GET(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const roomSchedule = await db.roomSchedule.findMany({
       include: {
@@ -9,11 +18,6 @@ export async function GET(req: NextRequest) {
           select: {
             roomName: true,
             building: true,
-          },
-        },
-        faculties: {
-          select: {
-            department: true,
           },
         },
       },
@@ -40,6 +44,12 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const deleteSchedule = await db.roomSchedule.deleteMany();
 

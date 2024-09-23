@@ -1,42 +1,67 @@
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 "use client";
-
 import { Container } from "../common/Container";
 import { Input } from "../ui/input";
 import { DatePickerDemo } from "../ui/DatePicker";
-import FormattingTable, { type TableColumn } from "./Table/Table";
-import { useState } from "react";
-import { ActivityLog } from "../../app/SampleData";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
+import { type TableColumn } from "./Table/Table";
+import { useEffect, useState } from "react";
 
-export default function ActivityLogs() {
+import { type auditLogsAttributes } from "~/data/models/auditLogs";
+import Table from "./Table/Table";
+import { useLogStore } from "~/store/useLogStore";
+import { format, parse } from "date-fns";
+import { formatTimetoLocal } from "~/lib/timeSchedule";
+
+export default function ActivityLogs({ loading }: { loading: boolean }) {
+  const { auditLog } = useLogStore();
+
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [pageSize] = useState(10);
+  // Calculate total pages
+  const [log, setLogs] = useState<auditLogsAttributes[]>([]);
+
+  useEffect(() => {
+    const auditLogsData = auditLog.data;
+    setLogs(auditLogsData);
+  }, [auditLog]);
+
+  const totalRecords = log.length;
+  const pageCount = Math.ceil(totalRecords / pageSize);
+
+  // Get records for the current page
+  const paginatedRecords = log.slice((page - 1) * pageSize, page * pageSize);
+
   // const [smsLogs, setSmsLogs] = useState<PaginatedList<smsLogs>>(initialPaginatedList);
 
-  // const columns: TableColumn<smsLogs>[] = [
-  //   {
-  //     id: "transactaionNumber",
-  //     header: "Transaction #",
-  //     formatter: (row) => <span>{row.attributes.transactaionNumber}</span>,
-  //   },
-  //   {
-  //     id: "dateAndTime",
-  //     header: "Date and Time",
-  //     formatter: (row) => <span>{row.attributes.dateAndTime}</span>,
-  //   },
-  //   {
-  //     id: "activities",
-  //     header: "Activities",
-  //     formatter: (row) => <span>{row.attributes.activities}</span>,
-  //   },
-  // ];
+  const columns: TableColumn<auditLogsAttributes>[] = [
+    {
+      id: "transactaionNumber",
+      header: "Transaction #",
+      formatter: (row) => <span>{row.id}</span>,
+    },
+    {
+      id: "Date and Time",
+      header: "Date and Time",
+      formatter: (row) => (
+        <span>{format(new Date(row.dateTime), "MMM dd, yyyy h:mm:ss a")}</span>
+      ),
+    },
+    {
+      id: "Activities",
+      header: "Activities",
+      formatter: (row) => (
+        <span>
+          {row.facultyName +
+            " " +
+            row.activity +
+            " by " +
+            row.loggedBy +
+            " Care of " +
+            row.careOf}
+        </span>
+      ),
+    },
+  ];
 
   return (
     <Container>
@@ -60,13 +85,18 @@ export default function ActivityLogs() {
           </div>
 
           <div>
-            {/* <FormattingTable<smsLogs>
+            <Table<auditLogsAttributes>
               loading={loading}
               columns={columns}
-              records={smsLogs.data}
-              pagination={smsLogs.meta.pagination}
+              records={paginatedRecords}
+              pagination={{
+                page,
+                pageSize,
+                pageCount,
+                total: totalRecords,
+              }}
               onChangePage={(page) => setPage(page)}
-            /> */}
+            />
           </div>
         </div>
       </div>

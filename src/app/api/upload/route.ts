@@ -7,8 +7,18 @@ import { type NextRequest, NextResponse } from "next/server";
 import csv from "csv-parser";
 import { db } from "~/server/db";
 import { PassThrough } from "stream";
+import { getServerSession } from "next-auth";
+import { authOptions } from "~/server/auth";
+import { isOverlapping } from "~/lib/timeSchedule";
+import { format, parse, parseISO } from "date-fns";
 
 export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const formData = await request.formData();
   const category = formData.get("category") as string | null;
   const file = formData.get("file") as Blob | null;
@@ -32,14 +42,7 @@ export async function POST(request: NextRequest) {
         .on("data", (data) => results.push(data))
         .on("end", async () => {
           try {
-            if (category?.toLowerCase() === "faculty") {
-              await db.faculty.createMany({
-                data: results.map((row) => ({
-                  facultyName: row.Name,
-                  department: row.Department,
-                })),
-              });
-            } else if (category?.toLowerCase() === "room") {
+            if (category?.toLowerCase() === "room") {
               await db.room.createMany({
                 data: results.map((row) => ({
                   id: row.id,
@@ -66,6 +69,7 @@ export async function POST(request: NextRequest) {
               const missingFaculties = [];
 
               for (const row of results) {
+                // Fetch the room
                 const room = await db.room.findUnique({
                   where: { id: row.roomID },
                 });
@@ -75,32 +79,42 @@ export async function POST(request: NextRequest) {
                   continue;
                 }
 
-                let faculty = await db.faculty.findUnique({
-                  where: { facultyName: row.facultyName },
+                // Fetch existing schedules for the same room and day
+                const existingSchedules = await db.roomSchedule.findMany({
+                  where: {
+                    roomId: room.id,
+                    day: row.day,
+                  },
                 });
 
-                if (!faculty) {
-                  faculty = await db.faculty.create({
-                    data: {
-                      facultyName: row.facultyName,
-                      department: row.department || "Unknown", // You can handle department dynamically if it exists in the row
-                    },
-                  });
+                // Check for overlaps with existing schedules
+                const hasOverlap = existingSchedules.some((existingSchedule) =>
+                  isOverlapping(
+                    row.beginTime,
+                    row.endTime,
+                    existingSchedule.beginTime,
+                    existingSchedule.endTime,
+                  ),
+                );
+
+                if (hasOverlap) {
+                  console.log(
+                    `Overlapping schedule found for room ${room.id} on ${row.day}`,
+                  );
+                  continue; // Skip this schedule as it overlaps
                 }
 
-                // Step 4: Insert the room schedule and link it to the room and faculty
+                // Insert the room schedule
                 await db.roomSchedule.create({
                   data: {
-                    roomId: room.id, // Use the found room id
+                    roomId: room.id,
                     facultyName: row.facultyName,
                     courseCode: row.courseCode,
                     section: row.section,
                     day: row.day,
-                    beginTime: row.beginTime,
-                    endTime: row.endTime,
-                    faculties: {
-                      connect: { id: faculty.id }, // Connect the schedule to the faculty
-                    },
+                    beginTime: parseTime(row.beginTime),
+                    endTime: parseTime(row.endTime),
+                    isTemp: false,
                   },
                 });
               }
@@ -143,4 +157,15 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
+}
+export function parseTime(timeString: any) {
+  // Split the time string into components
+  const [hours, minutes, seconds] = timeString.split(":");
+
+  // Create a new Date object
+  const date = new Date();
+
+  // Set the time on the date object
+  date.setUTCHours(parseInt(hours), parseInt(minutes), parseInt(seconds || 0)); // If seconds are missing, default to 0.
+  return date;
 }

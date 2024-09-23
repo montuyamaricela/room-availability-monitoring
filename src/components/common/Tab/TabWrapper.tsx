@@ -3,15 +3,17 @@ import { Tabs, TabsList, TabsTrigger } from "../..//ui/tabs";
 
 type TabWrapperProps = {
   children: ReactNode;
+  activeTab: string;
   setActiveTab: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export default function TabWrapper({
   children,
+  activeTab,
   setActiveTab,
 }: TabWrapperProps) {
   return (
-    <Tabs defaultValue="room-details" className="">
+    <Tabs defaultValue={activeTab} className="">
       {/* <TabsList className="flex w-full rounded-t-2xl  border-2 border-primary-green bg-white px-0 lg:h-16"> */}
       <TabsList className="grid h-10 grid-cols-2 rounded-t-2xl border-2 border-primary-green sm:h-16 sm:grid-cols-3 ">
         <TabsTrigger

@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { db } from "~/server/db";
 import { z } from "zod";
 import { randomUUID } from "crypto";
 import { sendInvitationLink } from "~/utils/email";
+import { getServerSession } from "next-auth";
+import { authOptions } from "~/server/auth";
 
 const inviteSchema = z.object({
   email: z.string().email("Invalid Email Address").min(1, "Email is required"),
@@ -14,7 +16,13 @@ const inviteSchema = z.object({
   department: z.string(),
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const token = randomUUID();
     const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now

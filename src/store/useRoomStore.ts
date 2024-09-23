@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export interface Room {
-  id: number;
+  id: string;
   roomName: string;
   building: string;
   floor: string;

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-type deleteSchedule = {
+type deleteScheduleProps = {
   setLoading: (loading: boolean) => void;
   setMessage: (message: string) => void;
 };
@@ -9,7 +9,7 @@ type deleteSchedule = {
 export async function deleteSchedule({
   setLoading,
   setMessage,
-}: deleteSchedule) {
+}: deleteScheduleProps) {
   try {
     setLoading(true);
     const response = await fetch("/api/schedule", {

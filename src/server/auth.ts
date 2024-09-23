@@ -18,24 +18,6 @@ import { getUserByEmail } from "~/lib/user";
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
 
-// declare module "next-auth" {
-//   interface Session extends DefaultSession {
-//     user: {
-//       id: string;
-//       // ...other properties
-//       role: "Admin" | "Security";
-//     } & DefaultSession["user"];
-//   }
-//   interface User extends AdapterUser {
-//     id: string;
-//     role?: "Admin" | "Security"; // Add role property here
-//   }
-//   // interface User {
-//   //   id: string;
-//   //   role: string; // Add role here
-//   // }
-// }
-// Define a custom user interface
 export interface CustomUser {
   id: string;
   email: string;
@@ -81,28 +63,6 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    // async session({ session, token }) {
-    //   console.log("Session callback:", { session, token });
-
-    //   return {
-    //     ...session,
-    //     user: {
-    //       ...session.user,
-    //       id: token.id as string,
-    //       role: token.role as string,
-    //       // Add other properties if needed
-    //     },
-    //   };
-    // },
-    // async jwt({ token, user }) {
-    //   if (user) {
-    //     token.id = user.id;
-    //     token.email = user.email;
-    //     token.role = user.role;
-    //     // Add other properties if needed
-    //   }
-    //   return token;
-    // },
   },
   secret: process.env.NEXTAUTH_SECRET,
   session: {
@@ -142,7 +102,7 @@ export const authOptions: NextAuthOptions = {
         return {
           id: existingUser.id,
           email: existingUser.email,
-          name: existingUser.firstName,
+          name: existingUser.firstName + " " + existingUser.lastName,
           role: existingUser.role,
         };
       },

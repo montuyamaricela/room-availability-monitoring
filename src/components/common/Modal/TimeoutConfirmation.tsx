@@ -10,13 +10,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../../ui/alert-dialog";
+import { type DeleteConfirmationTypes } from "./DeleteConfirmation";
 
-export type DeleteConfirmationTypes = {
-  ButtonTrigger?: ReactNode;
-  deleteHandler: () => void;
-};
-
-const DeleteConfirmation = ({
+const TimeoutConfirmation = ({
   ButtonTrigger,
   deleteHandler,
 }: DeleteConfirmationTypes) => {
@@ -26,11 +22,10 @@ const DeleteConfirmation = ({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Are you sure you want to continue?
+            Are you sure you want to Time Out?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete and
-            remove the data from our servers.
+            This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -47,4 +42,4 @@ const DeleteConfirmation = ({
   );
 };
 
-export default DeleteConfirmation;
+export default TimeoutConfirmation;

@@ -24,13 +24,17 @@ export default function TabContentWrapper({
   handleTabChange,
 }: TabProps) {
   const { selectedRoom } = useRoomStore();
-  const { data, isLoading, error, refetch } =
-    api.faculty.getAllFaculty.useQuery();
 
-  const faculties = data?.map((item) => {
+  const { data, isLoading, error, refetch } =
+    api.schedule.getAllFaculty.useQuery();
+
+  const filteredFaculties = Array.from(
+    new Set(data?.map((faculty) => faculty.facultyName)),
+  ).map((facultyName) => ({ facultyName }));
+
+  const faculties = filteredFaculties?.map((item) => {
     return { label: item.facultyName, value: item.facultyName };
   });
-
   const renderItem = () => {
     if (activeTab === "room-information") {
       return (
