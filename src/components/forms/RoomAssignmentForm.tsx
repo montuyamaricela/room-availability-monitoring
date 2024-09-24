@@ -75,9 +75,9 @@ export default function RoomAssignmentForm({
     const responseData = await response.json();
 
     if (response.ok) {
-      toast.success("Schedule successfully added!");
+      toast.success(responseData?.message);
     } else {
-      toast.error(responseData?.message || "Something went wrong");
+      toast.error(responseData?.error || "Something went wrong");
       console.error("Something went wrong");
     }
     form.reset();

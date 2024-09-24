@@ -50,7 +50,9 @@ export function filterTimeSlots(
       const startTime = timeStringToDate(formatTimetoLocal(schedule.start));
       const endTime = timeStringToDate(formatTimetoLocal(schedule.end));
 
-      return isWithinInterval(slotTime, { start: startTime, end: endTime });
+      return slotTime > startTime && slotTime < endTime;
+
+      // return isWithinInterval(slotTime, { start: startTime, end: endTime });
     });
   });
 }
@@ -62,6 +64,7 @@ export function isOverlapping(
   end2: Date,
 ): boolean {
   const overlap = start1 < end2 && start2 < end1;
+
   return overlap;
 }
 

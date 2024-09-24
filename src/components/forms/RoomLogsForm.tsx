@@ -72,7 +72,7 @@ export default function RoomLogsForm({
     if (response.ok) {
       toast.success("Schedule successfully added!");
     } else {
-      toast.error(responseData?.message || "Something went wrong");
+      toast.error(responseData?.error || "Something went wrong");
       console.error("Something went wrong");
     }
     form.reset();

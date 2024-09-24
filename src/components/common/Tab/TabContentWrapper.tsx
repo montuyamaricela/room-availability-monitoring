@@ -33,15 +33,23 @@ export default function TabContentWrapper({
   const renderItem = () => {
     if (activeTab === "room-information") {
       return (
-        <div>
+        <div className="my-auto flex h-full w-full flex-col items-center justify-center">
           {/* <RoomInfo /> */}
+          <p className="mb-5 text-center text-xl font-semibold">
+            {" "}
+            Room {selectedRoom?.roomName}
+          </p>
           <RoomDetailsForm />
-          <RoomInfo />
+          {/* <RoomInfo /> */}
         </div>
       );
     } else if (activeTab === "room-assignment") {
       return (
         <div>
+          <p className="mb-5 text-center text-xl font-semibold">
+            {" "}
+            Room {selectedRoom?.roomName}
+          </p>
           <RoomAssignmentForm faculty={faculties ?? []} setDay={setDay} />
           <RoomAssignmentTable day={day} />
         </div>
@@ -55,10 +63,6 @@ export default function TabContentWrapper({
         onClick={() => handleTabChange(activeTab)}
         className="h-full p-5"
       >
-        <p className="mb-5 text-center text-xl font-semibold">
-          {" "}
-          Room {selectedRoom?.roomName}
-        </p>
         {renderItem()}
       </TabsContent>
     </div>

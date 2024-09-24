@@ -73,6 +73,12 @@ export default function ScheduleTable({
       formatter: (row) => <span>{row?.section}</span>,
     },
     {
+      id: "Subject",
+      header: "Subject",
+      width: 100,
+      formatter: (row) => <span>{row?.courseCode}</span>,
+    },
+    {
       id: "Begin Time",
       header: "Begin Time",
       width: 100,
@@ -88,7 +94,7 @@ export default function ScheduleTable({
       id: "Action",
       header: "Action",
       formatter: (row) => (
-        <span className="flex justify-center gap-2">
+        <span className="flex justify-start gap-2">
           {/* disable the button if time is past end time  */}
           <Button
             disabled={
