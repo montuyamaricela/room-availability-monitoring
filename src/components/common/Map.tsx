@@ -31,8 +31,10 @@ export default function Map() {
           <ComboboxDemo />
         </div>
       </div>
-      <RoomLayout />
-      <Legends />
+      <div className="mt-10 flex flex-col gap-5 overflow-hidden sm:flex-row">
+        <Legends />
+        <RoomLayout />
+      </div>
     </Container>
   );
 }

@@ -27,7 +27,8 @@ export function RoomLayout() {
       const roomId = event.target.getAttribute("id");
 
       filteredRoomsByBuilding.map((item: Room) => {
-        if (item.roomName === roomId) {
+        console.log(roomId);
+        if (item.id === roomId) {
           setOpen(true);
           setSelectedRoom(item);
         }
@@ -40,6 +41,8 @@ export function RoomLayout() {
     rooms,
     selectedBuilding,
   );
+
+  console.log(selectedBuilding);
   // Filter the rooms based on the active filters
   const filteredRooms = filteredRoomsByBuilding?.filter((room: any) => {
     if (filters.length >= 1) {
@@ -48,7 +51,7 @@ export function RoomLayout() {
   });
   useEffect(() => {
     filteredRoomsByBuilding?.forEach((room: Room) => {
-      const pathElement = document.getElementById(room.roomName);
+      const pathElement = document.getElementById(room.id);
       if (pathElement) {
         if (room.status === "OCCUPIED") {
           pathElement.setAttribute("fill", "#FF8383");
@@ -62,7 +65,7 @@ export function RoomLayout() {
 
     if (filters.length !== 0) {
       filteredRooms?.forEach((room: Room) => {
-        const pathElement = document.getElementById(room.roomName);
+        const pathElement = document.getElementById(room.id);
         if (pathElement && room.status !== "OCCUPIED") {
           pathElement.setAttribute("fill", "#91D1FF");
           pathElement.setAttribute("stroke", "#73AED8");
@@ -72,24 +75,14 @@ export function RoomLayout() {
   }, [filteredRoomsByBuilding, filteredRooms, filters.length]); // Dependency array to run the effect when filteredRooms or filters change
 
   return (
-    <div className="">
-      <div className="mt-10 flex items-center justify-center">
+    <div className="w-full">
+      <div className="flex items-center justify-center">
         <div
           onClick={handleClick}
-          className="cursor-pointer overflow-x-scroll pb-5 md:overflow-x-hidden"
+          className="cursor-pointer overflow-x-scroll pb-5 lg:overflow-x-hidden"
         >
           {BuildingComponent}
         </div>
-        {/* <RoomModal setOpen={setOpen} open={open} /> */}
-
-        {/* eto gagamitin natin para sa modal  */}
-        {/* {pathname === "/" && <RoomModal setOpen={setOpen} open={open} />}
-        {pathname === "/admin" &&
-        session.data?.user.role != "Security Guard" ? (
-          <RoomModalAdmin setOpen={setOpen} open={open} />
-        ) : (
-          <RoomModalSecurity setOpen={setOpen} open={open} />
-        )} */}
 
         {pathname === "/admin" &&
         session.data?.user.role != "Security Guard" ? (

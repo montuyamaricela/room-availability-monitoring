@@ -2,11 +2,17 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export const RoomSchema = z.object({
-  Capacity: z.number().min(1, "Capacity name is required"),
-  ElectricFan: z.number(),
-  AvailableComputers: z.number(),
-  Functioning: z.number(),
-  NonFunctioning: z.number(),
+  Capacity: z.coerce.number().min(1, "Capacity must be at least 1"),
+  ElectricFan: z.coerce.number().min(0, "Electric Fans cannot be negative"),
+  AvailableComputers: z.coerce
+    .number()
+    .min(0, "Available Computers cannot be negative"),
+  Functioning: z.coerce
+    .number()
+    .min(0, "Functioning Computers cannot be negative"),
+  NonFunctioning: z.coerce
+    .number()
+    .min(0, "Non-functioning Computers cannot be negative"),
   Disabled: z.boolean(),
   Lecture: z.boolean(),
   Laboratory: z.boolean(),

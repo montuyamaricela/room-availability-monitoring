@@ -5,64 +5,64 @@ import { useRoomStore } from "~/store/useRoomStore";
 import RoomInfo from "../Modal/RoomInfo";
 import RoomAssignmentTable from "../Table/RoomAssignmentTable";
 import { api } from "~/trpc/react";
-import Spinner from "../Spinner";
+import { useState } from "react";
 
 type TabProps = {
   activeTab: string;
   handleTabChange: (activeTab: string) => void;
 };
 
-type facultyType = {
-  faculty: {
-    label: string;
-    value: string;
-  };
-};
-
 export default function TabContentWrapper({
   activeTab,
   handleTabChange,
-}: TabProps) {
+}: Readonly<TabProps>) {
   const { selectedRoom } = useRoomStore();
-  const { data, isLoading, error, refetch } =
-    api.faculty.getAllFaculty.useQuery();
 
-  const faculties = data?.map((item) => {
+  const { data } = api.schedule.getAllFaculty.useQuery();
+
+  const filteredFaculties = Array.from(
+    new Set(data?.map((faculty) => faculty.facultyName)),
+  ).map((facultyName) => ({ facultyName }));
+
+  const faculties = filteredFaculties?.map((item) => {
     return { label: item.facultyName, value: item.facultyName };
   });
+
+  const [day, setDay] = useState<string>("");
 
   const renderItem = () => {
     if (activeTab === "room-information") {
       return (
-        <div>
+        <div className="my-auto flex h-full w-full flex-col items-center justify-center">
           {/* <RoomInfo /> */}
-          <RoomInfo />
+          <p className="mb-5 text-center text-xl font-semibold">
+            {" "}
+            Room {selectedRoom?.roomName}
+          </p>
+          <RoomDetailsForm />
+          {/* <RoomInfo /> */}
         </div>
       );
     } else if (activeTab === "room-assignment") {
       return (
         <div>
-          <>
-            <RoomAssignmentForm faculty={faculties ?? []} />
-            <RoomAssignmentTable />
-          </>
+          <p className="mb-5 text-center text-xl font-semibold">
+            {" "}
+            Room {selectedRoom?.roomName}
+          </p>
+          <RoomAssignmentForm faculty={faculties ?? []} setDay={setDay} />
+          <RoomAssignmentTable day={day} />
         </div>
       );
-    } else if (activeTab === "room-details") {
-      return <RoomDetailsForm />;
     }
   };
   return (
-    <div className="my-auto h-[400px] max-h-[400px] min-h-[400px] w-full overflow-y-scroll sm:overflow-auto">
+    <div className="my-auto h-[600px] max-h-[600px] min-h-[600px] w-full overflow-y-scroll sm:overflow-auto">
       <TabsContent
         value={activeTab}
         onClick={() => handleTabChange(activeTab)}
-        className="p-5"
+        className="h-full p-5"
       >
-        <p className="mb-5 text-center text-xl font-semibold">
-          {" "}
-          Room {selectedRoom?.roomName}
-        </p>
         {renderItem()}
       </TabsContent>
     </div>

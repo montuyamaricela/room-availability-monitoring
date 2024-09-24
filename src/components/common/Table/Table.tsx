@@ -36,7 +36,7 @@ function TableHeader<T>({ columns }: { columns: TableColumn<T>[] }) {
           <th
             key={index}
             scope="col"
-            className="py-3.5 pl-4 pr-3 text-center text-sm font-semibold text-gray-900 sm:pl-0"
+            className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
           >
             {item.header}
           </th>
@@ -74,7 +74,7 @@ export default function Table<T>({
                   {columns.map((column, colIndex) => (
                     <td
                       key={colIndex}
-                      className="py-4 text-center text-sm text-gray-500"
+                      className="py-4 text-left text-sm text-gray-500"
                       // width={
                       //   column.width
                       //     ? column.width

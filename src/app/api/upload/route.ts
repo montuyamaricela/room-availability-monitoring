@@ -7,10 +7,19 @@ import { type NextRequest, NextResponse } from "next/server";
 import csv from "csv-parser";
 import { db } from "~/server/db";
 import { PassThrough } from "stream";
+import { getServerSession } from "next-auth";
+import { authOptions } from "~/server/auth";
+import { isOverlapping, parseTime } from "~/lib/timeSchedule";
+import { format, parse, parseISO } from "date-fns";
 
 export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const formData = await request.formData();
-  const category = formData.get("category") as string | null;
   const file = formData.get("file") as Blob | null;
 
   if (!file) {
@@ -32,82 +41,66 @@ export async function POST(request: NextRequest) {
         .on("data", (data) => results.push(data))
         .on("end", async () => {
           try {
-            if (category?.toLowerCase() === "faculty") {
-              await db.faculty.createMany({
-                data: results.map((row) => ({
-                  facultyName: row.Name,
-                  department: row.Department,
-                })),
+            const missingRooms: any[] = [];
+
+            // Map over results to create promises for fetching rooms and schedules
+            const promises = results.map(async (row) => {
+              // Fetch the room
+              const room = await db.room.findUnique({
+                where: { id: row.roomID },
               });
-            } else if (category?.toLowerCase() === "room") {
-              await db.room.createMany({
-                data: results.map((row) => ({
-                  id: row.id,
-                  roomName: row.roomName,
-                  building: row.building,
-                  floor: row.floor,
-                  withTv: row.WithTv === "TRUE",
-                  isLecture: row.isLecture === "TRUE",
-                  isLaboratory: row.isLaboratory === "TRUE",
-                  isAirconed: row.isAirconed === "TRUE",
-                  capacity: parseInt(row.capacity, 10),
-                  electricFans: parseInt(row.electricFans, 10),
-                  functioningComputers: parseInt(row.functioningComputers, 10),
-                  notFunctioningComputers: parseInt(
-                    row.notFunctioningComputers,
-                    10,
-                  ),
-                  status: row.status,
-                  disable: row.disable === "TRUE",
-                })),
-              });
-            } else if (category?.toLowerCase() === "schedule") {
-              const missingRooms = [];
-              const missingFaculties = [];
 
-              for (const row of results) {
-                const room = await db.room.findUnique({
-                  where: { id: row.roomID },
-                });
-
-                if (!room) {
-                  missingRooms.push(row.roomID);
-                  continue;
-                }
-
-                let faculty = await db.faculty.findUnique({
-                  where: { facultyName: row.facultyName },
-                });
-
-                if (!faculty) {
-                  faculty = await db.faculty.create({
-                    data: {
-                      facultyName: row.facultyName,
-                      department: row.department || "Unknown", // You can handle department dynamically if it exists in the row
-                    },
-                  });
-                }
-
-                // Step 4: Insert the room schedule and link it to the room and faculty
-                await db.roomSchedule.create({
-                  data: {
-                    roomId: room.id, // Use the found room id
-                    facultyName: row.facultyName,
-                    courseCode: row.courseCode,
-                    section: row.section,
-                    day: row.day,
-                    beginTime: row.beginTime,
-                    endTime: row.endTime,
-                    faculties: {
-                      connect: { id: faculty.id }, // Connect the schedule to the faculty
-                    },
-                  },
-                });
+              if (!room) {
+                missingRooms.push(row.roomID);
+                return; // Skip processing for this row
               }
 
-              if (missingRooms.length > 0) {
-                console.error(`Missing rooms: ${missingRooms.join(", ")}`);
+              // Fetch existing schedules for the same room and day
+              const existingSchedules = await db.roomSchedule.findMany({
+                where: {
+                  roomId: room.id,
+                  day: row.day,
+                },
+              });
+
+              // Check for overlaps with existing schedules
+              const hasOverlap = existingSchedules.some((existingSchedule) =>
+                isOverlapping(
+                  parseTime(row.beginTime),
+                  parseTime(row.endTime),
+                  existingSchedule.beginTime,
+                  existingSchedule.endTime,
+                ),
+              );
+
+              if (hasOverlap) {
+                console.log(
+                  `Overlapping schedule found for room ${room.id} on ${row.day}`,
+                );
+                return; // Skip this schedule as it overlaps
               }
+
+              // Insert the room schedule
+              await db.roomSchedule.create({
+                data: {
+                  roomId: room.id,
+                  facultyName: row.facultyName,
+                  courseCode: row.courseCode,
+                  section: row.section,
+                  day: row.day,
+                  beginTime: parseTime(row.beginTime),
+                  endTime: parseTime(row.endTime),
+                  isTemp: false,
+                },
+              });
+            });
+
+            // Wait for all promises to resolve
+            await Promise.all(promises);
+
+            // Log any missing rooms
+            if (missingRooms.length > 0) {
+              console.error(`Missing rooms: ${missingRooms.join(", ")}`);
             }
 
             resolve(
