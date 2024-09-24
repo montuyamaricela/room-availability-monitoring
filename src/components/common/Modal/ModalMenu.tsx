@@ -40,7 +40,9 @@ export function ModalMenu({ name, email, id, role }: ModalProps) {
               <Avatar>
                 <Image src={avatar} alt="Avatar" />
               </Avatar>
-              <div className="text-sm text-gray-dark">Welcome, {name}</div>
+              <div className="text-sm text-gray-dark">
+                Welcome, {name?.split(" ")[0]}
+              </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
 
@@ -58,11 +60,11 @@ export function ModalMenu({ name, email, id, role }: ModalProps) {
                 </DropdownMenuItem>
               </>
             )}
-            {role === "Super Admin" && (
+            {/* {role === "Super Admin" && (
               <DropdownMenuItem>
                 <Link href="/admin/upload">Data Import</Link>
               </DropdownMenuItem>
-            )}
+            )} */}
             <DropdownMenuItem>
               <Link href="/admin/activity-log">Activity Log</Link>
             </DropdownMenuItem>

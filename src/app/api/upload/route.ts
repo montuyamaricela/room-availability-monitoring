@@ -9,7 +9,7 @@ import { db } from "~/server/db";
 import { PassThrough } from "stream";
 import { getServerSession } from "next-auth";
 import { authOptions } from "~/server/auth";
-import { isOverlapping } from "~/lib/timeSchedule";
+import { isOverlapping, parseTime } from "~/lib/timeSchedule";
 import { format, parse, parseISO } from "date-fns";
 
 export async function POST(request: NextRequest) {
@@ -20,7 +20,6 @@ export async function POST(request: NextRequest) {
   }
 
   const formData = await request.formData();
-  const category = formData.get("category") as string | null;
   const file = formData.get("file") as Blob | null;
 
   if (!file) {
@@ -42,86 +41,66 @@ export async function POST(request: NextRequest) {
         .on("data", (data) => results.push(data))
         .on("end", async () => {
           try {
-            if (category?.toLowerCase() === "room") {
-              await db.room.createMany({
-                data: results.map((row) => ({
-                  id: row.id,
-                  roomName: row.roomName,
-                  building: row.building,
-                  floor: row.floor,
-                  withTv: row.WithTv === "TRUE",
-                  isLecture: row.isLecture === "TRUE",
-                  isLaboratory: row.isLaboratory === "TRUE",
-                  isAirconed: row.isAirconed === "TRUE",
-                  capacity: parseInt(row.capacity, 10),
-                  electricFans: parseInt(row.electricFans, 10),
-                  functioningComputers: parseInt(row.functioningComputers, 10),
-                  notFunctioningComputers: parseInt(
-                    row.notFunctioningComputers,
-                    10,
-                  ),
-                  status: row.status,
-                  disable: row.disable === "TRUE",
-                })),
+            const missingRooms: any[] = [];
+
+            // Map over results to create promises for fetching rooms and schedules
+            const promises = results.map(async (row) => {
+              // Fetch the room
+              const room = await db.room.findUnique({
+                where: { id: row.roomID },
               });
-            } else if (category?.toLowerCase() === "schedule") {
-              const missingRooms = [];
-              const missingFaculties = [];
 
-              for (const row of results) {
-                // Fetch the room
-                const room = await db.room.findUnique({
-                  where: { id: row.roomID },
-                });
+              if (!room) {
+                missingRooms.push(row.roomID);
+                return; // Skip processing for this row
+              }
 
-                if (!room) {
-                  missingRooms.push(row.roomID);
-                  continue;
-                }
+              // Fetch existing schedules for the same room and day
+              const existingSchedules = await db.roomSchedule.findMany({
+                where: {
+                  roomId: room.id,
+                  day: row.day,
+                },
+              });
 
-                // Fetch existing schedules for the same room and day
-                const existingSchedules = await db.roomSchedule.findMany({
-                  where: {
-                    roomId: room.id,
-                    day: row.day,
-                  },
-                });
+              // Check for overlaps with existing schedules
+              const hasOverlap = existingSchedules.some((existingSchedule) =>
+                isOverlapping(
+                  parseTime(row.beginTime),
+                  parseTime(row.endTime),
+                  existingSchedule.beginTime,
+                  existingSchedule.endTime,
+                ),
+              );
 
-                // Check for overlaps with existing schedules
-                const hasOverlap = existingSchedules.some((existingSchedule) =>
-                  isOverlapping(
-                    row.beginTime,
-                    row.endTime,
-                    existingSchedule.beginTime,
-                    existingSchedule.endTime,
-                  ),
+              if (hasOverlap) {
+                console.log(
+                  `Overlapping schedule found for room ${room.id} on ${row.day}`,
                 );
-
-                if (hasOverlap) {
-                  console.log(
-                    `Overlapping schedule found for room ${room.id} on ${row.day}`,
-                  );
-                  continue; // Skip this schedule as it overlaps
-                }
-
-                // Insert the room schedule
-                await db.roomSchedule.create({
-                  data: {
-                    roomId: room.id,
-                    facultyName: row.facultyName,
-                    courseCode: row.courseCode,
-                    section: row.section,
-                    day: row.day,
-                    beginTime: parseTime(row.beginTime),
-                    endTime: parseTime(row.endTime),
-                    isTemp: false,
-                  },
-                });
+                return; // Skip this schedule as it overlaps
               }
 
-              if (missingRooms.length > 0) {
-                console.error(`Missing rooms: ${missingRooms.join(", ")}`);
-              }
+              // Insert the room schedule
+              await db.roomSchedule.create({
+                data: {
+                  roomId: room.id,
+                  facultyName: row.facultyName,
+                  courseCode: row.courseCode,
+                  section: row.section,
+                  day: row.day,
+                  beginTime: parseTime(row.beginTime),
+                  endTime: parseTime(row.endTime),
+                  isTemp: false,
+                },
+              });
+            });
+
+            // Wait for all promises to resolve
+            await Promise.all(promises);
+
+            // Log any missing rooms
+            if (missingRooms.length > 0) {
+              console.error(`Missing rooms: ${missingRooms.join(", ")}`);
             }
 
             resolve(
@@ -157,15 +136,4 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
-}
-export function parseTime(timeString: any) {
-  // Split the time string into components
-  const [hours, minutes, seconds] = timeString.split(":");
-
-  // Create a new Date object
-  const date = new Date();
-
-  // Set the time on the date object
-  date.setUTCHours(parseInt(hours), parseInt(minutes), parseInt(seconds || 0)); // If seconds are missing, default to 0.
-  return date;
 }

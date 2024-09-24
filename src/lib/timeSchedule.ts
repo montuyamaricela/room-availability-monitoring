@@ -1,16 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import {
-  format,
-  addMinutes,
-  parse,
-  isWithinInterval,
-  isBefore,
-  isAfter,
-  set,
-  isPast,
-} from "date-fns";
-import { start } from "repl";
+import { format, addMinutes, parse, isWithinInterval } from "date-fns";
 
 // Generate time slots
 export function generateTimeSlots(
@@ -36,25 +28,25 @@ export function generateTimeSlots(
   return slots;
 }
 
-// Convert time string to Date
 function timeStringToDate(time: string): Date {
   return parse(time, "h:mm a", new Date());
 }
 
-// Filter time slots based on an array of schedules
 export function filterTimeSlots(
   slots: { label: string; value: string }[],
   schedules: { start: Date; end: Date; day: string }[],
+  day?: string,
 ): { label: string; value: string }[] {
   const today = new Date();
-  const todaysSchedules = schedules.filter(
-    (schedule) => schedule.day === format(today, "EEEE"),
-  );
+
+  const todaysSchedules = schedules.filter((schedule) => {
+    const currentDay = day ?? format(today, "EEEE");
+    return schedule.day === currentDay;
+  });
+
   return slots.filter((slot) => {
     const slotTime = timeStringToDate(slot.value);
-    // Check if the slot falls within any of today's schedules
     return !todaysSchedules.some((schedule) => {
-      // Assuming schedule.start and schedule.end are Date objects in UTC
       const startTime = timeStringToDate(formatTimetoLocal(schedule.start));
       const endTime = timeStringToDate(formatTimetoLocal(schedule.end));
 
@@ -63,26 +55,32 @@ export function filterTimeSlots(
   });
 }
 
-// Check if two time ranges overlap
 export function isOverlapping(
   start1: Date,
   end1: Date,
   start2: Date,
   end2: Date,
 ): boolean {
-  return isBefore(start1, end1) && isBefore(start2, end2);
+  const overlap = start1 < end2 && start2 < end1;
+  return overlap;
 }
 
 export function formatTimetoLocal(time: Date) {
   const date = new Date(time);
 
-  // Force the time to be displayed in UTC or another specific timezone
   const formattedDate = date.toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
-    timeZone: "UTC", // Change this to 'UTC' or your desired time zone
+    timeZone: "UTC",
   });
 
   return formattedDate;
+}
+
+export function parseTime(timeString: any) {
+  const [hours, minutes, seconds] = timeString.split(":").map(Number);
+  const date = new Date(Date.UTC(1970, 0, 1, hours, minutes, seconds));
+
+  return date;
 }

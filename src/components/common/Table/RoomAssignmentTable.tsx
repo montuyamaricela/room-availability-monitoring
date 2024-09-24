@@ -2,29 +2,53 @@ import React, { useEffect, useState } from "react";
 import Table, { type TableColumn } from "./Table";
 import { type scheduleAttributes } from "~/data/models/schedule";
 import { useScheduleStore } from "~/store/useScheduleStore";
+import { formatTimetoLocal } from "~/lib/timeSchedule";
+import { useRoomStore } from "~/store/useRoomStore";
+import { api } from "~/trpc/react";
+import toast from "react-hot-toast";
+import DeleteConfirmation from "../Modal/DeleteConfirmation";
+import { Button } from "~/components/ui/button";
 
-export default function RoomAssignmentTable() {
+export default function RoomAssignmentTable({
+  day,
+}: Readonly<{ day: string }>) {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
   const [loading, setLoading] = useState<boolean>(true);
+  const [deleted, setDeleted] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [roomSchedule, setRoomSchedule] = useState<scheduleAttributes[]>([]);
-  const [selectedSchedule, setSelectedSchedule] =
-    useState<scheduleAttributes>();
+  // const [selectedSchedule, setSelectedSchedule] =
+  //   useState<scheduleAttributes>();
   const { schedule } = useScheduleStore();
+  const { selectedRoom } = useRoomStore();
+
   useEffect(() => {
     let filteredData = schedule.data;
+
+    // Filter by room name
+    const filteredSched = filteredData.filter(
+      (sched) => sched.room.roomName === selectedRoom?.roomName,
+    );
+
     // Filter by search query if provided
     if (searchQuery) {
-      filteredData = filteredData.filter((sched) =>
+      filteredData = filteredSched.filter((sched) =>
         sched.facultyName.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
 
+    // Filter by day
+    if (day) {
+      filteredData = filteredSched.filter((sched) => {
+        return sched.day === day; // Return the comparison result
+      });
+    }
+
     // Set filtered data to state
     setRoomSchedule(filteredData);
-  }, [schedule.data, searchQuery]);
-
+    setLoading(false);
+  }, [schedule.data, searchQuery, day, selectedRoom?.roomName, deleted]);
   // Calculate total pages
   const totalRecords = roomSchedule.length;
   const pageCount = Math.ceil(totalRecords / pageSize);
@@ -34,6 +58,20 @@ export default function RoomAssignmentTable() {
     (page - 1) * pageSize,
     page * pageSize,
   );
+  const { mutate: deleteUser, isPending } =
+    api.schedule.deleteSchedule.useMutation({
+      onSuccess: () => {
+        toast.success("Successfully Deleted.");
+        setDeleted((current) => !current);
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
+
+  const handleDelete = (id: number) => {
+    deleteUser({ id: id });
+  };
 
   const columns: TableColumn<scheduleAttributes>[] = [
     {
@@ -47,14 +85,16 @@ export default function RoomAssignmentTable() {
       formatter: (row) => <span>{row.section}</span>,
     },
     {
-      id: "beginTime",
+      id: "Begin Time",
       header: "Begin Time",
-      formatter: (row) => <span>{row.beginTime}</span>,
+      width: 100,
+      formatter: (row) => <span>{formatTimetoLocal(row.beginTime)}</span>,
     },
     {
-      id: "endTime",
+      id: "End Time",
       header: "End Time",
-      formatter: (row) => <span>{row.endTime}</span>,
+      width: 100,
+      formatter: (row) => <span>{formatTimetoLocal(row.endTime)}</span>,
     },
     {
       id: "day",
@@ -64,7 +104,16 @@ export default function RoomAssignmentTable() {
     {
       id: "action",
       header: "Action",
-      formatter: (row) => <span className="text-primary-red">Delete</span>,
+      formatter: (row) => (
+        <DeleteConfirmation
+          deleteHandler={() => handleDelete(row ? row?.id : 0)}
+          ButtonTrigger={
+            <Button className="h-7 w-20 items-center rounded-full bg-primary-red hover:bg-primary-red">
+              Delete
+            </Button>
+          }
+        />
+      ),
     },
   ];
 

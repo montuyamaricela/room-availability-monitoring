@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const ACCEPTED_FILES = ["text/csv"];
 
 export const csvSchema = z.object({
-  category: z.string().min(3, "Category is required"),
+  category: z.string(),
   file: z
     .any()
     .refine((files) => files?.length === 1, "Cvs is required")

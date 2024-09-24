@@ -3,7 +3,7 @@ import { type scheduleAttributes } from "~/data/models/schedule";
 import Table, { type TableColumn } from "../common/Table/Table";
 import { api } from "~/trpc/react";
 import { useRoomStore } from "~/store/useRoomStore";
-import { addHours, format, isPast, parse } from "date-fns";
+import { addHours, format, isPast, parse, subHours } from "date-fns";
 import toast from "react-hot-toast";
 import { Button } from "../ui/button";
 import { formatTimetoLocal } from "~/lib/timeSchedule";
@@ -93,10 +93,13 @@ export default function ScheduleTable({
           <Button
             disabled={
               isPast(
-                parse(
-                  formatTimetoLocal(new Date(row.endTime)),
-                  "h:mm a",
-                  new Date(),
+                subHours(
+                  parse(
+                    formatTimetoLocal(new Date(row.endTime)),
+                    "h:mm a",
+                    new Date(),
+                  ),
+                  1,
                 ),
               ) || selectedRoom?.status === "OCCUPIED"
             }

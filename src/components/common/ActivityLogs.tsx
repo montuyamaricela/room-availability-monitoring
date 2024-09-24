@@ -9,20 +9,21 @@ import { useEffect, useState } from "react";
 import { type auditLogsAttributes } from "~/data/models/auditLogs";
 import Table from "./Table/Table";
 import { useLogStore } from "~/store/useLogStore";
-import { format, parse } from "date-fns";
-import { formatTimetoLocal } from "~/lib/timeSchedule";
+import { format } from "date-fns";
 
-export default function ActivityLogs({ loading }: { loading: boolean }) {
+export default function ActivityLogs({
+  loading,
+}: Readonly<{ loading: boolean }>) {
   const { auditLog } = useLogStore();
 
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
   // Calculate total pages
-  const [log, setLogs] = useState<auditLogsAttributes[]>([]);
+  const [log, setLog] = useState<auditLogsAttributes[]>([]);
 
   useEffect(() => {
     const auditLogsData = auditLog.data;
-    setLogs(auditLogsData);
+    setLog(auditLogsData);
   }, [auditLog]);
 
   const totalRecords = log.length;
@@ -30,8 +31,6 @@ export default function ActivityLogs({ loading }: { loading: boolean }) {
 
   // Get records for the current page
   const paginatedRecords = log.slice((page - 1) * pageSize, page * pageSize);
-
-  // const [smsLogs, setSmsLogs] = useState<PaginatedList<smsLogs>>(initialPaginatedList);
 
   const columns: TableColumn<auditLogsAttributes>[] = [
     {
@@ -70,7 +69,8 @@ export default function ActivityLogs({ loading }: { loading: boolean }) {
           <p className="text-xl font-semibold text-gray-dark">ACTIVITY LOGS</p>
           <hr className="border-t-1 mb-7 mt-1 border border-gray-light" />
 
-          <div className="mb-7 flex flex-col justify-between gap-5 md:flex-row">
+          {/* will add functionalities here after the admin side */}
+          {/* <div className="mb-7 flex flex-col justify-between gap-5 md:flex-row">
             <Input
               type="text"
               id="search"
@@ -82,7 +82,7 @@ export default function ActivityLogs({ loading }: { loading: boolean }) {
               <DatePickerDemo />
               <DatePickerDemo />
             </div>
-          </div>
+          </div> */}
 
           <div>
             <Table<auditLogsAttributes>

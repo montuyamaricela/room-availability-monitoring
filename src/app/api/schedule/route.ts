@@ -13,6 +13,9 @@ export async function GET(req: NextRequest) {
 
   try {
     const roomSchedule = await db.roomSchedule.findMany({
+      orderBy: {
+        beginTime: "asc",
+      },
       include: {
         room: {
           select: {

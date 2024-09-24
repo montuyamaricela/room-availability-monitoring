@@ -31,7 +31,7 @@ export default function Map() {
           <ComboboxDemo />
         </div>
       </div>
-      <div className="flex gap-5 overflow-hidden">
+      <div className="flex flex-col-reverse gap-5 overflow-hidden lg:flex-row">
         <Legends />
         <RoomLayout />
       </div>

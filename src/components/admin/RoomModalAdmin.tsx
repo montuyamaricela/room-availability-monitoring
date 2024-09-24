@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import TabContentWrapper from "../common/Tab/TabContentWrapper";
 import TabWrapper from "../common/Tab/TabWrapper";
 import { useRoomStore } from "~/store/useRoomStore";
@@ -24,7 +24,7 @@ const RoomModalAdmin = ({
   open,
   setOpen,
 }: ModalWrapperTypes) => {
-  const [activeTab, setActiveTab] = useState<string>("room-details");
+  const [activeTab, setActiveTab] = useState<string>("room-assignment");
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -38,16 +38,13 @@ const RoomModalAdmin = ({
           <DialogTitle>Room Modal Admin</DialogTitle>
         </VisuallyHidden.Root>
       </DialogHeader>
-      <DialogContent className="w-[90%] max-w-3xl">
+      <DialogContent className="max-w-[60%]">
         <TabWrapper activeTab={activeTab} setActiveTab={setActiveTab}>
           <TabContentWrapper
             activeTab={activeTab}
             handleTabChange={handleTabChange}
           />
         </TabWrapper>
-        {/* <div className="my-auto max-h-[600px] min-h-[600px] w-full overflow-y-scroll  lg:max-h-[400px] lg:min-h-[400px]">
-            <TabContentWrapper tab_content={activeTab} />
-          </div> */}
       </DialogContent>
     </Dialog>
   );

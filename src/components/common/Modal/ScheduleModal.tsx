@@ -14,6 +14,9 @@ import { Button } from "~/components/ui/button";
 import DeleteConfirmation from "../Modal/DeleteConfirmation";
 import { day, time } from "~/data/models/data";
 import { formatTimetoLocal } from "~/lib/timeSchedule";
+import { api } from "~/trpc/react";
+import toast from "react-hot-toast";
+import { useScheduleStore } from "~/store/useScheduleStore";
 
 type roomModalProps = {
   open: boolean;
@@ -26,11 +29,14 @@ export default function ScheduleModal({
   setOpen,
   selectedSchedule,
 }: roomModalProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const { clearSchedule } = useScheduleStore();
+
   const form = useForm({
     resolver: Schedule.ScheduleSchemaResolver,
     defaultValues: Schedule.ScheduleSchemaDefaultValues,
   });
-  const [isLoading, setIsLoading] = useState(false);
+
   const onSubmit = async (data: Schedule.IScheduleSchema) => {
     setIsLoading(true);
     // const response = await fetch("/api/invite-user", {
@@ -67,7 +73,7 @@ export default function ScheduleModal({
     if (selectedSchedule) {
       form.setValue("facultyName", selectedSchedule?.facultyName);
       form.setValue("Section", selectedSchedule?.section);
-      form.setValue("CourseCode", selectedSchedule?.courseCode);
+      form.setValue("Subject", selectedSchedule?.courseCode);
       form.setValue("Day", selectedSchedule?.day);
       form.setValue("Room", selectedSchedule?.room.roomName);
       form.setValue("beginTime", formatTimetoLocal(selectedSchedule.beginTime));
@@ -75,8 +81,19 @@ export default function ScheduleModal({
     }
   }, [form, selectedSchedule]);
 
-  const deleteSchedule = (id: number | undefined) => {
-    console.log(id);
+  const { mutate: deleteUser, isPending } =
+    api.schedule.deleteSchedule.useMutation({
+      onSuccess: () => {
+        toast.success("Successfully Deleted.");
+        setOpen(false);
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
+
+  const handleDelete = (id: number) => {
+    deleteUser({ id: id });
   };
 
   return (
@@ -135,10 +152,12 @@ export default function ScheduleModal({
                   {isLoading ? "Saving..." : "Save"}
                 </Button>
                 <DeleteConfirmation
-                  deleteHandler={() => deleteSchedule(selectedSchedule?.id)}
+                  deleteHandler={() =>
+                    handleDelete(selectedSchedule ? selectedSchedule?.id : 0)
+                  }
                   ButtonTrigger={
                     <Button className="w-44 items-center bg-primary-red hover:bg-primary-red">
-                      Delete
+                      {isPending ? "Deleting..." : "Delete"}
                     </Button>
                   }
                 />

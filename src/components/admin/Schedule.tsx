@@ -21,21 +21,24 @@ import NotAllowed from "../common/NotAllowed";
 import { useSession } from "next-auth/react";
 import Spinner from "../common/Spinner";
 import Table from "../common/Table/Table";
-import { format, parse } from "date-fns";
 import { formatTimetoLocal } from "~/lib/timeSchedule";
+import UploadScheduleModal from "../common/Modal/UploadScheduleModal";
 
 export default function Schedule({ loading }: { loading: boolean }) {
   const session = useSession();
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
   const [open, setOpen] = useState<boolean>(false);
+  const [loadingStatus, setLoadingStatus] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
+  const [openScheduleUpload, setOpenScheduleUpload] = useState<boolean>(false);
   const [department, setDepartment] = useState<string>("");
   const [day, setDay] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [roomSchedule, setRoomSchedule] = useState<scheduleAttributes[]>([]);
   const [selectedSchedule, setSelectedSchedule] =
     useState<scheduleAttributes>();
-  const { schedule } = useScheduleStore();
+  const { schedule, clearSchedule } = useScheduleStore();
   useEffect(() => {
     let filteredData = schedule.data;
     // Filter by search query if provided
@@ -54,9 +57,10 @@ export default function Schedule({ loading }: { loading: boolean }) {
     if (day) {
       filteredData = filteredData.filter((sched) => sched.day === day);
     }
+
     // Set filtered data to state
     setRoomSchedule(filteredData);
-  }, [day, department, schedule.data, searchQuery]);
+  }, [day, searchQuery, message, schedule.data]);
 
   // Calculate total pages
   const totalRecords = roomSchedule.length;
@@ -67,7 +71,6 @@ export default function Schedule({ loading }: { loading: boolean }) {
     (page - 1) * pageSize,
     page * pageSize,
   );
-
   const columns: TableColumn<scheduleAttributes>[] = [
     {
       id: "facultyName",
@@ -123,7 +126,7 @@ export default function Schedule({ loading }: { loading: boolean }) {
       id: "Action",
       header: "Action",
       formatter: (row) => (
-        <span className="flex justify-center">
+        <span className="">
           <Button
             onClick={() => openModal(row.id)}
             className="bg-primary-green px-8 hover:bg-primary-green"
@@ -135,9 +138,6 @@ export default function Schedule({ loading }: { loading: boolean }) {
     },
   ];
 
-  const [loadingStatus, setLoadingStatus] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>("");
-
   const openModal = (id: number) => {
     const selectedSched = roomSchedule.find((item) => item.id === id);
     setSelectedSchedule(selectedSched);
@@ -147,6 +147,7 @@ export default function Schedule({ loading }: { loading: boolean }) {
   useEffect(() => {
     if (message) {
       toast.success(message);
+      clearSchedule();
     }
   }, [message]);
   if (session.status === "loading") {
@@ -193,22 +194,21 @@ export default function Schedule({ loading }: { loading: boolean }) {
                   placeholder="Search..."
                 />
               </div>
-              {session.data.user.role === "Super Admin" && (
-                <DeleteConfirmation
-                  deleteHandler={() =>
-                    deleteSchedule({ setLoading: setLoadingStatus, setMessage })
-                  }
-                  ButtonTrigger={
-                    <Button className="items-center bg-primary-green hover:bg-primary-green">
-                      {loadingStatus ? "Resetting..." : "RESET SCHEDULES"}
-                    </Button>
-                  }
-                />
-              )}
+              {/* /// here */}
+              <Button
+                onClick={() => setOpenScheduleUpload(true)}
+                className="bg-primary-green hover:bg-primary-green"
+              >
+                Upload Schedule
+              </Button>
             </div>
           </div>
 
           <div>
+            <UploadScheduleModal
+              open={openScheduleUpload}
+              setOpen={setOpenScheduleUpload}
+            />
             <Table<scheduleAttributes>
               loading={loading}
               columns={columns}
@@ -221,6 +221,23 @@ export default function Schedule({ loading }: { loading: boolean }) {
               }}
               onChangePage={(page) => setPage(page)}
             />
+            <div className="flex justify-end">
+              {session.data.user.role === "Super Admin" && (
+                <DeleteConfirmation
+                  deleteHandler={() =>
+                    deleteSchedule({
+                      setLoading: setLoadingStatus,
+                      setMessage,
+                    })
+                  }
+                  ButtonTrigger={
+                    <Button className="mt-5 bg-primary-green hover:bg-primary-green">
+                      {loadingStatus ? "Resetting..." : "RESET SCHEDULES"}
+                    </Button>
+                  }
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

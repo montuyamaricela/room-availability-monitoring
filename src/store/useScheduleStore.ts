@@ -6,9 +6,11 @@ import { initialPaginatedList, type PaginatedList } from "~/lib/types";
 interface scheduleState {
   schedule: PaginatedList<scheduleAttributes>;
   setSchedule: (schedule: PaginatedList<scheduleAttributes>) => void;
+  clearSchedule: () => void; // New clearSchedule method
 }
 
 export const useScheduleStore = create<scheduleState>((set) => ({
   schedule: initialPaginatedList,
   setSchedule: (schedule) => set({ schedule }), // Correctly setting the selected room
+  clearSchedule: () => set({ schedule: initialPaginatedList }),
 }));

@@ -11,7 +11,7 @@ export const ScheduleSchema = z.object({
   Room: z.string(),
   Day: z.string(),
   beginTime: z.string().min(1, "Start time is required"),
-  endTime: z.string().min(1, "Begin time is required"),
+  endTime: z.string().min(1, "End time is required"),
 });
 export type IScheduleSchema = z.infer<typeof ScheduleSchema>;
 export const ScheduleSchemaResolver = zodResolver(ScheduleSchema);
@@ -32,7 +32,7 @@ export const TimeInSchema = z.object({
   Room: z.string(),
   Day: z.string(),
   beginTime: z.string().min(1, "Start time is required"),
-  endTime: z.string().min(1, "Begin time is required"),
+  endTime: z.string().min(1, "End time is required"),
   careOf: z.string().min(3, "Key Borrowed by is required"),
 });
 

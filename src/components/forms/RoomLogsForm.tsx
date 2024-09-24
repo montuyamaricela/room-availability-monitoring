@@ -6,7 +6,6 @@ import { FormCombobox, FormInput } from "../ui/form-components";
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import * as scheduleSchema from "../../validations/ScheduleSchema";
-import { time } from "~/data/models/data";
 import { filterTimeSlots, generateTimeSlots } from "~/lib/timeSchedule";
 import { useScheduleStore } from "~/store/useScheduleStore";
 import { useEffect, useState } from "react";
@@ -16,15 +15,16 @@ import toast from "react-hot-toast";
 export default function RoomLogsForm({
   faculty,
   setIsSubmitted,
-}: {
+}: Readonly<{
   faculty: {
     label: string;
     value: string;
   }[];
   setIsSubmitted: (submitted: boolean) => void;
-}) {
+}>) {
   const { schedule } = useScheduleStore();
   const { selectedRoom } = useRoomStore();
+  const [loading, setLoading] = useState<boolean>(false);
   const [availableSlots, setAvailableSlots] = useState([
     {
       label: "",
@@ -51,6 +51,7 @@ export default function RoomLogsForm({
   }, [schedule, selectedRoom?.roomName]);
 
   const onSubmit = async (data: scheduleSchema.IScheduleSchema) => {
+    setLoading(true);
     const response = await fetch("/api/room-schedule", {
       method: "POST",
       headers: {
@@ -76,6 +77,7 @@ export default function RoomLogsForm({
     }
     form.reset();
     setIsSubmitted(true);
+    setLoading(false);
   };
   return (
     <Form {...form}>
@@ -107,7 +109,7 @@ export default function RoomLogsForm({
           />
         </div>
         <Button className="w-44 bg-green-light hover:bg-primary-green">
-          + Add
+          {loading ? "Adding..." : "+ Add"}
         </Button>
       </form>
     </Form>
