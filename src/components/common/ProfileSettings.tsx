@@ -13,7 +13,6 @@ import * as authSchema from "../../validations/authValidationSchema";
 
 export default function ProfileSettings() {
   const session = useSession();
-  console.log(session);
 
   const form = useForm({
     resolver: authSchema.CreateAccountResolver,
@@ -31,10 +30,10 @@ export default function ProfileSettings() {
             <form>
               <div className="mt-6 flex flex-col items-center justify-center gap-3 md:flex-row md:gap-10">
                 <Image src={avatar} alt="Avatar" width={120} />
-                <FormInput 
-                  form={form} 
-                  name="picture" 
-                  label="Change Profile Picture" 
+                <FormInput
+                  form={form}
+                  name="picture"
+                  label="Change Profile Picture"
                   type="file"
                 />
                 <div className="flex items-center gap-2">
@@ -46,10 +45,10 @@ export default function ProfileSettings() {
               </div>
               <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <FormInput form={form} name="lastName" label="Last Name" />
-                <FormInput 
-                  form={form} 
-                  name="firstName" 
-                  label="First Name" 
+                <FormInput
+                  form={form}
+                  name="firstName"
+                  label="First Name"
                   // setValue={session?.data?.user.name}
                 />
                 <FormInput form={form} name="middleName" label="Middle Name" />
@@ -60,7 +59,7 @@ export default function ProfileSettings() {
                   placeholder="Select Department"
                   name={"department"}
                   data={departments}
-                /> 
+                />
                 <FormInput form={form} name="email" label="Email" />
               </div>
               <Button className="mx-auto mt-6 block items-center bg-green-light font-bold hover:bg-green-900 lg:float-right">

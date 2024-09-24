@@ -10,6 +10,7 @@ import { formatTimetoLocal } from "~/lib/timeSchedule";
 import TimeInConfirmation from "../common/Modal/TimeInConfirmation";
 import roomTimeOut from "~/hooks/roomTimeOut";
 import TimeoutConfirmation from "../common/Modal/TimeoutConfirmation";
+import { useScheduleStore } from "~/store/useScheduleStore";
 
 export default function ScheduleTable({
   isSubmitted,
@@ -18,28 +19,53 @@ export default function ScheduleTable({
   isSubmitted: boolean;
   setSubmitted: (submitted: boolean) => void;
 }) {
-  const { rooms, selectedRoom } = useRoomStore();
   const currentDate = new Date();
 
+  const { rooms, selectedRoom } = useRoomStore();
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const { schedule } = useScheduleStore();
   // Time in confirmation modal state
   const [open, setOpen] = useState<boolean>(false);
 
-  const { mutate, isPending, data, error } =
-    api.schedule.getRoomSchedule.useMutation({
-      onSuccess: (data) => {
-        setRoomSchedule(data);
-        setSubmitted(false);
-      },
-      onError: (error) => {
-        console.error("Failed to fetch schedule:", error);
-        toast.error(error.message);
-      },
-    });
+  // const { mutate, isPending, data, error } =
+  //   api.schedule.getRoomSchedule.useMutation({
+  //     onSuccess: (data) => {
+  //       setRoomSchedule(data);
+  //       setSubmitted(false);
+  //     },
+  //     onError: (error) => {
+  //       console.error("Failed to fetch schedule:", error);
+  //       toast.error(error.message);
+  //     },
+  //   });
 
   const [roomSchedule, setRoomSchedule] = useState<scheduleAttributes[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(5);
   // Calculate total pages
+
+  useEffect(() => {
+    let filteredData = schedule.data;
+
+    // Filter by room name
+    const filteredSched = filteredData.filter(
+      (sched) => sched.room.roomName === selectedRoom?.roomName,
+    );
+
+    filteredData = filteredSched.filter((sched) => {
+      return sched.day === format(currentDate, "EEEE"); // Return the comparison result
+    });
+
+    setRoomSchedule(filteredData);
+    setLoading(false);
+    // mutate({
+    //   room: selectedRoom?.id ?? "",
+    //   day: format(currentDate, "EEEE"),
+    // });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSubmitted, schedule.data]);
+
   const totalRecords = roomSchedule.length;
   const pageCount = Math.ceil(totalRecords / pageSize);
 
@@ -52,13 +78,6 @@ export default function ScheduleTable({
   const [selectedSchedule, setSelectedSchedule] =
     useState<scheduleAttributes>();
 
-  useEffect(() => {
-    mutate({
-      room: selectedRoom?.id ?? "",
-      day: format(currentDate, "EEEE"),
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSubmitted]);
   const columns: TableColumn<scheduleAttributes>[] = [
     {
       id: "facultyName",
@@ -98,16 +117,20 @@ export default function ScheduleTable({
           {/* disable the button if time is past end time  */}
           <Button
             disabled={
-              isPast(
+              !isPast(
                 subHours(
                   parse(
-                    formatTimetoLocal(new Date(row.endTime)),
+                    formatTimetoLocal(new Date(row.beginTime)),
                     "h:mm a",
                     new Date(),
                   ),
                   1,
                 ),
-              ) || selectedRoom?.status === "OCCUPIED"
+              ) ||
+              isPast(
+                parse(formatTimetoLocal(row.endTime), "h:mm a", new Date()),
+              ) ||
+              selectedRoom?.status === "OCCUPIED"
             }
             onClick={() => {
               setSelectedSchedule(row);
@@ -143,7 +166,7 @@ export default function ScheduleTable({
                   ) ||
                   selectedRoom?.status === "AVAILABLE"
                 }
-                className="hover h-6 rounded-full bg-primary-green text-xs hover:bg-primary-green"
+                className="hover h-6 rounded-full bg-green-light text-xs hover:bg-primary-green"
               >
                 Time Out
               </Button>
@@ -162,7 +185,7 @@ export default function ScheduleTable({
         selectedSchedule={selectedSchedule ?? null}
       />
       <Table<scheduleAttributes>
-        loading={isPending}
+        loading={loading}
         columns={columns}
         records={paginatedRecords}
         pagination={{

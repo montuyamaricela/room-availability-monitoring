@@ -27,7 +27,6 @@ export function RoomLayout() {
       const roomId = event.target.getAttribute("id");
 
       filteredRoomsByBuilding.map((item: Room) => {
-        console.log(roomId);
         if (item.id === roomId) {
           setOpen(true);
           setSelectedRoom(item);
@@ -42,7 +41,6 @@ export function RoomLayout() {
     selectedBuilding,
   );
 
-  console.log(selectedBuilding);
   // Filter the rooms based on the active filters
   const filteredRooms = filteredRoomsByBuilding?.filter((room: any) => {
     if (filters.length >= 1) {

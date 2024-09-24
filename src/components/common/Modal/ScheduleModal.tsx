@@ -65,7 +65,6 @@ export default function ScheduleModal({
     //   toast.error(responseData?.message || "Something went wrong");
     //   console.error("Registration failed");
     // }
-    console.log(data);
     setIsLoading(false);
   };
 
