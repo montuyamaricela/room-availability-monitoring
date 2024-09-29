@@ -49,7 +49,7 @@ const RoomModalSecurity = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{ButtonTrigger}</DialogTrigger>
-      <DialogContent className="max-w-[60%]">
+      <DialogContent className="mx-auto md:max-w-[70%] max-w-[95%] max-h-[95%] overflow-y-auto">
         <DialogHeader className="rounded-t-2xl bg-primary-green py-3">
           <DialogTitle className="text-center text-2xl font-medium uppercase text-white">
             Log

@@ -33,7 +33,7 @@ export default function TabContentWrapper({
   const renderItem = () => {
     if (activeTab === "room-information") {
       return (
-        <div className="my-auto flex h-full w-full flex-col items-center justify-center">
+        <div className="my-auto mx-auto flex h-full w-full flex-col sm:items-center sm:justify-center">
           {/* <RoomInfo /> */}
           <p className="mb-5 text-center text-xl font-semibold">
             {" "}
@@ -61,7 +61,7 @@ export default function TabContentWrapper({
       <TabsContent
         value={activeTab}
         onClick={() => handleTabChange(activeTab)}
-        className="h-full p-5"
+        className="sm:h-[90%] p-5"
       >
         {renderItem()}
       </TabsContent>

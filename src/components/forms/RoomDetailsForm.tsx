@@ -243,7 +243,7 @@ export default function RoomDetailsForm() {
     <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="w-full gap-3 sm:grid-cols-2 md:grid lg:grid-cols-3">
+          <div className="w-full gap-5 flex-col flex sm:flex-row">
             <FormInput
               form={form}
               type="number"
@@ -256,6 +256,9 @@ export default function RoomDetailsForm() {
               name="ElectricFan"
               label="Electric Fan: "
             />
+          </div>
+            
+          <div className="w-full gap-5 mt-5 flex-col flex sm:flex-row">
             <FormInput
               form={form}
               type="number"
@@ -263,7 +266,6 @@ export default function RoomDetailsForm() {
               disabled={true}
               label="Available Computers: "
             />
-            {/* Conditional rendering of Functioning and Non-Functioning based on Lecture checkbox */}
             <FormInput
               form={form}
               type="number"
@@ -279,6 +281,7 @@ export default function RoomDetailsForm() {
               disabled={form.watch("Lecture") || !form.watch("Laboratory")}
             />
           </div>
+            {/* Conditional rendering of Functioning and Non-Functioning based on Lecture checkbox */}
           <div className="mt-5 flex flex-col gap-5 sm:flex-row">
             <FormCheckbox form={form} name="Disable" label="Disable" />
             <FormCheckbox
@@ -306,7 +309,7 @@ export default function RoomDetailsForm() {
               label="With TV"
             />
           </div>
-          <div className="my-6 flex justify-end">
+          <div className="mt-6 flex justify-center sm:justify-end">
             <div>
               <Button className="bg-green-light px-10 hover:bg-primary-green">
                 {isLoading ? "Saving..." : "Save"}
