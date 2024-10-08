@@ -5,6 +5,8 @@ import Topbar from "~/components/common/Topbar";
 import { Poppins } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import Provider from "~/components/common/Provider";
+import { Suspense } from "react";
+import Spinner from "~/components/common/Spinner";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "700"],
@@ -27,13 +29,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.className}`}>
       <body>
-        <Provider>
-          <TRPCReactProvider>
-            <Topbar />
-            {children}
-          </TRPCReactProvider>
-          <Toaster />
-        </Provider>
+        <Suspense fallback={<Spinner />}>
+          <Provider>
+            <TRPCReactProvider>
+              <Topbar />
+              {children}
+            </TRPCReactProvider>
+            <Toaster />
+          </Provider>
+        </Suspense>
       </body>
     </html>
   );
