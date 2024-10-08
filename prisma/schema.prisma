@@ -26,6 +26,7 @@ model User {
   password            String  
   image               String?
   status              String
+  ActivityLogs        ActivityLogs[]
 }
 
 model VerificationToken {
@@ -45,6 +46,13 @@ model CreationToken {
   expires             DateTime
   @@unique([identifier, token])
 }
+
+model ForgotPasswordToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  @@unique([identifier, token])
+} 
 
 model Room {
   id                     String @unique
@@ -68,11 +76,11 @@ model RoomSchedule {
   id          Int    @id @default(autoincrement())
   roomId      String 
   room        Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  // faculties   Faculty[] @relation("ScheduleFaculties")
   facultyName String
   courseCode  String
   section     String
   day         String
+  department  String?
   isTemp      Boolean
   beginTime   DateTime @db.Time     
   endTime     DateTime @db.Time 
@@ -80,7 +88,7 @@ model RoomSchedule {
 
 
 
-model ActivityLogs {
+model RoomLogs {
   id          Int      @id @default(autoincrement())
   dateTime    DateTime @default(now())
   facultyName String
@@ -90,12 +98,22 @@ model ActivityLogs {
   careOf      String
 }
 
+model ActivityLogs {
+  id          Int      @id @default(autoincrement())
+  dateTime    DateTime @default(now())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  activity    String
+}
+
 model Feedbacks {
-  id         Int      @id @default(autoincrement())
-  dateTime   DateTime @default(now())
-  department String
-  message    String
-  status     String
+  id            Int      @id @default(autoincrement())
+  dateTime      DateTime @default(now())
+  department    String
+  message       String
+  acknowledgeBy String?
+  acknowledged  Boolean    @default(false)
+  acknowledgedAt     DateTime   @updatedAt
 }
 
 

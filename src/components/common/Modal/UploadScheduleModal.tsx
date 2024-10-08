@@ -23,6 +23,8 @@ import {
 import icon from "/public/images/icon/image.png";
 import Image from "next/image";
 import { type Header } from "../DynamicTable";
+import { useActivityLog } from "~/lib/createLogs";
+import { useSession } from "next-auth/react";
 
 type UploadScheduleModalProps = {
   open: boolean;
@@ -33,9 +35,11 @@ export default function UploadScheduleModal({
   open,
   setOpen,
 }: UploadScheduleModalProps) {
+  const session = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setSubmitted] = useState(false);
   const [headers, setHeaders] = useState<Header[]>([]); // Initialize with the correct type
+  const { logActivity } = useActivityLog();
 
   const form = useForm({
     resolver: csvSchema.csvDataResolver,
@@ -74,6 +78,9 @@ export default function UploadScheduleModal({
         }
         toast.success(responseData?.message);
         form.reset();
+        if (session) {
+          logActivity(session?.data?.user.id ?? "", "uploaded schedule");
+        }
       } else {
         toast.error("File upload failed");
         console.error("File upload failed");

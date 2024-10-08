@@ -11,6 +11,8 @@ import TimeInConfirmation from "../common/Modal/TimeInConfirmation";
 import roomTimeOut from "~/hooks/roomTimeOut";
 import TimeoutConfirmation from "../common/Modal/TimeoutConfirmation";
 import { useScheduleStore } from "~/store/useScheduleStore";
+import { useSession } from "next-auth/react";
+import { useRoomLog } from "~/lib/createLogs";
 
 export default function ScheduleTable({
   isSubmitted,
@@ -20,29 +22,22 @@ export default function ScheduleTable({
   setSubmitted: (submitted: boolean) => void;
 }) {
   const currentDate = new Date();
+  const session = useSession();
+  const { logActivity } = useRoomLog();
 
   const { rooms, selectedRoom } = useRoomStore();
   const [loading, setLoading] = useState<boolean>(true);
-
+  const [isDeleted, setDeleted] = useState<boolean>(false);
   const { schedule } = useScheduleStore();
   // Time in confirmation modal state
   const [open, setOpen] = useState<boolean>(false);
 
-  // const { mutate, isPending, data, error } =
-  //   api.schedule.getRoomSchedule.useMutation({
-  //     onSuccess: (data) => {
-  //       setRoomSchedule(data);
-  //       setSubmitted(false);
-  //     },
-  //     onError: (error) => {
-  //       console.error("Failed to fetch schedule:", error);
-  //       toast.error(error.message);
-  //     },
-  //   });
-
   const [roomSchedule, setRoomSchedule] = useState<scheduleAttributes[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(5);
+  const [selectedSchedule, setSelectedSchedule] =
+    useState<scheduleAttributes>();
+
   // Calculate total pages
 
   useEffect(() => {
@@ -75,8 +70,19 @@ export default function ScheduleTable({
     page * pageSize,
   );
 
-  const [selectedSchedule, setSelectedSchedule] =
-    useState<scheduleAttributes>();
+  useEffect(() => {
+    if (selectedSchedule?.roomId) {
+      logActivity(
+        session?.data?.user?.firstName + " " + session?.data?.user?.lastName,
+        "timed out",
+        selectedSchedule.facultyName,
+        selectedSchedule.facultyName,
+        selectedSchedule?.roomId,
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDeleted]);
 
   const columns: TableColumn<scheduleAttributes>[] = [
     {
@@ -143,7 +149,10 @@ export default function ScheduleTable({
 
           {/* disable the button if past the end time + 1 hour */}
           <TimeoutConfirmation
-            deleteHandler={() => roomTimeOut(row, setSubmitted)}
+            deleteHandler={() => {
+              setSelectedSchedule(row);
+              void roomTimeOut(row, setSubmitted, setDeleted);
+            }}
             ButtonTrigger={
               <Button
                 disabled={

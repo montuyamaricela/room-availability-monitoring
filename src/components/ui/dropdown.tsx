@@ -70,11 +70,11 @@ export function ComboboxDemo() {
 }
 const buildingsList = [
   {
-    value: "PANCHO_HALL",
+    value: "PANCHO HALL",
     label: "Pancho Hall",
   },
   {
-    value: "BSBA",
+    value: "CBA",
     label: "CBA Building",
   },
   {

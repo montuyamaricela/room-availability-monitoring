@@ -1,16 +1,98 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import logo from "/public/images/logo/image.png";
 import { Container } from "../common/Container";
-// import { Form } from "../ui/form";
-// import { FormInput } from "../ui/form-components";
-// import { Button } from "../ui/button";
+import { api } from "~/trpc/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { useActivityLog } from "~/lib/createLogs";
 
 export default function Resetpassword() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [isTokenValid, setIsTokenValid] = useState(false);
+  const [token, setToken] = useState("");
+  const [email, setEmail] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { logActivity } = useActivityLog();
+
+  const getData = api.user.getForgotPasswordData.useMutation({
+    onSuccess: (data) => {
+      setIsTokenValid(true);
+      setEmail(data.email);
+      setIsLoading(false);
+    },
+    onError: () => {
+      setIsTokenValid(false);
+      setIsLoading(false);
+    },
+  });
+
+  const resetPass = api.user.resetPassword.useMutation({
+    onSuccess: (data) => {
+      logActivity(data ?? "", "resetted their password");
+      setTimeout(() => {
+        toast.success("Successfully updated password");
+        router.push("/signin");
+      }, 1000); // 3 seconds delay before redirecting
+    },
+    onError: () => {
+      setIsTokenValid(false);
+      setIsLoading(false);
+    },
+  });
+
+  useEffect(() => {
+    // Get the token from the URL
+    const token = searchParams.get("token");
+
+    if (token) {
+      setToken(token);
+      getData.mutate({ token });
+    } else {
+      // No token present in the URL
+      setIsTokenValid(false);
+      setIsLoading(false);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isTokenValid) {
+        toast.error("Invalid or missing token");
+        setTimeout(() => {
+          router.push("/");
+        }, 3000); // 3 seconds delay before redirecting
+      }
+    }
+  }, [isLoading, isTokenValid, router]);
+
+  const resetPasswordHanlder = () => {
+    if (password === "" && confirmPassword === "") {
+      toast.error("Password fields are required. Please try again");
+    } else if (password.length < 8 || confirmPassword.length < 8) {
+      toast.error("Password must have atleast 8 characters");
+    } else if (password != confirmPassword) {
+      toast.error("Password does not match. Please try again.");
+    } else {
+      setIsLoading(true);
+      resetPass.mutate({ email, password, token });
+    }
+  };
+
   return (
     <Container className="my-auto flex h-screen items-center bg-primary-green">
-      <div className="flex justify-center items-center ">
-         <div className="flex w-full flex-col rounded-lg shadow-lg md:flex-row xl:w-4/5">
+      <div className="flex items-center justify-center ">
+        <div className="flex w-full flex-col rounded-lg shadow-lg md:flex-row xl:w-4/5">
           <div className="flex flex-col items-center gap-2 rounded-t-2xl bg-gradient-to-b from-green-400 to-green-800 p-8 drop-shadow-md sm:gap-5 sm:p-10 md:w-1/2 md:items-start md:rounded-l-2xl md:rounded-tr-none lg:p-16">
             <Image
               src={logo}
@@ -27,31 +109,40 @@ export default function Resetpassword() {
             </p>
           </div>
           <div className="rounded-b-2xl  bg-white md:w-1/2 md:rounded-r-2xl md:rounded-bl-none">
-            <div className="flex h-full w-full  items-center justify-center p-8 sm:p-10">
-              {/* Uncomment mo nalang pag gagamitin mo na */}
-              {/* <Form {...form}>
-                <form className="w-full space-y-5">
-                  <FormInput form={form} name="email" label="Email" />
-
-                  <FormInput
-                    form={form}
-                    name="newpassword"
-                    type="password"
-                    label="New Password"
-                  />
-
-                  <FormInput
-                    form={form}
-                    name="confirmpassword"
-                    type="password"
-                    label="Confirm Password"
-                  />
-
-                  <div className="flex justify-center">
-                    <Button className="w-3/4 items-center bg-green-dark hover:bg-green-900 sm:w-2/6">RESET</Button>
-                  </div>
-                </form>
-              </Form> */}
+            <div className="flex h-full w-full flex-col justify-center gap-5 p-8 sm:p-10">
+              <div className="">
+                <Label>Email Address</Label>
+                <Input
+                  name="email"
+                  type="email"
+                  disabled
+                  defaultValue={email}
+                />
+              </div>
+              <div className="">
+                <Label>Password</Label>
+                <Input
+                  name="password"
+                  type="password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              <div className="">
+                <Label>Confirm Password</Label>
+                <Input
+                  name="confirm password"
+                  type="password"
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+              </div>
+              <div className="flex justify-center">
+                <Button
+                  onClick={resetPasswordHanlder}
+                  className="w-3/4 items-center bg-green-dark hover:bg-green-900 sm:w-2/6"
+                >
+                  {isLoading ? "Updating..." : "Update"}
+                </Button>
+              </div>
             </div>
           </div>
         </div>

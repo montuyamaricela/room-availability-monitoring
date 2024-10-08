@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { error } from "console";
 import { format, parse } from "date-fns";
 import { getServerSession } from "next-auth";
 import { NextResponse, type NextRequest } from "next/server";
@@ -33,6 +32,7 @@ export async function POST(req: NextRequest) {
               day: body.Day,
             },
           });
+
           // Check for overlaps with existing schedules
           const hasOverlap = existingSchedules.some((existingSchedule) =>
             isOverlapping(
@@ -63,18 +63,6 @@ export async function POST(req: NextRequest) {
 
         // Call the createRoomSchedule function
         await createRoomSchedule();
-        // await db.roomSchedule.create({
-        //   data: {
-        //     roomId: room.id,
-        //     facultyName: body.facultyName,
-        //     courseCode: body.Subject,
-        //     section: body.Section,
-        //     day: body.Day,
-        //     beginTime: parseTime(convertToTimeFormat(body.beginTime)),
-        //     endTime: parseTime(convertToTimeFormat(body.endTime)),
-        //     isTemp: body.isTemp,
-        //   },
-        // });
       }
     } else {
       if (room && body.action === "Add Schedule") {
@@ -117,6 +105,51 @@ export async function POST(req: NextRequest) {
 
         // Call the createRoomSchedule function
         await createRoomSchedule();
+      } else if (room && body.action === "Update Schedule") {
+        const createRoomSchedule = async () => {
+          // Fetch existing schedules for the same room and day
+          const existingSchedules = await db.roomSchedule.findMany({
+            where: {
+              roomId: room.id,
+              day: body.Day,
+              NOT: {
+                id: body.scheduleID,
+              },
+            },
+          });
+
+          // Check for overlaps with existing schedules
+          const hasOverlap = existingSchedules.some((existingSchedule) =>
+            isOverlapping(
+              parseTime(convertToTimeFormat(body.beginTime)),
+              parseTime(convertToTimeFormat(body.endTime)),
+              existingSchedule.beginTime,
+              existingSchedule.endTime,
+            ),
+          );
+
+          if (hasOverlap) {
+            throw new Error("Time conflict. Please try again.");
+          }
+
+          await db.roomSchedule.update({
+            where: {
+              id: body.scheduleID,
+            },
+            data: {
+              facultyName: body.facultyName,
+              courseCode: body.Subject,
+              section: body.Section,
+              day: body.Day,
+              beginTime: parseTime(convertToTimeFormat(body.beginTime)),
+              endTime: parseTime(convertToTimeFormat(body.endTime)),
+              isTemp: body.isTemp,
+            },
+          });
+        };
+
+        // Call the createRoomSchedule function
+        await createRoomSchedule();
       }
 
       if (body.isTemp && body.action === "Time out") {
@@ -135,18 +168,6 @@ export async function POST(req: NextRequest) {
         },
         data: {
           status: body.action === "Time in" ? "OCCUPIED" : "AVAILABLE",
-        },
-      });
-    }
-    // create room activty log only if the post req is not for adding perm sched
-    if (body.action != "Add Schedule") {
-      await db.activityLogs.create({
-        data: {
-          careOf: body.careOf,
-          facultyName: body.facultyName,
-          roomId: body.roomId,
-          loggedBy: session.user.name,
-          activity: body.action,
         },
       });
     }

@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
 
     // If rooms are found, return them
     return NextResponse.json({
-      rooms: rooms,
+      rooms,
     });
   } catch (error) {
     console.error("Error Getting data:", error);

@@ -37,11 +37,10 @@ export default function Page() {
 
         const scheduleData = await schedResp.json();
         setSchedule(scheduleData as PaginatedList<scheduleAttributes>);
-        const data: Room[] = await response.json();
-
+        const data = await response.json();
         // Check if the new data is different before updating the state
         if (JSON.stringify(data) !== JSON.stringify(rooms)) {
-          setRooms(data); // Only update if there's a change
+          setRooms(data.rooms as unknown as Room[]); // Only update if there's a change
         }
       } catch (error) {
         console.error("Error fetching rooms:", error);
@@ -52,12 +51,12 @@ export default function Page() {
     setLoading(true);
     fetchRooms().finally(() => setLoading(false)); // Ensure loading is updated
 
-    // Set up polling every 1 second
+    // Set up polling every 5 second
     intervalId = setInterval(fetchRooms, 5000);
 
     // Cleanup interval on unmount
     return () => clearInterval(intervalId);
-  }, [rooms, setRooms, setSchedule]); // Add rooms dependency to prevent unnecessary re-renders
+  }, []); // Add rooms dependency to prevent unnecessary re-renders
 
   return <>{loading ? <Spinner /> : <Map />} </>;
 }

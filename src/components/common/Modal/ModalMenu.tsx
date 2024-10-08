@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import {
@@ -15,15 +16,24 @@ import avatar from "/public/images/avatar/image.png";
 import Link from "next/link";
 import { Button } from "../../ui/button";
 import { signOut } from "next-auth/react";
+import { useActivityLog } from "~/lib/createLogs";
+import { useUserInfoStore } from "~/store/useUserInfoStore";
 
 type ModalProps = {
-  name?: string | null | undefined;
-  email?: string | null | undefined;
+  firstName?: string | null | undefined;
   id?: string | undefined;
   role?: string | undefined;
 };
 
-export function ModalMenu({ name, email, id, role }: ModalProps) {
+export default function ModalMenu({ firstName, id, role }: ModalProps) {
+  const { logActivity } = useActivityLog();
+  const { user } = useUserInfoStore();
+
+  const signOutHandler = async () => {
+    void signOut();
+    logActivity(id ?? "", "logged out");
+  };
+
   return (
     <>
       {id ? (
@@ -38,10 +48,14 @@ export function ModalMenu({ name, email, id, role }: ModalProps) {
           <DropdownMenuContent className="w-full">
             <DropdownMenuLabel className="flex items-center gap-2">
               <Avatar>
-                <Image src={avatar} alt="Avatar" />
+                <img
+                  src={user?.image ?? avatar.src}
+                  alt="Avatar"
+                  className="rounded-full border-2 border-primary-green"
+                />
               </Avatar>
               <div className="text-sm text-gray-dark">
-                Welcome, {name?.split(" ")[0]}
+                Welcome, {user?.firstName ?? firstName}
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -60,13 +74,8 @@ export function ModalMenu({ name, email, id, role }: ModalProps) {
                 </DropdownMenuItem>
               </>
             )}
-            {/* {role === "Super Admin" && (
-              <DropdownMenuItem>
-                <Link href="/admin/upload">Data Import</Link>
-              </DropdownMenuItem>
-            )} */}
             <DropdownMenuItem>
-              <Link href="/admin/activity-log">Activity Log</Link>
+              <Link href="/admin/logs">Logs</Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Link href="/admin/feedback">Feedback</Link>
@@ -80,7 +89,7 @@ export function ModalMenu({ name, email, id, role }: ModalProps) {
 
             <DropdownMenuItem>
               <div
-                onClick={() => signOut()}
+                onClick={signOutHandler}
                 className="h-5 w-full  font-normal text-gray-dark hover:cursor-pointer"
               >
                 Logout

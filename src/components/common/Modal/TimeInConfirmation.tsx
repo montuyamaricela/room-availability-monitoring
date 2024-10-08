@@ -24,6 +24,8 @@ import { Button } from "~/components/ui/button";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { formatTimetoLocal } from "~/lib/timeSchedule";
 import toast from "react-hot-toast";
+import { useRoomLog } from "~/lib/createLogs";
+import { useSession } from "next-auth/react";
 
 type TimeInConfirmationProps = {
   open: boolean;
@@ -36,7 +38,9 @@ export default function TimeInConfirmation({
   setOpen,
   selectedSchedule,
 }: TimeInConfirmationProps) {
+  const session = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const { logActivity } = useRoomLog();
 
   const form = useForm({
     resolver: scheduleSchema.TimeInSchemaResolver,
@@ -62,6 +66,15 @@ export default function TimeInConfirmation({
 
     if (response.ok) {
       toast.success("Timed in sucessfully!");
+      if (selectedSchedule?.roomId) {
+        logActivity(
+          session?.data?.user.firstName + " " + session?.data?.user.lastName,
+          "timed in",
+          data.careOf,
+          data.facultyName,
+          selectedSchedule?.roomId,
+        );
+      }
     } else {
       toast.error(responseData?.message || "Something went wrong");
       console.error("Something went wrong");
@@ -78,7 +91,6 @@ export default function TimeInConfirmation({
       form.setValue("Subject", selectedSchedule?.courseCode);
       form.setValue("beginTime", formatTimetoLocal(selectedSchedule.beginTime));
       form.setValue("careOf", selectedSchedule.facultyName);
-
       form.setValue("endTime", formatTimetoLocal(selectedSchedule.endTime));
     }
   }, [form, selectedSchedule]);

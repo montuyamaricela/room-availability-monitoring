@@ -12,6 +12,8 @@ import { useScheduleStore } from "~/store/useScheduleStore";
 import { useEffect, useState } from "react";
 import { filterTimeSlots, generateTimeSlots } from "~/lib/timeSchedule";
 import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
+import { useActivityLog } from "~/lib/createLogs";
 
 export default function RoomAssignmentForm({
   faculty,
@@ -25,6 +27,10 @@ export default function RoomAssignmentForm({
 }) {
   const { selectedRoom } = useRoomStore();
   const { schedule } = useScheduleStore();
+  const { logActivity } = useActivityLog();
+
+  const session = useSession();
+
   const [loading, setLoading] = useState<boolean>(false);
   const [availableSlots, setAvailableSlots] = useState([
     {
@@ -40,7 +46,7 @@ export default function RoomAssignmentForm({
   useEffect(() => {
     const timeSlots = generateTimeSlots("07:00", "20:00", 30);
     const filteredSchedule = schedule.data.filter((item) => {
-      return item.room.roomName === selectedRoom?.roomName ?? "";
+      return item.room.roomName === selectedRoom?.roomName;
     });
 
     const schedules = filteredSchedule.map((item) => {
@@ -76,6 +82,10 @@ export default function RoomAssignmentForm({
 
     if (response.ok) {
       toast.success(responseData?.message);
+      logActivity(
+        session?.data?.user?.id ?? "",
+        `Assigned ${data.facultyName} to Room ${selectedRoom?.roomName} `,
+      );
     } else {
       toast.error(responseData?.error || "Something went wrong");
       console.error("Something went wrong");

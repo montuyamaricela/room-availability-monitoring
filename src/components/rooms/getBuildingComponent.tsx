@@ -6,12 +6,12 @@ import Pancho from "./Pancho";
 import Hangar from "./Hangar";
 import GenRooms from "./GenRooms";
 
-export type BuildingName = "PANCHO_HALL" | "BSBA" | "HANGAR" | "MPG_OLDCANTEEN";
+export type BuildingName = "PANCHO HALL" | "CBA" | "HANGAR" | "MPG_OLDCANTEEN";
 type BuildingComponent = React.FC;
 
 const buildingComponents: Record<BuildingName, BuildingComponent> = {
-  PANCHO_HALL: Pancho,
-  BSBA: CBAROOM,
+  "PANCHO HALL": Pancho,
+  CBA: CBAROOM,
   HANGAR: Hangar,
   MPG_OLDCANTEEN: GenRooms,
 };

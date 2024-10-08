@@ -22,13 +22,13 @@ const ModalWrapper = ({
     <Dialog>
       <DialogTrigger asChild>{ButtonTrigger}</DialogTrigger>
       <DialogContent className="md:max-w-4/5 w-[90%] ">
-        <DialogHeader className="rounded-t-2xl bg-primary-green py-5">
-          {title && (
+        {title && (
+          <DialogHeader className="rounded-t-2xl bg-primary-green py-5">
             <DialogTitle className="text-center text-xl font-medium uppercase text-white">
               {title}
             </DialogTitle>
-          )}
-        </DialogHeader>
+          </DialogHeader>
+        )}
         {children}
       </DialogContent>
     </Dialog>

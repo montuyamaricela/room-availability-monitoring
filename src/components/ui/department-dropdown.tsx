@@ -97,3 +97,9 @@ export const days = [
   { label: "Friday", value: "Friday" },
   { label: "Saturday", value: "Saturday" },
 ];
+
+export const feedBackStatus = [
+  { label: "All", value: "" },
+  { label: "Acknowledged", value: "Acknowledged" },
+  { label: "Unread", value: "False" },
+];

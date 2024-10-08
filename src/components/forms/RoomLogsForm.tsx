@@ -11,6 +11,8 @@ import { useScheduleStore } from "~/store/useScheduleStore";
 import { useEffect, useState } from "react";
 import { useRoomStore } from "~/store/useRoomStore";
 import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
+import { useActivityLog, useRoomLog } from "~/lib/createLogs";
 
 export default function RoomLogsForm({
   faculty,
@@ -22,6 +24,10 @@ export default function RoomLogsForm({
   }[];
   setIsSubmitted: (submitted: boolean) => void;
 }>) {
+  const { logActivity } = useRoomLog();
+  const { logActivity: activityLog } = useActivityLog();
+
+  const session = useSession();
   const { schedule } = useScheduleStore();
   const { selectedRoom } = useRoomStore();
   const [loading, setLoading] = useState<boolean>(false);
@@ -35,11 +41,10 @@ export default function RoomLogsForm({
     resolver: scheduleSchema.ScheduleSchemaResolver,
     defaultValues: scheduleSchema.ScheduleSchemaDefaultValues,
   });
-
   useEffect(() => {
     const timeSlots = generateTimeSlots("07:00", "20:00", 30);
     const filteredSchedule = schedule.data.filter((item) => {
-      return item.room.roomName === selectedRoom?.roomName ?? "";
+      return item.room.roomName === selectedRoom?.roomName;
     });
 
     const schedules = filteredSchedule.map((item) => {
@@ -61,8 +66,6 @@ export default function RoomLogsForm({
         roomId: selectedRoom?.id,
         roomName: selectedRoom?.roomName,
         action: "Added temporary schedule",
-        // will fix this
-        careOf: "--",
         ...data,
         isTemp: true,
       }),
@@ -71,6 +74,19 @@ export default function RoomLogsForm({
 
     if (response.ok) {
       toast.success("Schedule successfully added!");
+      if (selectedRoom?.id && session?.data?.user) {
+        logActivity(
+          session?.data?.user.firstName + " " + session?.data?.user.lastName,
+          "added temporary schedule for",
+          "",
+          data.facultyName,
+          selectedRoom?.id,
+        );
+        activityLog(
+          session?.data?.user?.id,
+          `added temporary schedule for Room ${selectedRoom.roomName}`,
+        );
+      }
     } else {
       toast.error(responseData?.error || "Something went wrong");
       console.error("Something went wrong");

@@ -23,19 +23,25 @@ import Spinner from "../common/Spinner";
 import Table from "../common/Table/Table";
 import { formatTimetoLocal } from "~/lib/timeSchedule";
 import UploadScheduleModal from "../common/Modal/UploadScheduleModal";
+import { useActivityLog } from "~/lib/createLogs";
+import RequestSchedule from "../common/Modal/RequestSchedule";
 
 export default function Schedule({ loading }: { loading: boolean }) {
   const session = useSession();
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
   const [open, setOpen] = useState<boolean>(false);
+  const [openScheduleUpload, setOpenScheduleUpload] = useState<boolean>(false);
+  const [openRequestScheduleModal, setOpenRequestScheduleModal] =
+    useState<boolean>(false);
+
   const [loadingStatus, setLoadingStatus] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
-  const [openScheduleUpload, setOpenScheduleUpload] = useState<boolean>(false);
   const [department, setDepartment] = useState<string>("");
   const [day, setDay] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [roomSchedule, setRoomSchedule] = useState<scheduleAttributes[]>([]);
+  const { logActivity } = useActivityLog();
   const [selectedSchedule, setSelectedSchedule] =
     useState<scheduleAttributes>();
   const { schedule, clearSchedule } = useScheduleStore();
@@ -47,12 +53,13 @@ export default function Schedule({ loading }: { loading: boolean }) {
         sched.facultyName.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
-    // // Filter by department if selected
-    // if (department) {
-    //   filteredData = filteredData.filter(
-    //     (sched) => sched.faculties[0].department === department,
-    //   );
-    // }
+
+    // Filter by department if selected
+    if (department) {
+      filteredData = filteredData.filter(
+        (sched) => sched.department === department,
+      );
+    }
 
     if (day) {
       filteredData = filteredData.filter((sched) => sched.day === day);
@@ -60,7 +67,7 @@ export default function Schedule({ loading }: { loading: boolean }) {
 
     // Set filtered data to state
     setRoomSchedule(filteredData);
-  }, [day, searchQuery, message, schedule.data]);
+  }, [day, searchQuery, message, schedule.data, department]);
 
   // Calculate total pages
   const totalRecords = roomSchedule.length;
@@ -78,12 +85,12 @@ export default function Schedule({ loading }: { loading: boolean }) {
       width: 100,
       formatter: (row) => <span>{row?.facultyName}</span>,
     },
-    // {
-    //   id: "department",
-    //   header: "Department",
-    //   width: 60,
-    //   formatter: (row) => <span>{row?.faculties[0]?.department}</span>,
-    // },
+    {
+      id: "department",
+      header: "Department",
+      width: 60,
+      formatter: (row) => <span>{row?.department}</span>,
+    },
     {
       id: "section",
       header: "Section",
@@ -148,7 +155,9 @@ export default function Schedule({ loading }: { loading: boolean }) {
     if (message) {
       toast.success(message);
       clearSchedule();
+      logActivity(session.data?.user.id ?? "", "resetted schedule");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [message]);
   if (session.status === "loading") {
     return <Spinner />;
@@ -156,6 +165,7 @@ export default function Schedule({ loading }: { loading: boolean }) {
   if (session.data?.user.role != "Super Admin") {
     return <NotAllowed />;
   }
+
   return (
     <Container>
       <ScheduleModal
@@ -191,7 +201,7 @@ export default function Schedule({ loading }: { loading: boolean }) {
                   type="text"
                   id="search"
                   className="lg:w-96"
-                  placeholder="Search..."
+                  placeholder="Search faculty..."
                 />
               </div>
               {/* /// here */}
@@ -201,6 +211,14 @@ export default function Schedule({ loading }: { loading: boolean }) {
               >
                 Upload Schedule
               </Button>
+              {session.data.user.role === "Super Admin" && (
+                <Button
+                  onClick={() => setOpenRequestScheduleModal(true)}
+                  className="bg-primary-green hover:bg-primary-green"
+                >
+                  Request Schedule
+                </Button>
+              )}
             </div>
           </div>
 
@@ -208,6 +226,10 @@ export default function Schedule({ loading }: { loading: boolean }) {
             <UploadScheduleModal
               open={openScheduleUpload}
               setOpen={setOpenScheduleUpload}
+            />
+            <RequestSchedule
+              open={openRequestScheduleModal}
+              setOpen={setOpenRequestScheduleModal}
             />
             <Table<scheduleAttributes>
               loading={loading}

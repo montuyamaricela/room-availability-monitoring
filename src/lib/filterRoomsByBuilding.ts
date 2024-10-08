@@ -8,5 +8,5 @@ export function filterRoomsByBuilding(
   rooms: any,
   building: BuildingName,
 ): Room[] {
-  return rooms?.rooms?.filter((room: Room) => room.building === building);
+  return rooms?.filter((room: Room) => room.building === building);
 }

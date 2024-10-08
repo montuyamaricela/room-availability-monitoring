@@ -7,8 +7,14 @@ interface PaginationProps {
   loading: boolean;
   pagination: IPagination;
   onChange: (page: number) => void;
+  isOnFeedback?: boolean;
 }
-const Pagination = ({ loading, pagination, onChange }: PaginationProps) => {
+const Pagination = ({
+  loading,
+  pagination,
+  onChange,
+  isOnFeedback,
+}: PaginationProps) => {
   const hasNoPrevious = useMemo(() => pagination.page > 1, [pagination.page]);
   const hasNoNext = useMemo(
     () => pagination.page != pagination.pageCount,
@@ -26,7 +32,9 @@ const Pagination = ({ loading, pagination, onChange }: PaginationProps) => {
   );
 
   return (
-    <div className="flex items-center justify-between border-t border-gray-200 bg-white py-3">
+    <div
+      className={`flex items-center justify-between border-t border-gray-200  py-3 ${isOnFeedback ? "bg-custom-gray" : "bg-white"}`}
+    >
       <div className="flex flex-1 justify-between sm:hidden">
         <button
           onClick={() => onChange(pagination.page - 1)}

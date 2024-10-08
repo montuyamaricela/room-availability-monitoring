@@ -19,6 +19,7 @@ import { useState } from "react";
 import CreateAccount from "./CreateAccount";
 import toast from "react-hot-toast";
 import DeleteConfirmation from "../common/Modal/DeleteConfirmation";
+import NotAllowed from "../common/NotAllowed";
 
 export default function AccountManagement() {
   const session = useSession();
@@ -35,7 +36,9 @@ export default function AccountManagement() {
     },
   });
 
-  const handleDelete = (id: string) => deleteUser({ id: id });
+  const handleDelete = (id: string) => {
+    deleteUser({ id: id });
+  };
 
   if (isLoading) return <Spinner />;
   if (error) return <div>Error: {error.message}</div>;
@@ -72,12 +75,12 @@ export default function AccountManagement() {
             <TableCell>{account.status}</TableCell>
             {session.data?.user.role === "Super Admin" && (
               <TableCell className="flex items-center gap-5">
-                <Button className="h-5 bg-transparent p-0 text-red-light hover:bg-transparent">
+                {/* <Button className="h-5 bg-transparent p-0 text-red-light hover:bg-transparent">
                   Block
                 </Button>
                 <Button className="hover:bg-grtransparent h-5 bg-transparent p-0 text-green-light">
                   Unblock
-                </Button>
+                </Button> */}
                 <DeleteConfirmation
                   deleteHandler={() => handleDelete(account.id)}
                   ButtonTrigger={
@@ -96,9 +99,9 @@ export default function AccountManagement() {
               columns.length +
               (session.data?.user.role === "Super Admin" ? 1 : 0)
             }
-            className="text-center text-base text-red-light"
+            className="text-center text-base text-primary-gray"
           >
-            No Data Available
+            No Results
           </TableCell>
         )}
       </TableBody>
@@ -113,7 +116,9 @@ export default function AccountManagement() {
             <h1 className="text-2xl font-semibold text-gray-dark">
               ACCOUNT MANAGEMENT
             </h1>
-            {session.data?.user.role === "Super Admin" && <CreateAccount />}
+            {session.data?.user.role === "Super Admin" && (
+              <CreateAccount {...session.data?.user} />
+            )}
           </div>
           <Input
             type="text"

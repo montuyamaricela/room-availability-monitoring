@@ -1,14 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { create } from "zustand";
-import { type auditLogsAttributes } from "~/data/models/auditLogs";
+import {
+  type roomLogsAttributes,
+  type activityLogsAttributes,
+} from "~/data/models/auditLogs";
 import { initialPaginatedList, type PaginatedList } from "~/lib/types";
 
 interface logState {
-  auditLog: PaginatedList<auditLogsAttributes>;
-  setAuditLogs: (auditLog: PaginatedList<auditLogsAttributes>) => void;
+  activityLog: PaginatedList<activityLogsAttributes>;
+  setActivityLogs: (auditLog: PaginatedList<activityLogsAttributes>) => void;
+  roomLog: PaginatedList<roomLogsAttributes>;
+  setRoomLog: (auditLog: PaginatedList<roomLogsAttributes>) => void;
 }
 
 export const useLogStore = create<logState>((set) => ({
-  auditLog: initialPaginatedList,
-  setAuditLogs: (auditLog) => set({ auditLog }), // Correctly setting the selected room
+  activityLog: initialPaginatedList,
+  setActivityLogs: (activityLog) => set({ activityLog }),
+  roomLog: initialPaginatedList,
+  setRoomLog: (roomLog) => set({ roomLog }),
 }));
