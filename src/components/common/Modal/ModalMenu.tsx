@@ -74,9 +74,11 @@ export default function ModalMenu({ firstName, id, role }: ModalProps) {
                 </DropdownMenuItem>
               </>
             )}
-            <DropdownMenuItem>
-              <Link href="/admin/logs">Logs</Link>
-            </DropdownMenuItem>
+            {role === "Super Admin" && (
+              <DropdownMenuItem>
+                <Link href="/admin/logs">Logs</Link>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem>
               <Link href="/admin/feedback">Feedback</Link>
             </DropdownMenuItem>

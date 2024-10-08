@@ -45,6 +45,10 @@ export default function Changepassword() {
       toast.error("Password must have atleast 8 characters");
     } else if (password != confirmPassword) {
       toast.error("Password does not match. Please try again.");
+    } else if (oldPassword === password) {
+      toast.error(
+        "New password can't be the same as the old one. Please try again.",
+      );
     } else {
       setIsLoading(true);
       if (session.data?.user?.id) {

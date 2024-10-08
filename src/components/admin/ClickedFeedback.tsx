@@ -53,7 +53,6 @@ const ClickedFeedback = ({
     });
     logActivity(userId ?? "", `acknowledged a feedback`);
   };
-
   return (
     <Dialog>
       <DialogTrigger asChild>{ButtonTrigger}</DialogTrigger>
@@ -66,15 +65,14 @@ const ClickedFeedback = ({
             <DialogClose asChild>
               <Button className="w-32">CLOSE</Button>
             </DialogClose>
-            {!isAcknowledged ||
-              (role === "Admin" && (
-                <Button
-                  onClick={buttonHandler}
-                  className="w-32 bg-primary-green hover:bg-green-light"
-                >
-                  {loading ? "ACKNOWLEDGING..." : "ACKNOWLEDGE"}
-                </Button>
-              ))}
+            {!isAcknowledged && role === "Admin" && (
+              <Button
+                onClick={buttonHandler}
+                className="w-32 bg-primary-green hover:bg-green-light"
+              >
+                {loading ? "ACKNOWLEDGING..." : "ACKNOWLEDGE"}
+              </Button>
+            )}
           </div>
         </div>
       </DialogContent>

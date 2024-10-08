@@ -65,6 +65,7 @@ export async function POST(req: NextRequest) {
 
       // Process the rows by grouping them first
       const groupedSchedules = groupSchedulesByCommonDetails(filteredRows);
+      const groupedSchedulesLength = Object.keys(groupedSchedules).length;
 
       // Iterate over the grouped schedules
       const promises = Object.values(groupedSchedules).map(
@@ -154,7 +155,8 @@ export async function POST(req: NextRequest) {
         console.error(`Missing rooms: ${missingRooms.join(", ")}`);
       }
 
-      const totalSchedulesProcessed = filteredRows.length - missingRooms.length; // Calculate successfully processed schedules
+      const totalSchedulesProcessed =
+        groupedSchedulesLength - missingRooms.length; // Calculate successfully processed schedules
 
       return NextResponse.json(
         {

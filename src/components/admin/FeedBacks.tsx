@@ -13,6 +13,7 @@ import {
 import OpenFeedbackModal from "./ClickedFeedback";
 import ComposeFeedBack from "../security/ComposeModal";
 import Pagination from "../common/Table/Pagination";
+import { useUserInfoStore } from "~/store/useUserInfoStore";
 
 const pageSize = 10; // Define the number of items per page
 
@@ -28,10 +29,13 @@ export default function FeedBacks() {
   const [page, setPage] = useState<number>(1); // Track the current page
   const [totalRecords, setTotalRecords] = useState<number>(0); // Track total feedbacks
 
+  const { user } = useUserInfoStore();
   useEffect(() => {
     let filteredData = feedbacks?.data;
-    if (session.data?.user.role === "Admin") {
-      setDepartment(session.data.user.department);
+    if (session?.data?.user?.role === "Admin") {
+      if (user?.department) {
+        setDepartment(user?.department);
+      }
     }
 
     if (department) {
@@ -56,7 +60,7 @@ export default function FeedBacks() {
       page * pageSize,
     );
     setPaginatedFeedbacks(paginatedData);
-  }, [feedbacks, department, status, session, page]);
+  }, [feedbacks, department, status, page, user, session]);
 
   // Handle pagination page change
   const handlePageChange = (newPage: number) => {

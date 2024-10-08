@@ -162,7 +162,7 @@ export default function Schedule({ loading }: { loading: boolean }) {
   if (session.status === "loading") {
     return <Spinner />;
   }
-  if (session.data?.user.role != "Super Admin") {
+  if (session.data?.user.role === "Security Guard") {
     return <NotAllowed />;
   }
 
@@ -211,7 +211,7 @@ export default function Schedule({ loading }: { loading: boolean }) {
               >
                 Upload Schedule
               </Button>
-              {session.data.user.role === "Super Admin" && (
+              {session?.data?.user.role === "Super Admin" && (
                 <Button
                   onClick={() => setOpenRequestScheduleModal(true)}
                   className="bg-primary-green hover:bg-primary-green"
@@ -244,7 +244,7 @@ export default function Schedule({ loading }: { loading: boolean }) {
               onChangePage={(page) => setPage(page)}
             />
             <div className="flex justify-end">
-              {session.data.user.role === "Super Admin" && (
+              {session?.data?.user.role === "Super Admin" && (
                 <DeleteConfirmation
                   deleteHandler={() =>
                     deleteSchedule({

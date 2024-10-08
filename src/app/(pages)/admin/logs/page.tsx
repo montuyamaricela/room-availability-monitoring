@@ -1,11 +1,13 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useEffect, useState } from "react";
 import Logs from "~/components/common/Logs";
+import NotAllowed from "~/components/common/NotAllowed";
 import Spinner from "~/components/common/Spinner";
 import {
   type roomLogsAttributes,
@@ -16,6 +18,8 @@ import { useLogStore } from "~/store/useLogStore";
 import { api } from "~/trpc/react";
 
 export default function Page() {
+  const session = useSession();
+
   const [loading, setLoading] = useState<boolean>(true); // Initially loading is true
 
   const { setActivityLogs, setRoomLog } = useLogStore();
@@ -66,6 +70,10 @@ export default function Page() {
     activityLogsError,
     roomLogsError,
   ]);
+
+  if (session.data?.user.role != "Super Admin") {
+    return <NotAllowed />;
+  }
 
   return <>{loading ? <Spinner /> : <Logs loading={loading} />}</>;
 }
