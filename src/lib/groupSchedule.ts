@@ -10,7 +10,7 @@ export function groupSchedulesByCommonDetails(rows: any[]) {
     if (!grouped[key]) {
       grouped[key] = [];
     }
-    grouped[key].push(row);
+    grouped[key]!.push(row);
   });
 
   return grouped;
@@ -26,7 +26,7 @@ export function groupSchedulesByCommonDetailsCSV(rows: any[]) {
     if (!grouped[key]) {
       grouped[key] = [];
     }
-    grouped[key].push(row);
+    grouped[key]!.push(row);
   });
 
   return grouped;

@@ -8,7 +8,7 @@ import { Button } from "~/components/ui/button";
 import toast from "react-hot-toast";
 import { api } from "~/trpc/react";
 
-const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 export default function ForgotPasswordModal() {
   const [email, setEmail] = useState("");
