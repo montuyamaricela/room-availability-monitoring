@@ -13,12 +13,14 @@ import * as authSchema from "../../validations/authValidationSchema";
 import toast from "react-hot-toast";
 import { departments, role } from "../authentications/Signup";
 import { useRouter } from "next/navigation";
+import { useActivityLog } from "~/lib/createLogs";
 
-export default function CreateAccount() {
+export default function CreateAccount({ id }: { id?: string | undefined }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [disableField, setDisableField] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(true); // Track modal open/close state
+  const { logActivity } = useActivityLog();
 
   const form = useForm({
     resolver: authSchema.CreateAccountResolver,
@@ -44,11 +46,17 @@ export default function CreateAccount() {
 
     if (response.ok) {
       // delay
-      toast.success("Account created successfully!");
+      toast.success(
+        "Account created successfully! Please check your email for verification link.",
+      );
+      logActivity(
+        id ?? "",
+        `created an account for ${data?.firstName + " " + data?.lastName}`,
+      );
       setTimeout(() => {
         form.reset();
         window.location.reload(); // Hard reload the page
-      }, 1500); // 3 seconds delay before redirecting
+      }, 1000); // 1 seconds delay before redirecting
     } else {
       toast.error(responseData?.message || "Something went wrong");
       console.error("Registration failed");

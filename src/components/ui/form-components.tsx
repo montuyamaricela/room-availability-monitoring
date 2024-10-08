@@ -75,12 +75,7 @@ export const FormTextarea = ({
           <FormItem>
             <FormLabel>{label}</FormLabel>
             <FormControl>
-              <Textarea
-                placeholder={placeholder}
-                rows={3}
-                {...field}
-                className="border-primary-gray rounded-none border bg-white p-5 text-black 2xl:text-lg"
-              />
+              <Textarea placeholder={placeholder} rows={3} {...field} />
             </FormControl>
             <FormDescription>{description}</FormDescription>
             <FormMessage />

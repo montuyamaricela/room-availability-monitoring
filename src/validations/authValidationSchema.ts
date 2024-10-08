@@ -68,13 +68,19 @@ export const createAccountSchema = z
     },
   );
 
+export const forgotPasswordSchema = z.object({
+  email: z.string().email(),
+});
+
 export type ILogin = z.infer<typeof signinSchema>;
 export type ISignUp = z.infer<typeof signUpSchema>;
 export type ICreateAccount = z.infer<typeof createAccountSchema>;
+export type IForgotPassword = z.infer<typeof forgotPasswordSchema>;
 
 export const SigninResolver = zodResolver(signinSchema);
 export const SignupResolver = zodResolver(signUpSchema);
 export const CreateAccountResolver = zodResolver(createAccountSchema);
+export const ForgotPasswordResolver = zodResolver(forgotPasswordSchema);
 
 export const SigninDefaultValues = {
   email: "",
@@ -98,4 +104,8 @@ export const SignupDefaultValues = {
   role: "",
   department: "",
   status: "Not Verified",
+};
+
+export const forgotPasswordDefaultValue = {
+  email: "",
 };

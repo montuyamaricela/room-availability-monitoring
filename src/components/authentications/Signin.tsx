@@ -15,10 +15,16 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "~/trpc/react";
+import { useActivityLog } from "~/lib/createLogs";
+import ForgotPasswordModal from "../common/Modal/ForgotPasswordModal";
+import { EyeIcon } from "lucide-react";
 
 export default function Signin() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const { logActivity } = useActivityLog();
 
   const form = useForm({
     resolver: authSchema.SigninResolver,
@@ -28,9 +34,11 @@ export default function Signin() {
   const getStatus = api.user.getUserStatus.useMutation({
     onSuccess: (data) => {
       if (data.status === "Verified") {
-        void handleSignIn();
+        void handleSignIn(data.id);
       } else {
-        toast.error("Email is not verified");
+        toast.error(
+          "Email is not yet verified. Please verify your email and try again.",
+        );
         setIsLoading(false);
       }
     },
@@ -40,7 +48,7 @@ export default function Signin() {
       setIsLoading(false);
     },
   });
-  const handleSignIn = async () => {
+  const handleSignIn = async (userID: string) => {
     try {
       const signInData = await signIn("credentials", {
         email: form.getValues("email"),
@@ -49,14 +57,16 @@ export default function Signin() {
       });
 
       if (signInData?.error) {
-        toast.error(signInData.error);
+        if (signInData.error.includes("CredentialsSignin")) {
+          toast.error("Invalid email or password. Please try again");
+        } else {
+          toast.error(signInData.error);
+        }
       } else {
         toast.success("Signed in successfully!");
-        setTimeout(() => {
-          form.reset();
-          router.push("/admin");
-        }, 1500);
+        logActivity(userID ?? "", "logged In");
       }
+
       setIsLoading(false);
     } catch (error) {
       toast.error("An error occurred during sign-in.");
@@ -67,6 +77,10 @@ export default function Signin() {
   const onSubmit = async (data: authSchema.ILogin) => {
     setIsLoading(true);
     getStatus.mutate({ email: data.email });
+  };
+
+  const togglePassword = () => {
+    setShowPassword((current) => !current);
   };
 
   return (
@@ -96,19 +110,26 @@ export default function Signin() {
                   onSubmit={form.handleSubmit(onSubmit)}
                 >
                   <FormInput form={form} name="email" label="Email" />
-                  <FormInput
-                    form={form}
-                    name="password"
-                    type="password"
-                    label="Password"
-                  />
+                  <div className="relative">
+                    <FormInput
+                      form={form}
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      label="Password"
+                    />
+                    <EyeIcon
+                      onClick={togglePassword}
+                      className={`absolute right-3 top-8 z-40 h-5 w-5 cursor-pointer ${showPassword ? "text-black" : "text-primary-gray"}`}
+                    />
+                  </div>
 
-                  <h3 className="text-right text-sm font-medium text-gray-dark">
-                    Forgot password?{" "}
-                    <Link href="#" className="text-green-dark underline">
-                      Click here
-                    </Link>
-                  </h3>
+                  <div className="flex items-center justify-end gap-1">
+                    <h3 className="text-right text-sm font-medium text-gray-dark">
+                      Forgot password?
+                    </h3>
+                    <ForgotPasswordModal />
+                  </div>
+
                   <div className="flex justify-center">
                     <Button className="w-3/4 items-center bg-green-dark hover:bg-green-900 sm:w-2/6">
                       {isLoading ? "Logging In...." : "Login"}

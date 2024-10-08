@@ -9,16 +9,19 @@ import { useBuildingStore } from "~/store/useBuildingStore";
 import { type Room, useRoomStore } from "~/store/useRoomStore";
 import { filterRoomsByBuilding } from "~/lib/filterRoomsByBuilding";
 import { useFilterStore } from "~/store/useFilterStore";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import RoomModalAdmin from "../admin/RoomModalAdmin";
 import { useSession } from "next-auth/react";
 import RoomModalSecurity from "../security/RoomModalSecurity";
 
 export function RoomLayout() {
   const session = useSession();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const roomID = searchParams.get("room");
 
   const [open, setOpen] = useState(false);
-  const { rooms, setSelectedRoom } = useRoomStore();
+  const { rooms, setSelectedRoom, selectedRoom } = useRoomStore();
   const { filters } = useFilterStore();
   const pathname = usePathname();
 
@@ -40,6 +43,20 @@ export function RoomLayout() {
     rooms,
     selectedBuilding,
   );
+
+  // useEffect(() => {
+  //   if (!rooms || !roomID) return; // Only run if roomID exists and modal is closed
+
+  //   const selectedRoomFromParams = rooms?.filter((room: any) => {
+  //     return room.id.toLowerCase() === roomID.toLowerCase();
+  //   });
+  //   setSelectedRoom(selectedRoomFromParams[0] as unknown as Room);
+  //   if (selectedRoomFromParams.length > 0) {
+  //     setOpen(true);
+  //   } else {
+  //     setOpen(false);
+  //   }
+  // }, [roomID]); // Dependencies: rooms, roomID, open
 
   // Filter the rooms based on the active filters
   const filteredRooms = filteredRoomsByBuilding?.filter((room: any) => {
@@ -87,6 +104,8 @@ export function RoomLayout() {
           <RoomModalAdmin setOpen={setOpen} open={open} />
         ) : session.data?.user.role == "Security Guard" ? (
           <RoomModalSecurity setOpen={setOpen} open={open} />
+        ) : session.data?.user.role == "Super Admin" ? (
+          <RoomModalAdmin setOpen={setOpen} open={open} />
         ) : (
           <RoomModal setOpen={setOpen} open={open} />
         )}

@@ -30,6 +30,7 @@ export default function Page() {
         if (!response.ok) {
           throw new Error("Failed to fetch rooms");
         }
+
         const schedResp = await fetch("/api/schedule", {
           method: "GET",
         });
@@ -40,11 +41,10 @@ export default function Page() {
 
         const scheduleData = await schedResp.json();
         setSchedule(scheduleData as PaginatedList<scheduleAttributes>);
-        const data: Room[] = await response.json();
-
+        const data = await response.json();
         // Check if the new data is different before updating the state
         if (JSON.stringify(data) !== JSON.stringify(rooms)) {
-          setRooms(data); // Only update if there's a change
+          setRooms(data.rooms as unknown as Room[]); // Only update if there's a change
         }
       } catch (error) {
         console.error("Error fetching rooms:", error);

@@ -16,7 +16,7 @@ const signUpSchema = z.object({
   password: z
     .string()
     .min(1, "Password is Required")
-    .min(8, "Password must have atleast 8 characters"),
+    .min(8, "Password must have at least 8 characters"),
   status: z.string(),
 });
 
@@ -29,18 +29,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No token" }, { status: 400 });
     }
 
-    const token = randomUUID();
-    const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
-
+    // Parse request body
     const body = await req.json();
     const { email, password, firstName, lastName, department, role, status } =
       signUpSchema.parse(body);
 
-    // check if email already exists
+    // Check if the email is already taken
     const existingUser = await db.user.findUnique({
-      where: {
-        email: email,
-      },
+      where: { email },
     });
 
     if (existingUser) {
@@ -53,8 +49,10 @@ export async function POST(req: Request) {
       );
     }
 
+    // Hash password (slow process but async)
     const hashPassword = await hash(password, 10);
 
+    // Create a new user in the database
     const newUser = await db.user.create({
       data: {
         email,
@@ -67,21 +65,31 @@ export async function POST(req: Request) {
       },
     });
 
-    await db.verificationToken.create({
-      data: {
-        identifier: email,
-        token,
-        expires,
-      },
+    // Generate verification token and expiration time
+    const token = randomUUID();
+    const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
+
+    // Perform DB operations concurrently to improve speed
+    await Promise.all([
+      db.verificationToken.create({
+        data: {
+          identifier: email,
+          token,
+          expires,
+        },
+      }),
+      db.creationToken.delete({
+        where: { token: creationToken },
+      }),
+    ]);
+
+    // Send verification email asynchronously
+    sendVerificationEmail(email, token).catch((error) => {
+      console.error("Failed to send verification email:", error);
     });
 
-    await db.creationToken.delete({
-      where: { token: creationToken },
-    });
-
-    await sendVerificationEmail(email, token);
-
-    const { password: newUserPassword, ...rest } = newUser;
+    // Return response while email is being sent
+    const { password: newUserPassword, ...rest } = newUser; // Exclude the password from the response
 
     return NextResponse.json(
       {
@@ -91,9 +99,10 @@ export async function POST(req: Request) {
       { status: 201 },
     );
   } catch (error) {
+    console.error("Error during sign-up process:", error);
     return NextResponse.json(
       {
-        message: error,
+        message: "An error occurred during sign-up.",
       },
       { status: 500 },
     );

@@ -49,7 +49,7 @@ export default function Pancho() {
         stroke="#38A35A"
         strokeWidth="3"
         d="M999.64 116.497H1042.488V148.823H999.64z"
-        id="PANCHOOld Faculty Room"
+        id="PANCHO231"
       ></path>
       <path
         fill="#fff"
@@ -292,7 +292,7 @@ export default function Pancho() {
         stroke="#38A35A"
         strokeWidth="3"
         d="M574.113 10.658H624.567V42.519H574.113z"
-        id="PANCHONew"
+        id="PANCHO220"
       ></path>
       <path
         fill="#fff"

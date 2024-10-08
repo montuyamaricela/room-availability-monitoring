@@ -28,11 +28,12 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.className}`}>
       <body>
         <Provider>
-          <Topbar />
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <TRPCReactProvider>
+            <Topbar />
+            {children}
+          </TRPCReactProvider>
           <Toaster />
         </Provider>
-    
       </body>
     </html>
   );

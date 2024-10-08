@@ -1,11 +1,14 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import toast from "react-hot-toast";
 import { type scheduleAttributes } from "~/data/models/schedule";
+import { useRoomLog } from "~/lib/createLogs";
 
 export default async function roomTimeOut(
   selectedSchedule: scheduleAttributes | null,
   setSubmitted: (submitted: boolean) => void,
+  setDeleted: (deleted: boolean) => void,
 ) {
   try {
     const response = await fetch("/api/room-schedule", {
@@ -24,6 +27,7 @@ export default async function roomTimeOut(
     const responseData = await response.json();
     if (response.ok) {
       toast.success("Timed out sucessfully!");
+      setDeleted(true);
     } else {
       toast.error(responseData?.message || "Something went wrong");
       console.error("Something went wrong");

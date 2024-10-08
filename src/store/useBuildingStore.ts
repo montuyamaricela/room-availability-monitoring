@@ -7,7 +7,7 @@ interface BuildingState {
 }
 
 export const useBuildingStore = create<BuildingState>((set) => ({
-  selectedBuilding: "PANCHO_HALL",
+  selectedBuilding: "PANCHO HALL",
   setSelectedBuilding: (newSelectedBuilding) =>
     set({ selectedBuilding: newSelectedBuilding }),
 }));

@@ -26,7 +26,7 @@ export default function RoomInfo() {
         <p>
           Status:{" "}
           <span className="capitalize">
-            {selectedRoom?.status.toLowerCase()}
+            {selectedRoom?.status?.toLowerCase()}
           </span>
         </p>
       </div>

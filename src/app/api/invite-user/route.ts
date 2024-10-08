@@ -31,24 +31,36 @@ export async function POST(req: NextRequest) {
     const { email, firstName, lastName, department, role } =
       inviteSchema.parse(body);
 
-    // check if email already exists
-    const existingUser = await db.user.findUnique({
-      where: {
-        email: email,
-      },
-    });
+    // Use Promise.all to fetch existing user and invitation status concurrently
+    const [existingUser, alreadyInvited] = await Promise.all([
+      db.user.findUnique({ where: { email } }),
+      // find creationToken with same email and not expired.
+      db.creationToken.findFirst({
+        where: { identifier: email },
+      }),
+    ]);
 
-    const alreadyInvited = await db.creationToken.findUnique({
-      where: {
-        identifier: email,
-      },
-    });
-
-    if (existingUser ?? alreadyInvited) {
+    if (existingUser) {
       return NextResponse.json(
         {
           user: null,
           message: "User with this email already exists",
+        },
+        { status: 409 },
+      );
+    }
+
+    // If there's a token but it's expired, delete it
+    if (alreadyInvited && alreadyInvited.expires < new Date()) {
+      await db.creationToken.delete({
+        where: { identifier: alreadyInvited.identifier },
+      });
+    } else if (alreadyInvited) {
+      // If token exists and is not expired, return conflict
+      return NextResponse.json(
+        {
+          user: null,
+          message: "Invitation for this email has already been sent",
         },
         { status: 409 },
       );
@@ -66,7 +78,10 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    await sendInvitationLink(email, token);
+    // Send the invitation email asynchronously
+    sendInvitationLink(email, token).catch((error) => {
+      console.error("Failed to send invitation email:", error);
+    });
 
     return NextResponse.json(
       {
@@ -76,9 +91,10 @@ export async function POST(req: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
+    console.error(error); // Log the error for debugging
     return NextResponse.json(
       {
-        message: error,
+        message: "An error occurred while processing the request",
       },
       { status: 500 },
     );

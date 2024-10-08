@@ -1,10 +1,5 @@
 import * as React from "react";
 
-// const handleRoomClick = (roomId: string) => {
-//   console.log(roomId);
-//   // logic to show modal with room details
-// };
-
 const CBAROOM = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

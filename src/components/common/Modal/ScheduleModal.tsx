@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React, { useEffect, useState } from "react";
 import {
   Dialog,
@@ -13,10 +15,16 @@ import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import DeleteConfirmation from "../Modal/DeleteConfirmation";
 import { day, time } from "~/data/models/data";
-import { formatTimetoLocal } from "~/lib/timeSchedule";
+import {
+  filterTimeSlots,
+  formatTimetoLocal,
+  generateTimeSlots,
+} from "~/lib/timeSchedule";
 import { api } from "~/trpc/react";
 import toast from "react-hot-toast";
 import { useScheduleStore } from "~/store/useScheduleStore";
+import { useActivityLog } from "~/lib/createLogs";
+import { useSession } from "next-auth/react";
 
 type roomModalProps = {
   open: boolean;
@@ -29,9 +37,16 @@ export default function ScheduleModal({
   setOpen,
   selectedSchedule,
 }: roomModalProps) {
+  const session = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  const { clearSchedule } = useScheduleStore();
-
+  const { clearSchedule, schedule } = useScheduleStore();
+  const { logActivity } = useActivityLog();
+  const [availableSlots, setAvailableSlots] = useState([
+    {
+      label: "",
+      value: "",
+    },
+  ]);
   const form = useForm({
     resolver: Schedule.ScheduleSchemaResolver,
     defaultValues: Schedule.ScheduleSchemaDefaultValues,
@@ -39,32 +54,36 @@ export default function ScheduleModal({
 
   const onSubmit = async (data: Schedule.IScheduleSchema) => {
     setIsLoading(true);
-    // const response = await fetch("/api/invite-user", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     email: data.email,
-    //     firstName: data.firstName,
-    //     lastName: data.lastName,
-    //     role: data.role,
-    //     department: data.department,
-    //   }),
-    // });
-    // const responseData = await response.json();
+    const response = await fetch("/api/room-schedule", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        scheduleID: selectedSchedule?.id,
+        roomId: selectedSchedule?.roomId,
+        roomName: selectedSchedule?.room.roomName,
+        isTemp: false,
+        action: "Update Schedule",
+        ...data,
+      }),
+    });
+    const responseData = await response.json();
 
-    // if (response.ok) {
-    //   // delay
-    //   toast.success("Account created successfully!");
-    //   setTimeout(() => {
-    //     form.reset();
-    //     window.location.reload(); // Hard reload the page
-    //   }, 1500); // 3 seconds delay before redirecting
-    // } else {
-    //   toast.error(responseData?.message || "Something went wrong");
-    //   console.error("Registration failed");
-    // }
+    if (response.ok) {
+      toast.success(responseData?.message);
+      logActivity(
+        session?.data?.user?.id ?? "",
+        `updated ${data.facultyName}'s schedule on ${selectedSchedule?.day} at Room ${selectedSchedule?.room.roomName}`,
+      );
+      setTimeout(() => {
+        setOpen(false);
+        form.reset();
+      }, 1000);
+    } else {
+      toast.error(responseData?.error || "Something went wrong");
+      console.error("Something went wrong");
+    }
     setIsLoading(false);
   };
 
@@ -79,12 +98,17 @@ export default function ScheduleModal({
       form.setValue("endTime", formatTimetoLocal(selectedSchedule.endTime));
     }
   }, [form, selectedSchedule]);
-
   const { mutate: deleteUser, isPending } =
     api.schedule.deleteSchedule.useMutation({
       onSuccess: () => {
         toast.success("Successfully Deleted.");
         setOpen(false);
+        if (session?.data?.user?.id) {
+          logActivity(
+            session.data.user.id ?? "",
+            `deleted ${selectedSchedule?.facultyName}'s schedule on ${selectedSchedule?.day} in Room ${selectedSchedule?.room.roomName}`,
+          );
+        }
       },
       onError: (error) => {
         toast.error(error.message);
@@ -115,11 +139,7 @@ export default function ScheduleModal({
                     disabled
                   />
                   <FormInput form={form} name="Section" label="Section" />
-                  <FormInput
-                    form={form}
-                    name="CourseCode"
-                    label="Course Code"
-                  />
+                  <FormInput form={form} name="Subject" label="Subject" />
                   <FormInput form={form} name="Room" label="Room" disabled />
                 </div>
                 <FormCombobox
@@ -143,7 +163,6 @@ export default function ScheduleModal({
                   placeholder="End Department"
                   name={"endTime"}
                   data={time}
-                  defaultValue=""
                 />
               </div>
               <div className="mt-5 flex justify-end gap-5 ">

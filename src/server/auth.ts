@@ -9,7 +9,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
 
 import { db } from "~/server/db";
-import { getUserByEmail } from "~/lib/user";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -21,7 +20,11 @@ import { getUserByEmail } from "~/lib/user";
 export interface CustomUser {
   id: string;
   email: string;
-  name: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  department: string;
+  image: string;
   role?: "Admin" | "Security Guard" | "Super Admin"; // Define roles
 }
 
@@ -50,7 +53,11 @@ export const authOptions: NextAuthOptions = {
         user: {
           id: token.id as string,
           email: token.email!,
-          name: token.name!,
+          firstName: token.firstName,
+          middleName: token.middleName,
+          lastName: token.lastName,
+          department: token.department,
+          image: token.image,
           role: token.role as string,
         } as CustomUser,
       };
@@ -59,6 +66,11 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = (user as CustomUser).id;
         token.email = (user as CustomUser).email;
+        token.firstName = (user as CustomUser).firstName;
+        token.middleName = (user as CustomUser).middleName;
+        token.lastName = (user as CustomUser).lastName;
+        token.department = (user as CustomUser).department;
+        token.image = (user as CustomUser).image;
         token.role = (user as CustomUser).role;
       }
       return token;
@@ -67,6 +79,7 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
+    maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
   },
   adapter: PrismaAdapter(db) as Adapter,
   providers: [
@@ -102,7 +115,11 @@ export const authOptions: NextAuthOptions = {
         return {
           id: existingUser.id,
           email: existingUser.email,
-          name: existingUser.firstName + " " + existingUser.lastName,
+          firstName: existingUser.firstName,
+          middleName: existingUser.middleName,
+          lastName: existingUser.lastName,
+          department: existingUser?.department,
+          image: existingUser?.image,
           role: existingUser.role,
         };
       },
@@ -113,7 +130,7 @@ export const authOptions: NextAuthOptions = {
   },
   jwt: {
     secret: process.env.NEXTAUTH_SECRET, // Ensure this is set in your environment variables
-    maxAge: 5 * 24 * 60 * 60, // 5 days in seconds
+    maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
   },
 };
 
