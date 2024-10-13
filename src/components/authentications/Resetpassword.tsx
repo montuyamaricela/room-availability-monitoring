@@ -12,6 +12,8 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useActivityLog } from "~/lib/createLogs";
+import PrivacyPolicy from "../common/Modal/PrivacyPolicy";
+import TermsofServices from "../common/Modal/TermsofService";
 
 export default function Resetpassword() {
   const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +26,10 @@ export default function Resetpassword() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { logActivity } = useActivityLog();
+  const [openPrivacyPolicyModal, setOpenPrivacyPolicyModal] =
+    useState<boolean>(false);
+  const [openTermsofServicesModal, setOpenTermsofServicesModal] =
+    useState<boolean>(false);
 
   const getData = api.user.getForgotPasswordData.useMutation({
     onSuccess: (data) => {
@@ -104,8 +110,8 @@ export default function Resetpassword() {
               RESET PASSWORD
             </p>
             <p className="font-500 text-center text-sm text-white md:text-left">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              Welcome to the BulSU Bustos Campus Room Availability Monitoring System.
+              Easily check the status of classrooms in real-time to plan your activities more efficiently.
             </p>
           </div>
           <div className="rounded-b-2xl  bg-white md:w-1/2 md:rounded-r-2xl md:rounded-bl-none">
@@ -148,8 +154,28 @@ export default function Resetpassword() {
         </div>
       </div>
       <div className="mt-7 flex items-center justify-center gap-10 text-sm text-white">
-        <Link href="#">Terms of Service</Link>
-        <Link href="#">Privacy Policy</Link>
+        <Button
+          onClick={() => setOpenTermsofServicesModal(true)}
+          className="bg-transparent hover:bg-transparent"
+        >
+          Terms of Service
+        </Button>
+        <Button
+          onClick={() => setOpenPrivacyPolicyModal(true)}
+          className="bg-transparent hover:bg-transparent"
+        >
+          Privacy Policy
+        </Button>
+      </div>
+      <div>
+        <TermsofServices
+          open={openTermsofServicesModal}
+          setOpen={setOpenTermsofServicesModal}
+        />
+        <PrivacyPolicy
+          open={openPrivacyPolicyModal}
+          setOpen={setOpenPrivacyPolicyModal}
+        />
       </div>
     </Container>
   );

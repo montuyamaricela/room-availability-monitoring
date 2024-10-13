@@ -11,6 +11,12 @@ import { Button } from "../ui/button";
 import Image from "next/image";
 import avatar from "/public/images/avatar/image.png";
 import icon from "/public/images/icon/image.png";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import { departments } from "../authentications/Signup";
 import { getSession, signOut, useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
@@ -161,20 +167,33 @@ export default function ProfileSettings() {
                   height={120}
                   width={120}
                 />
-                <div>
-                  <Label>Profile image</Label>
+                <div className="w-full md:w-fit">
+                  <div className="flex gap-3 mb-2">
+                    <Label>Profile image</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Image
+                            src={icon}
+                            alt="Information"
+                            className="cursor-pointer"
+                            width={15}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent className="ml-5 text-xs font-normal">
+                          <p>
+                            Note! Only .jpeg, .jpg and .png images are accepted{" "}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  
                   <Input
                     id="image"
                     type="file"
-                    className="w-[100%]"
                     {...form.register("image")}
                   />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Image src={icon} alt="Information" width={20} />
-                  <p className="text-xs text-green-light">
-                    Note! Only .jpeg, .jpg and .png images are accepted{" "}
-                  </p>
                 </div>
               </div>
               <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
