@@ -11,10 +11,19 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { useActivityLog } from "~/lib/createLogs";
+import { useScheduleStore } from "~/store/useScheduleStore";
+import { type scheduleRecordsAttributes } from "~/data/models/schedule";
+import { formatTimetoLocal } from "~/lib/timeSchedule";
 
 export default function RoomDetailsForm() {
   const session = useSession();
   const { logActivity } = useActivityLog();
+  const { scheduleRecord, schedule } = useScheduleStore();
+  const [facultyName, setFacultyName] = useState<string>("");
+  const [subjectAndSection, setSubjectAndSection] = useState<string>("");
+  const [timeInAt, setTimeInAt] = useState<string>("");
+  const [timeOutAt, setTimeOutAt] = useState<string>("");
+  const [isAvailable, setIsAvailable] = useState<boolean>(false);
 
   const form = useForm<roomSchema.IRoomSchema>({
     resolver: roomSchema.RoomSchemaResolver,
@@ -23,6 +32,63 @@ export default function RoomDetailsForm() {
 
   const { selectedRoom } = useRoomStore();
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const filteredRoomScheduleRecord =
+      (scheduleRecord as unknown as scheduleRecordsAttributes[]) ?? [];
+
+    const roomSchedule = schedule.data;
+
+    const filterSchedBySelectedRoom = filteredRoomScheduleRecord?.map(
+      (item) => {
+        if (
+          item?.roomSchedule?.room?.roomName &&
+          item.roomSchedule.room.roomName === selectedRoom?.roomName
+        ) {
+          if (item.timeOut === null && item.timeIn != null) {
+            return item;
+          }
+        }
+      },
+    );
+
+    const filterScheduleByFacultyAndRoom = roomSchedule?.filter((schedule) => {
+      if (
+        schedule.facultyName === filterSchedBySelectedRoom[0]?.facultyName &&
+        schedule.room.roomName === selectedRoom?.roomName
+      ) {
+        if (schedule.id === filterSchedBySelectedRoom[0].roomScheduleId) {
+          return schedule;
+        }
+      }
+    });
+
+    if (filterSchedBySelectedRoom[0]) {
+      setSubjectAndSection(
+        filterScheduleByFacultyAndRoom[0]?.courseCode +
+          " " +
+          filterScheduleByFacultyAndRoom[0]?.section || "-",
+      );
+      setFacultyName(filterSchedBySelectedRoom[0]?.facultyName ?? "");
+      setSubjectAndSection(
+        filterScheduleByFacultyAndRoom[0]?.courseCode +
+          " " +
+          filterScheduleByFacultyAndRoom[0]?.section || "-",
+      );
+      if (
+        filterScheduleByFacultyAndRoom[0]?.beginTime &&
+        filterScheduleByFacultyAndRoom[0]?.endTime
+      ) {
+        setTimeInAt(
+          formatTimetoLocal(filterScheduleByFacultyAndRoom[0]?.beginTime),
+        );
+
+        setTimeOutAt(
+          formatTimetoLocal(filterScheduleByFacultyAndRoom[0]?.endTime),
+        );
+      }
+    }
+  }, [scheduleRecord, selectedRoom?.roomName, schedule]);
 
   useEffect(() => {
     if (selectedRoom) {
@@ -95,7 +161,8 @@ export default function RoomDetailsForm() {
       toast.success("Room successfully updated!");
       if (session?.data?.user?.id) {
         logActivity(
-          session.data.user.id ?? "",
+          session.data?.user.firstName + " " + session?.data?.user?.lastName ||
+            "",
           `updated Room ${selectedRoom?.roomName} details`,
         );
       }
@@ -106,8 +173,19 @@ export default function RoomDetailsForm() {
     setIsLoading(false);
   };
 
+  useEffect(() => {
+    if (selectedRoom?.status === "AVAILABLE") {
+      setIsAvailable(false);
+      setTimeInAt(""), setTimeOutAt("");
+      setFacultyName("");
+      setSubjectAndSection("");
+    } else {
+      setIsAvailable(true);
+    }
+  }, [selectedRoom?.status]);
+
   return (
-    <div>
+    <div className="flex w-full flex-col-reverse sm:w-auto sm:flex-col">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="w-full gap-3 sm:grid-cols-2 md:grid lg:grid-cols-3">
@@ -146,7 +224,7 @@ export default function RoomDetailsForm() {
               disabled={form.watch("Lecture") || !form.watch("Laboratory")}
             />
           </div>
-          <div className="mt-5 flex flex-col gap-5 sm:flex-row">
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:gap-5">
             <FormCheckbox form={form} name="Disable" label="Disable" />
             <FormCheckbox
               form={form}
@@ -182,6 +260,24 @@ export default function RoomDetailsForm() {
           </div>
         </form>
       </Form>
+      {isAvailable && (
+        <div className="mb-5 space-y-2 text-sm sm:mb-0">
+          <div className="flex items-center gap-1">
+            <p className="font-medium">Room status: </p>
+            <div className="w-28 rounded-full bg-primary-red text-center text-sm font-medium text-white">
+              <p>{selectedRoom?.status}</p>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <p className="font-medium">Occupied By: {facultyName}</p>
+            <p className="font-medium">
+              Subject & Section: {subjectAndSection}
+            </p>
+            <p className="font-medium">Timed In At: {timeInAt ?? ""}</p>
+            <p className="font-medium">Scheduled out at: {timeOutAt ?? ""}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

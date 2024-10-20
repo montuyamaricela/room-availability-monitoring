@@ -64,7 +64,9 @@ export default function RequestSchedule({
         toast.success(responseData.message);
         if (session?.data?.user?.id) {
           logActivity(
-            session?.data?.user?.id,
+            session.data?.user.firstName +
+              " " +
+              session?.data?.user?.lastName || "",
             "requested schedule from Bulsu Smart Scheduling",
           );
         }

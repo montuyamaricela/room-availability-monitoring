@@ -9,12 +9,14 @@ import {
 
 export const logsRouter = createTRPCRouter({
   activityLogs: publicProcedure
-    .input(z.object({ userID: z.string().min(1), activity: z.string().min(1) }))
+    .input(
+      z.object({ userName: z.string().min(1), activity: z.string().min(1) }),
+    )
     .mutation(async ({ ctx, input }) => {
       await ctx.db.activityLogs.create({
         data: {
           activity: input.activity,
-          userId: input.userID,
+          userName: input.userName,
         },
       });
     }),
@@ -45,14 +47,6 @@ export const logsRouter = createTRPCRouter({
     return ctx.db.activityLogs.findMany({
       orderBy: {
         dateTime: "desc",
-      },
-      include: {
-        user: {
-          select: {
-            firstName: true,
-            lastName: true,
-          },
-        },
       },
     });
   }),

@@ -14,6 +14,7 @@ import { filterTimeSlots, generateTimeSlots } from "~/lib/timeSchedule";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { useActivityLog } from "~/lib/createLogs";
+import RoomAssignmentFormConfirmation from "./RoomAssignmentFormConfirmation";
 
 export default function RoomAssignmentForm({
   faculty,
@@ -28,7 +29,8 @@ export default function RoomAssignmentForm({
   const { selectedRoom } = useRoomStore();
   const { schedule } = useScheduleStore();
   const { logActivity } = useActivityLog();
-
+  const [openAddScheduleModal, setOpenAddScheduleModal] = useState(false);
+  const [formData, setFormData] = useState<scheduleSchema.IScheduleSchema>();
   const session = useSession();
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -64,79 +66,96 @@ export default function RoomAssignmentForm({
   }, [form.watch("Day"), schedule, selectedRoom?.roomName]);
 
   const onSubmit = async (data: scheduleSchema.IScheduleSchema) => {
-    setLoading(true);
-    const response = await fetch("/api/room-schedule", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        roomId: selectedRoom?.id,
-        roomName: selectedRoom?.roomName,
-        isTemp: false,
-        action: "Add Schedule",
-        ...data,
-      }),
-    });
-    const responseData = await response.json();
+    if (data.facultyName != "Other") {
+      setLoading(true);
+      const response = await fetch("/api/room-schedule", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          roomId: selectedRoom?.id,
+          roomName: selectedRoom?.roomName,
+          isTemp: false,
+          action: "Add Schedule",
+          ...data,
+        }),
+      });
+      const responseData = await response.json();
 
-    if (response.ok) {
-      toast.success(responseData?.message);
-      logActivity(
-        session?.data?.user?.id ?? "",
-        `Assigned ${data.facultyName} to Room ${selectedRoom?.roomName} `,
-      );
+      if (response.ok) {
+        toast.success(responseData?.message);
+        logActivity(
+          session.data?.user.firstName + " " + session?.data?.user?.lastName ||
+            "",
+          `assigned schedule for ${data.facultyName} on ${data.Day} at Room ${selectedRoom?.roomName}`,
+        );
+      } else {
+        toast.error(responseData?.error || "Something went wrong");
+        console.error("Something went wrong");
+      }
+      form.reset();
+      setLoading(false);
     } else {
-      toast.error(responseData?.error || "Something went wrong");
-      console.error("Something went wrong");
+      setOpenAddScheduleModal(true);
+      setFormData(data);
     }
-    form.reset();
-    setLoading(false);
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="mb-5 grid grid-cols-3 gap-6">
-          <FormCombobox
-            label="Faculty Name"
-            form={form}
-            placeholder="Select Faculty"
-            name={"facultyName"}
-            data={faculty}
-          />
-          <FormInput form={form} name="Subject" label="Subject" />
-          <FormInput form={form} name="Section" label="Section" />
-          <FormCombobox
-            label="Day"
-            form={form}
-            placeholder="Select Day"
-            name={"Day"}
-            data={day}
-          />
-          <FormCombobox
-            label="From"
-            form={form}
-            placeholder="Select Start Time"
-            name={"beginTime"}
-            data={availableSlots ?? []}
-          />
-          <FormCombobox
-            label="To"
-            form={form}
-            placeholder="Select End Time"
-            name={"endTime"}
-            data={availableSlots ?? []}
-          />
-        </div>
-        <Button className="w-44 bg-green-light hover:bg-primary-green">
-          {" "}
-          {loading ? "Adding..." : "+ Add"}
-        </Button>
-        {/* <Button className="ml-2 bg-green-light hover:bg-primary-green">
+    <>
+      <RoomAssignmentFormConfirmation
+        open={openAddScheduleModal}
+        setOpen={setOpenAddScheduleModal}
+        availableSlots={availableSlots}
+        formData={formData ?? undefined}
+        userName={
+          session.data?.user.firstName + " " + session?.data?.user?.lastName
+        }
+      />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="mb-5 grid w-full gap-6 sm:grid-cols-3">
+            <FormCombobox
+              label="Faculty Name"
+              form={form}
+              placeholder="Select Faculty"
+              name={"facultyName"}
+              data={faculty}
+            />
+            <FormInput form={form} name="Subject" label="Subject" />
+            <FormInput form={form} name="Section" label="Section" />
+            <FormCombobox
+              label="Day"
+              form={form}
+              placeholder="Select Day"
+              name={"Day"}
+              data={day}
+            />
+            <FormCombobox
+              label="From"
+              form={form}
+              placeholder="Select Start Time"
+              name={"beginTime"}
+              data={availableSlots ?? []}
+            />
+            <FormCombobox
+              label="To"
+              form={form}
+              placeholder="Select End Time"
+              name={"endTime"}
+              data={availableSlots ?? []}
+            />
+          </div>
+          <Button className="w-44 bg-green-light hover:bg-primary-green">
+            {" "}
+            {loading ? "Adding..." : "+ Add"}
+          </Button>
+          {/* <Button className="ml-2 bg-green-light hover:bg-primary-green">
           Update
         </Button> */}
-      </form>
-    </Form>
+        </form>
+      </Form>
+    </>
   );
 }

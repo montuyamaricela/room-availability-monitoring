@@ -73,7 +73,8 @@ export default function ScheduleModal({
     if (response.ok) {
       toast.success(responseData?.message);
       logActivity(
-        session?.data?.user?.id ?? "",
+        session.data?.user.firstName + " " + session?.data?.user?.lastName ||
+          "",
         `updated ${data.facultyName}'s schedule on ${selectedSchedule?.day} at Room ${selectedSchedule?.room.roomName}`,
       );
       setTimeout(() => {
@@ -105,7 +106,8 @@ export default function ScheduleModal({
         setOpen(false);
         if (session?.data?.user?.id) {
           logActivity(
-            session.data.user.id ?? "",
+            session.data.user.firstName + " " + session.data.user.lastName ||
+              "",
             `deleted ${selectedSchedule?.facultyName}'s schedule on ${selectedSchedule?.day} in Room ${selectedSchedule?.room.roomName}`,
           );
         }

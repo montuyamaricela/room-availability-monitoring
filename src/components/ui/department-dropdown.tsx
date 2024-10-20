@@ -48,7 +48,7 @@ export function DepartmentDropdown({
       <PopoverContent className="w-full p-0 sm:w-[200px]">
         <Command>
           <CommandInput placeholder="Search..." className="h-9" />
-          <CommandEmpty>No framework found.</CommandEmpty>
+          <CommandEmpty>Not found...</CommandEmpty>
           <CommandList>
             <CommandGroup>
               {data.map((item: { label: string; value: string }) => (

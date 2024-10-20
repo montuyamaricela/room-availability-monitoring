@@ -98,7 +98,9 @@ export default function Signup() {
     const responseData = await response.json();
 
     if (response.ok) {
-      toast.success("Account created successfully!");
+      toast.success(
+        "Account created successfully! Please check your email for verification link.",
+      );
       form.reset();
       setTimeout(() => {
         router.push("/signin");
@@ -133,8 +135,9 @@ export default function Signup() {
               CREATE ACCOUNT
             </p>
             <p className="font-500 text-center text-sm text-white md:text-left">
-              Welcome to the BulSU Bustos Campus Room Availability Monitoring System.
-              Easily check the status of classrooms in real-time to plan your activities more efficiently.
+              Welcome to the BulSU Bustos Campus Room Availability Monitoring
+              System. Easily check the status of classrooms in real-time to plan
+              your activities more efficiently.
             </p>
           </div>
           <div className="rounded-b-2xl bg-white md:w-1/2 md:rounded-r-2xl md:rounded-bl-none">
@@ -186,22 +189,10 @@ export default function Signup() {
                     />
                   </div>
 
-                  <h3 className="my-5 text-xs font-medium text-gray-dark">
-                    By clicking Create, you agree to our
-                    <Button
-                      onClick={() => setOpenTermsofServicesModal(true)}
-                      className="bg-transparent hover:bg-transparent font-semibold text-green-dark"
-                    >
-                      Terms of Service
-                    </Button>
-                    and that you have read our
-                    <Button
-                      onClick={() => setOpenPrivacyPolicyModal(true)}
-                      className="bg-transparent hover:bg-transparent font-semibold text-green-dark"
-                    >
-                      Privacy Policy
-                    </Button>
-                  </h3>
+                  <p className="mb-5 text-xs font-medium text-gray-dark">
+                    By clicking Create, you agree to our Terms of Service and
+                    Privacy Policy
+                  </p>
                   <div className="flex justify-center">
                     <Button className="w-2/6 items-center bg-green-dark hover:bg-green-900">
                       {formLoading ? "Submitting...." : "Submit"}

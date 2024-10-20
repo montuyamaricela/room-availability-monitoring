@@ -20,11 +20,13 @@ import CreateAccount from "./CreateAccount";
 import toast from "react-hot-toast";
 import DeleteConfirmation from "../common/Modal/DeleteConfirmation";
 import NotAllowed from "../common/NotAllowed";
+import { useActivityLog } from "~/lib/createLogs";
 
 export default function AccountManagement() {
   const session = useSession();
   const { data, isLoading, error, refetch } = api.user.getAllUser.useQuery();
   const [search, setSearch] = useState("");
+  const { logActivity } = useActivityLog();
 
   const { mutate: deleteUser } = api.user.deleteUser.useMutation({
     onSuccess: () => {
@@ -36,8 +38,9 @@ export default function AccountManagement() {
     },
   });
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: string, name: string) => {
     deleteUser({ id: id });
+    logActivity("Super Admin", `deleted ${name}'s account`);
   };
 
   if (isLoading) return <Spinner />;
@@ -82,7 +85,12 @@ export default function AccountManagement() {
                   Unblock
                 </Button> */}
                 <DeleteConfirmation
-                  deleteHandler={() => handleDelete(account.id)}
+                  deleteHandler={() =>
+                    handleDelete(
+                      account.id,
+                      account.firstName + " " + account.lastName,
+                    )
+                  }
                   ButtonTrigger={
                     <Button className="h-5 bg-transparent p-0 text-red-light hover:bg-transparent">
                       Delete

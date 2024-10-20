@@ -18,7 +18,7 @@ export default async function roomTimeOut(
       },
       body: JSON.stringify({
         roomId: selectedSchedule ? selectedSchedule.roomId : "",
-        action: "Time out",
+        action: "Returned the key",
         id: selectedSchedule ? selectedSchedule.id : null,
         careOf: selectedSchedule ? selectedSchedule.facultyName : "",
         ...selectedSchedule,
@@ -27,12 +27,14 @@ export default async function roomTimeOut(
     const responseData = await response.json();
     if (response.ok) {
       toast.success("Timed out sucessfully!");
-      setDeleted(true);
     } else {
       toast.error(responseData?.message || "Something went wrong");
       console.error("Something went wrong");
     }
-    setSubmitted(true);
+    setTimeout(() => {
+      setSubmitted(true);
+      setDeleted(true);
+    }, 1500);
   } catch (error) {
     console.error("Error updating room status", error);
   }

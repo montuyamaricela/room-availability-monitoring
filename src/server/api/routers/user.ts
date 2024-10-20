@@ -100,6 +100,7 @@ export const userRouter = createTRPCRouter({
         status: user.status,
         email: user.email,
         id: user.id,
+        name: user.firstName + " " + user.lastName,
       };
     }),
 
@@ -215,6 +216,6 @@ export const userRouter = createTRPCRouter({
         }),
       ]);
 
-      return user.id;
+      return user.firstName + " " + user.lastName;
     }),
 });

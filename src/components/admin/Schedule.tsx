@@ -155,7 +155,11 @@ export default function Schedule({ loading }: { loading: boolean }) {
     if (message) {
       toast.success(message);
       clearSchedule();
-      logActivity(session.data?.user.id ?? "", "resetted schedule");
+      logActivity(
+        session.data?.user.firstName + " " + session?.data?.user?.lastName ||
+          "",
+        "resetted schedule",
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [message]);

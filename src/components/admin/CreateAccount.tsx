@@ -15,7 +15,13 @@ import { departments, role } from "../authentications/Signup";
 import { useRouter } from "next/navigation";
 import { useActivityLog } from "~/lib/createLogs";
 
-export default function CreateAccount({ id }: { id?: string | undefined }) {
+export default function CreateAccount({
+  firstName,
+  lastName,
+}: {
+  firstName?: string | undefined;
+  lastName?: string | undefined;
+}) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [disableField, setDisableField] = useState(false);
@@ -47,10 +53,10 @@ export default function CreateAccount({ id }: { id?: string | undefined }) {
     if (response.ok) {
       // delay
       toast.success(
-        "Account created successfully! Please check your email for verification link.",
+        "Account created successfully! Please check your email for creation link.",
       );
       logActivity(
-        id ?? "",
+        firstName + " " + lastName,
         `created an account for ${data?.firstName + " " + data?.lastName}`,
       );
       setTimeout(() => {

@@ -8,10 +8,15 @@ import { api } from "~/trpc/react";
 import toast from "react-hot-toast";
 import DeleteConfirmation from "../Modal/DeleteConfirmation";
 import { Button } from "~/components/ui/button";
+import { useSession } from "next-auth/react";
+import { useActivityLog } from "~/lib/createLogs";
 
 export default function RoomAssignmentTable({
   day,
 }: Readonly<{ day: string }>) {
+  const session = useSession();
+  const { logActivity } = useActivityLog();
+
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
   const [loading, setLoading] = useState<boolean>(true);
@@ -58,7 +63,7 @@ export default function RoomAssignmentTable({
     (page - 1) * pageSize,
     page * pageSize,
   );
-  const { mutate: deleteUser, isPending } =
+  const { mutate: deleteSchedule, isPending } =
     api.schedule.deleteSchedule.useMutation({
       onSuccess: () => {
         toast.success("Successfully Deleted.");
@@ -69,8 +74,17 @@ export default function RoomAssignmentTable({
       },
     });
 
-  const handleDelete = (id: number) => {
-    deleteUser({ id: id });
+  const handleDelete = (
+    id: number,
+    facultyName: string,
+    day: string,
+    room: string,
+  ) => {
+    deleteSchedule({ id: id });
+    logActivity(
+      session?.data?.user.firstName + " " + session?.data?.user.lastName || "",
+      `deleted ${facultyName}'s schedule on ${day} at Room ${room}`,
+    );
   };
 
   const columns: TableColumn<scheduleAttributes>[] = [
@@ -106,7 +120,14 @@ export default function RoomAssignmentTable({
       header: "Action",
       formatter: (row) => (
         <DeleteConfirmation
-          deleteHandler={() => handleDelete(row ? row?.id : 0)}
+          deleteHandler={() =>
+            handleDelete(
+              row ? row?.id : 0,
+              row.facultyName,
+              row.day,
+              row.room.roomName,
+            )
+          }
           ButtonTrigger={
             <Button className="h-7 w-20 items-center rounded-full bg-primary-red hover:bg-primary-red">
               Delete

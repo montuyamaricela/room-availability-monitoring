@@ -4,7 +4,14 @@
 import { type FieldProps } from "../../lib/types";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
-import { Command, CommandGroup, CommandItem, CommandList } from "./command";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "./command";
 import { cn } from "../../lib/utils";
 import { Check } from "lucide-react";
 import React from "react";
@@ -126,6 +133,8 @@ export const FormCombobox = ({
               </PopoverTrigger>
               <PopoverContent className="p-0" align="start">
                 <Command>
+                  <CommandInput placeholder="Search..." className="h-9" />
+                  <CommandEmpty>Not found...</CommandEmpty>
                   <CommandList>
                     <CommandGroup>
                       {data?.map((item) => (

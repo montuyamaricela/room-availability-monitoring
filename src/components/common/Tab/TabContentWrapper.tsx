@@ -24,28 +24,29 @@ export default function TabContentWrapper({
     new Set(data?.map((faculty) => faculty.facultyName)),
   ).map((facultyName) => ({ facultyName }));
 
-  const faculties = filteredFaculties?.map((item) => {
-    return { label: item.facultyName, value: item.facultyName };
-  });
+  const faculties =
+    filteredFaculties?.map((item) => {
+      return { label: item.facultyName, value: item.facultyName };
+    }) || [];
+
+  faculties.push({ label: "Other", value: "Other" });
 
   const [day, setDay] = useState<string>("");
 
   const renderItem = () => {
     if (activeTab === "room-information") {
       return (
-        <div className="my-auto flex h-full w-full flex-col items-center justify-center">
-          {/* <RoomInfo /> */}
+        <div className="my-auto flex h-full w-full flex-col items-center justify-center ">
           <p className="mb-5 text-center text-xl font-semibold">
             {" "}
             Room {selectedRoom?.roomName}
           </p>
           <RoomDetailsForm />
-          {/* <RoomInfo /> */}
         </div>
       );
     } else if (activeTab === "room-assignment") {
       return (
-        <div>
+        <div className="overflow-x-hidden">
           <p className="mb-5 text-center text-xl font-semibold">
             {" "}
             Room {selectedRoom?.roomName}

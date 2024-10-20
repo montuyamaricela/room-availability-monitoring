@@ -1,11 +1,7 @@
 export interface activityLogsAttributes {
   id: number;
   dateTime: Date;
-  userId: string;
-  user: {
-    firstName: string;
-    lastName: string;
-  };
+  userName: string;
   activity: string;
 }
 

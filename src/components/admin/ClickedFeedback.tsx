@@ -15,7 +15,7 @@ type ModalWrapperTypes = {
   children: ReactNode;
   role: string | undefined;
   name: string;
-  userId: string | undefined;
+  userName: string | undefined;
   feedbackID: number;
   isAcknowledged: boolean;
 };
@@ -25,7 +25,7 @@ const ClickedFeedback = ({
   feedbackID,
   children,
   role,
-  userId,
+  userName,
   name,
   isAcknowledged,
 }: ModalWrapperTypes) => {
@@ -51,7 +51,7 @@ const ClickedFeedback = ({
       acknowledged: true,
       acknowledgedBy: name,
     });
-    logActivity(userId ?? "", `acknowledged a feedback`);
+    logActivity(userName ?? "", `acknowledged a feedback`);
   };
   return (
     <Dialog>

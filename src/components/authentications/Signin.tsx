@@ -40,7 +40,7 @@ export default function Signin() {
   const getStatus = api.user.getUserStatus.useMutation({
     onSuccess: (data) => {
       if (data.status === "Verified") {
-        void handleSignIn(data.id);
+        void handleSignIn(data.name);
       } else {
         toast.error(
           "Email is not yet verified. Please verify your email and try again.",
@@ -54,7 +54,7 @@ export default function Signin() {
       setIsLoading(false);
     },
   });
-  const handleSignIn = async (userID: string) => {
+  const handleSignIn = async (name: string) => {
     try {
       const signInData = await signIn("credentials", {
         email: form.getValues("email"),
@@ -70,7 +70,7 @@ export default function Signin() {
         }
       } else {
         toast.success("Signed in successfully!");
-        logActivity(userID ?? "", "logged In");
+        logActivity(name ?? "", "logged In");
       }
 
       setIsLoading(false);
@@ -104,8 +104,9 @@ export default function Signin() {
               LOGIN
             </p>
             <p className="font-500 text-center text-sm text-white md:text-left">
-              Welcome to the BulSU Bustos Campus Room Availability Monitoring System.
-              Easily check the status of classrooms in real-time to plan your activities more efficiently.
+              Welcome to the BulSU Bustos Campus Room Availability Monitoring
+              System. Easily check the status of classrooms in real-time to plan
+              your activities more efficiently.
             </p>
           </div>
           <div className="rounded-b-2xl  bg-white md:w-1/2 md:rounded-r-2xl md:rounded-bl-none">

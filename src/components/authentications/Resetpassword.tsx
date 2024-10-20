@@ -110,8 +110,9 @@ export default function Resetpassword() {
               RESET PASSWORD
             </p>
             <p className="font-500 text-center text-sm text-white md:text-left">
-              Welcome to the BulSU Bustos Campus Room Availability Monitoring System.
-              Easily check the status of classrooms in real-time to plan your activities more efficiently.
+              Welcome to the BulSU Bustos Campus Room Availability Monitoring
+              System. Easily check the status of classrooms in real-time to plan
+              your activities more efficiently.
             </p>
           </div>
           <div className="rounded-b-2xl  bg-white md:w-1/2 md:rounded-r-2xl md:rounded-bl-none">

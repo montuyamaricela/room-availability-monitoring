@@ -38,7 +38,7 @@ const RoomModalAdmin = ({
           <DialogTitle>Room Modal Admin</DialogTitle>
         </VisuallyHidden.Root>
       </DialogHeader>
-      <DialogContent className="max-w-[60%]">
+      <DialogContent className="max-w-[95%] sm:max-w-[70%]">
         <TabWrapper activeTab={activeTab} setActiveTab={setActiveTab}>
           <TabContentWrapper
             activeTab={activeTab}

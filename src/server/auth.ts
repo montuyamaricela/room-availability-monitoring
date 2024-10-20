@@ -25,7 +25,7 @@ export interface CustomUser {
   lastName: string;
   department: string;
   image: string;
-  role?: "Admin" | "Security Guard" | "Super Admin"; // Define roles
+  role?: "Admin" | "Security Guard" | "Super Admin" | "Room Viewer"; // Define roles
 }
 
 // Extend session type to include custom user

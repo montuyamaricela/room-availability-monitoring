@@ -32,7 +32,11 @@ export default function Changepassword() {
 
   const resetPass = api.user.changePassword.useMutation({
     onSuccess: () => {
-      logActivity(session.data?.user.id ?? "", "changed their password");
+      logActivity(
+        session.data?.user.firstName + " " + session?.data?.user?.lastName ||
+          "",
+        "changed their password",
+      );
       setTimeout(() => {
         toast.success("Successfully updated password");
         void signOut();
@@ -66,7 +70,7 @@ export default function Changepassword() {
 
   return (
     <Container className="my-auto flex h-screen items-center bg-primary-green">
-      <div className="flex items-center justify-center ">
+      <div className="flex items-center justify-center">
         <div className="flex w-full flex-col rounded-lg shadow-lg md:flex-row xl:w-4/5">
           <div className="flex flex-col items-center gap-2 rounded-t-2xl bg-gradient-to-b from-green-400 to-green-800 p-8 drop-shadow-md sm:gap-5 sm:p-10 md:w-1/2 md:items-start md:rounded-l-2xl md:rounded-tr-none lg:p-16">
             <Image
@@ -79,8 +83,9 @@ export default function Changepassword() {
               CHANGE PASSWORD
             </p>
             <p className="font-500 text-center text-sm text-white md:text-left">
-              Welcome to the BulSU Bustos Campus Room Availability Monitoring System.
-              Easily check the status of classrooms in real-time to plan your activities more efficiently.
+              Welcome to the BulSU Bustos Campus Room Availability Monitoring
+              System. Easily check the status of classrooms in real-time to plan
+              your activities more efficiently.
             </p>
           </div>
           <div className="rounded-b-2xl  bg-white md:w-1/2 md:rounded-r-2xl md:rounded-bl-none">
@@ -122,7 +127,7 @@ export default function Changepassword() {
           </div>
         </div>
       </div>
-      <div className="mt-7 flex items-center justify-center gap-10 text-sm text-white">
+      <div className="mt-5 flex items-center justify-center gap-10 text-sm text-white">
         <Button
           onClick={() => setOpenTermsofServicesModal(true)}
           className="bg-transparent hover:bg-transparent"

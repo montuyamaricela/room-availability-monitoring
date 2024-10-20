@@ -4,14 +4,14 @@ import { useLogStore } from "~/store/useLogStore";
 import Table, { type TableColumn } from "./Table";
 import { format } from "date-fns";
 import { TabsContent } from "~/components/ui/tabs";
+import { useScheduleStore } from "~/store/useScheduleStore";
 
 export default function ActivityLogs({
   loading,
 }: Readonly<{ loading: boolean }>) {
   const { activityLog } = useLogStore();
-
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize] = useState(100);
   // Calculate total pages
   const [log, setLog] = useState<activityLogsAttributes[]>([]);
 
@@ -35,11 +35,7 @@ export default function ActivityLogs({
     {
       id: "Activity",
       header: "Activity",
-      formatter: (row) => (
-        <span>
-          {row.user.firstName + " " + row.user.lastName + " " + row.activity}
-        </span>
-      ),
+      formatter: (row) => <span>{row.userName + " " + row.activity}</span>,
     },
     {
       id: "Date and Time",

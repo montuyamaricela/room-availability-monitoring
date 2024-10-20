@@ -152,7 +152,7 @@ export async function POST(req: NextRequest) {
         await createRoomSchedule();
       }
 
-      if (body.isTemp && body.action === "Time out") {
+      if (body.isTemp && body.action === "Returned the key") {
         // delete the temporary schedule after time out.
         await db.roomSchedule.delete({
           where: {
@@ -167,7 +167,7 @@ export async function POST(req: NextRequest) {
           id: body.roomId,
         },
         data: {
-          status: body.action === "Time in" ? "OCCUPIED" : "AVAILABLE",
+          status: body.action === "Borrowed the key" ? "OCCUPIED" : "AVAILABLE",
         },
       });
     }

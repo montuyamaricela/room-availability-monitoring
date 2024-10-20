@@ -21,19 +21,24 @@ import { useUserInfoStore } from "~/store/useUserInfoStore";
 
 type ModalProps = {
   firstName?: string | null | undefined;
+  lastName?: string | null | undefined;
   id?: string | undefined;
   role?: string | undefined;
 };
 
-export default function ModalMenu({ firstName, id, role }: ModalProps) {
+export default function ModalMenu({
+  firstName,
+  lastName,
+  id,
+  role,
+}: ModalProps) {
   const { logActivity } = useActivityLog();
   const { user } = useUserInfoStore();
 
   const signOutHandler = async () => {
     void signOut();
-    logActivity(id ?? "", "logged out");
+    logActivity(firstName + " " + lastName || "", "logged out");
   };
-
   return (
     <>
       {id ? (
@@ -64,7 +69,7 @@ export default function ModalMenu({ firstName, id, role }: ModalProps) {
               <Link href="/admin">Home</Link>
             </DropdownMenuItem>
 
-            {role != "Security Guard" && (
+            {role != "Security Guard" && role != "Room Viewer" && (
               <>
                 <DropdownMenuItem>
                   <Link href="/admin/account-management">Manage Account</Link>
@@ -75,19 +80,28 @@ export default function ModalMenu({ firstName, id, role }: ModalProps) {
               </>
             )}
             {role === "Super Admin" && (
-              <DropdownMenuItem>
-                <Link href="/admin/logs">Logs</Link>
-              </DropdownMenuItem>
+              <>
+                <DropdownMenuItem>
+                  <Link href="/admin/logs">Logs</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/admin/barcode-list">Barcode List</Link>
+                </DropdownMenuItem>
+              </>
             )}
-            <DropdownMenuItem>
-              <Link href="/admin/feedback">Feedback</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link href="/admin/profile-setting">Profile Settings</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link href="/admin/change-password">Password Settings</Link>
-            </DropdownMenuItem>
+            {role != "Room Viewer" && (
+              <>
+                <DropdownMenuItem>
+                  <Link href="/admin/feedback">Feedback</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/admin/profile-setting">Profile Settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/admin/change-password">Password Settings</Link>
+                </DropdownMenuItem>
+              </>
+            )}
 
             <DropdownMenuItem>
               <div

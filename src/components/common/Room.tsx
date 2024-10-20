@@ -15,6 +15,11 @@ import { useSession } from "next-auth/react";
 import RoomModalSecurity from "../security/RoomModalSecurity";
 
 export function RoomLayout() {
+  // Create a Set to store the record IDs or faculty names that already received feedback
+  const [submittedFeedbackRecords, setSubmittedFeedbackRecords] = useState<
+    Set<number>
+  >(new Set());
+
   const session = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -44,19 +49,19 @@ export function RoomLayout() {
     selectedBuilding,
   );
 
-  // useEffect(() => {
-  //   if (!rooms || !roomID) return; // Only run if roomID exists and modal is closed
+  useEffect(() => {
+    if (!rooms || !roomID) return; // Only run if roomID exists and modal is closed
 
-  //   const selectedRoomFromParams = rooms?.filter((room: any) => {
-  //     return room.id.toLowerCase() === roomID.toLowerCase();
-  //   });
-  //   setSelectedRoom(selectedRoomFromParams[0] as unknown as Room);
-  //   if (selectedRoomFromParams.length > 0) {
-  //     setOpen(true);
-  //   } else {
-  //     setOpen(false);
-  //   }
-  // }, [roomID]); // Dependencies: rooms, roomID, open
+    const selectedRoomFromParams = rooms?.filter((room: any) => {
+      return room.id.toLowerCase() === roomID.toLowerCase();
+    });
+    setSelectedRoom(selectedRoomFromParams[0] as unknown as Room);
+    if (selectedRoomFromParams.length > 0) {
+      setOpen(true);
+    } else {
+      setOpen(false);
+    }
+  }, [roomID, rooms, setSelectedRoom]); // Dependencies: rooms, roomID, open
 
   // Filter the rooms based on the active filters
   const filteredRooms = filteredRoomsByBuilding?.filter((room: any) => {
@@ -99,11 +104,15 @@ export function RoomLayout() {
           {BuildingComponent}
         </div>
 
-        {pathname === "/admin" &&
-        session.data?.user.role != "Security Guard" ? (
+        {pathname === "/admin" && session.data?.user.role == "Admin" ? (
           <RoomModalAdmin setOpen={setOpen} open={open} />
         ) : session.data?.user.role == "Security Guard" ? (
-          <RoomModalSecurity setOpen={setOpen} open={open} />
+          <RoomModalSecurity
+            setOpen={setOpen}
+            open={open}
+            setSubmittedFeedbackRecords={setSubmittedFeedbackRecords}
+            submittedFeedbackRecords={submittedFeedbackRecords}
+          />
         ) : session.data?.user.role == "Super Admin" ? (
           <RoomModalAdmin setOpen={setOpen} open={open} />
         ) : (

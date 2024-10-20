@@ -26,21 +26,26 @@ import { formatTimetoLocal } from "~/lib/timeSchedule";
 import toast from "react-hot-toast";
 import { useRoomLog } from "~/lib/createLogs";
 import { useSession } from "next-auth/react";
+import { useTimeIn } from "~/lib/roomScheduleLog";
 
 type TimeInConfirmationProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
+  setLoading: (loading: boolean) => void;
   selectedSchedule: scheduleAttributes | null;
+  setOpenModal: (loading: boolean) => void;
 };
 
 export default function TimeInConfirmation({
   open,
   setOpen,
   selectedSchedule,
+  setOpenModal,
 }: TimeInConfirmationProps) {
   const session = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const { logActivity } = useRoomLog();
+  const { timeInRoom } = useTimeIn();
 
   const form = useForm({
     resolver: scheduleSchema.TimeInSchemaResolver,
@@ -49,7 +54,6 @@ export default function TimeInConfirmation({
 
   const onSubmit = async (data: scheduleSchema.ITimeInSchema) => {
     setIsLoading(true);
-
     const response = await fetch("/api/room-schedule", {
       method: "POST",
       headers: {
@@ -57,7 +61,7 @@ export default function TimeInConfirmation({
       },
       body: JSON.stringify({
         roomId: selectedSchedule ? selectedSchedule.roomId : "",
-        action: "Time in",
+        action: "Borrowed the key",
         isTemp: selectedSchedule ? selectedSchedule.isTemp : "",
         ...data,
       }),
@@ -69,12 +73,18 @@ export default function TimeInConfirmation({
       if (selectedSchedule?.roomId) {
         logActivity(
           session?.data?.user.firstName + " " + session?.data?.user.lastName,
-          "timed in",
+          "borrowed the key",
           data.careOf,
           data.facultyName,
           selectedSchedule?.roomId,
         );
+        timeInRoom(selectedSchedule.id, data.facultyName);
       }
+
+      setTimeout(() => {
+        setOpen(false);
+        setOpenModal(false);
+      }, 2000);
     } else {
       toast.error(responseData?.message || "Something went wrong");
       console.error("Something went wrong");
