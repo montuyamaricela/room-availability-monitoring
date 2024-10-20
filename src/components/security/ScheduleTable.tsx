@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { type scheduleAttributes } from "~/data/models/schedule";
+import {
+  type scheduleRecordsAttributes,
+  type scheduleAttributes,
+} from "~/data/models/schedule";
 import Table, { type TableColumn } from "../common/Table/Table";
-import { api } from "~/trpc/react";
 import { useRoomStore } from "~/store/useRoomStore";
-import { addHours, format, isPast, parse, subHours } from "date-fns";
-import toast from "react-hot-toast";
+import {
+  addHours,
+  addMinutes,
+  format,
+  isPast,
+  parse,
+  subHours,
+} from "date-fns";
 import { Button } from "../ui/button";
 import { formatTimetoLocal } from "~/lib/timeSchedule";
 import TimeInConfirmation from "../common/Modal/TimeInConfirmation";
@@ -13,26 +21,42 @@ import TimeoutConfirmation from "../common/Modal/TimeoutConfirmation";
 import { useScheduleStore } from "~/store/useScheduleStore";
 import { useSession } from "next-auth/react";
 import { useRoomLog } from "~/lib/createLogs";
+import { useTimeOut } from "~/lib/roomScheduleLog";
+import { useFeedbackAutomation } from "~/lib/feedbackAutomation";
 
 export default function ScheduleTable({
   isSubmitted,
   setSubmitted,
+  setOpenModal,
+  submittedFeedbackRecords,
+  setSubmittedFeedbackRecords,
 }: {
   isSubmitted: boolean;
   setSubmitted: (submitted: boolean) => void;
+  setOpenModal: (open: boolean) => void;
+  submittedFeedbackRecords: Set<number>;
+  setSubmittedFeedbackRecords: React.Dispatch<
+    React.SetStateAction<Set<number>>
+  >;
 }) {
   const currentDate = new Date();
   const session = useSession();
   const { logActivity } = useRoomLog();
-
+  const { timeOutRoom } = useTimeOut();
+  const { automateFeedback } = useFeedbackAutomation();
   const { rooms, selectedRoom } = useRoomStore();
   const [loading, setLoading] = useState<boolean>(true);
   const [isDeleted, setDeleted] = useState<boolean>(false);
-  const { schedule } = useScheduleStore();
+  const { schedule, scheduleRecord } = useScheduleStore();
+
   // Time in confirmation modal state
   const [open, setOpen] = useState<boolean>(false);
 
   const [roomSchedule, setRoomSchedule] = useState<scheduleAttributes[]>([]);
+  const [roomScheduleRecords, setRoomScheduleRecords] = useState<
+    scheduleRecordsAttributes[]
+  >([]);
+
   const [page, setPage] = useState(1);
   const [pageSize] = useState(5);
   const [selectedSchedule, setSelectedSchedule] =
@@ -42,6 +66,18 @@ export default function ScheduleTable({
 
   useEffect(() => {
     let filteredData = schedule.data;
+    let filteredRoomScheduleRecord =
+      (scheduleRecord as unknown as scheduleRecordsAttributes[]) ?? [];
+    const filteredScheduleRecords = filteredRoomScheduleRecord?.filter(
+      (record) =>
+        record?.roomSchedule?.room?.roomName &&
+        record.roomSchedule.room.roomName === selectedRoom?.roomName,
+    );
+
+    filteredRoomScheduleRecord = filteredScheduleRecords?.filter((rec) => {
+      return rec.roomSchedule.day === format(currentDate, "EEEE");
+    });
+    setRoomScheduleRecords(filteredRoomScheduleRecord);
 
     // Filter by room name
     const filteredSched = filteredData.filter(
@@ -54,12 +90,8 @@ export default function ScheduleTable({
 
     setRoomSchedule(filteredData);
     setLoading(false);
-    // mutate({
-    //   room: selectedRoom?.id ?? "",
-    //   day: format(currentDate, "EEEE"),
-    // });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSubmitted, schedule.data]);
+  }, [scheduleRecord, rooms, selectedRoom?.status]);
 
   const totalRecords = roomSchedule.length;
   const pageCount = Math.ceil(totalRecords / pageSize);
@@ -72,17 +104,98 @@ export default function ScheduleTable({
 
   useEffect(() => {
     if (selectedSchedule?.roomId) {
+      let facultyName = selectedSchedule.facultyName;
+      roomScheduleRecords?.map((item) => {
+        if (item.roomScheduleId === selectedSchedule.id) {
+          facultyName = item.facultyName;
+        }
+      });
+
       logActivity(
         session?.data?.user?.firstName + " " + session?.data?.user?.lastName,
-        "timed out",
-        selectedSchedule.facultyName,
-        selectedSchedule.facultyName,
+        "returned the key",
+        facultyName,
+        facultyName,
         selectedSchedule?.roomId,
       );
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDeleted]);
+
+  // Check if the faculty is 15 minutes past scheduled end time and did not return the key
+  useEffect(() => {
+    roomSchedule?.forEach((record) => {
+      const endTime = parse(
+        formatTimetoLocal(record.endTime),
+        "h:mm a",
+        new Date(),
+      );
+      const fifteenMinutesAfterEnd = addMinutes(endTime, 15);
+      roomScheduleRecords.forEach((rec) => {
+        // If it's past the time and the record hasn't had feedback submitted yet
+        if (rec.timeIn != null && rec.timeOut === null) {
+          if (rec.facultyName === record.facultyName) {
+            if (
+              isPast(fifteenMinutesAfterEnd) &&
+              !submittedFeedbackRecords.has(record.id)
+            ) {
+              console.log(rec.id);
+
+              const feedbackMessage = `${rec.facultyName} did not return the key after 15 mins of their scheduled Time Out at Room ${record.room.roomName}`;
+              automateFeedback(record.department ?? "CICS", feedbackMessage);
+
+              // Add the record ID to the set to prevent duplicate feedback
+              setSubmittedFeedbackRecords((prevSet) =>
+                new Set(prevSet).add(record.id),
+              );
+            }
+          }
+        }
+      });
+    });
+  }, [
+    automateFeedback,
+    roomSchedule,
+    roomScheduleRecords,
+    setSubmittedFeedbackRecords,
+    submittedFeedbackRecords,
+  ]);
+
+  function canTimeOut(id: number) {
+    let canTimeOut = false;
+    roomScheduleRecords?.map((item) => {
+      if (item.roomScheduleId === id) {
+        item.timeOut === null && item.timeIn != null
+          ? (canTimeOut = true)
+          : (canTimeOut = false);
+      }
+    });
+    return canTimeOut;
+  }
+
+  function timeOutSchedule(row: scheduleAttributes | null) {
+    if (!row) return;
+
+    let facultyName = row?.facultyName;
+    roomScheduleRecords?.map((item: scheduleRecordsAttributes) => {
+      if (item.roomScheduleId === row?.id) {
+        timeOutRoom(item.id);
+        facultyName = item?.facultyName;
+      }
+    });
+
+    const updatedRow = {
+      ...row,
+      facultyName,
+    };
+    setOpen(false);
+    void roomTimeOut(updatedRow, setSubmitted, setDeleted);
+
+    setTimeout(() => {
+      setOpenModal(false);
+    }, 2000);
+  }
 
   const columns: TableColumn<scheduleAttributes>[] = [
     {
@@ -151,7 +264,8 @@ export default function ScheduleTable({
           <TimeoutConfirmation
             deleteHandler={() => {
               setSelectedSchedule(row);
-              void roomTimeOut(row, setSubmitted, setDeleted);
+              timeOutSchedule(row);
+              setLoading(true);
             }}
             ButtonTrigger={
               <Button
@@ -173,7 +287,8 @@ export default function ScheduleTable({
                       1,
                     ),
                   ) ||
-                  selectedRoom?.status === "AVAILABLE"
+                  selectedRoom?.status === "AVAILABLE" ||
+                  !canTimeOut(row.id)
                 }
                 className="hover h-6 rounded-full bg-green-light text-xs hover:bg-primary-green"
               >
@@ -190,7 +305,9 @@ export default function ScheduleTable({
     <>
       <TimeInConfirmation
         setOpen={setOpen}
+        setOpenModal={setOpenModal}
         open={open}
+        setLoading={setLoading}
         selectedSchedule={selectedSchedule ?? null}
       />
       <Table<scheduleAttributes>

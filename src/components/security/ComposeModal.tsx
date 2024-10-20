@@ -21,7 +21,13 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 import { useActivityLog } from "~/lib/createLogs";
 
-export default function ComposeFeedBack({ id }: { id: string }) {
+export default function ComposeFeedBack({
+  firstName,
+  lastName,
+}: {
+  firstName: string;
+  lastName: string;
+}) {
   const { logActivity } = useActivityLog();
   const [loading, setIsLoading] = useState(false);
   const form = useForm({
@@ -48,7 +54,10 @@ export default function ComposeFeedBack({ id }: { id: string }) {
       department: data.department,
       feedback: data.feedback,
     });
-    logActivity(id ?? "", `created feedback for ${data.department} department`);
+    logActivity(
+      firstName + " " + lastName || "",
+      `created feedback for ${data.department} department`,
+    );
   };
   return (
     <Dialog>

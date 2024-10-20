@@ -119,7 +119,11 @@ export default function FeedBacks() {
                       " " +
                       session?.data?.user.lastName
                     }
-                    userId={session?.data?.user?.id}
+                    userName={
+                      session?.data?.user.firstName +
+                      " " +
+                      session.data?.user.lastName
+                    }
                     feedbackID={feedback.id}
                     isAcknowledged={feedback.acknowledged}
                     ButtonTrigger={

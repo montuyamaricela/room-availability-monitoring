@@ -15,6 +15,21 @@ export interface scheduleAttributes {
   isTemp: boolean;
 }
 
+export interface scheduleRecordsAttributes {
+  id: number;
+  facultyName: string;
+  roomScheduleId: number;
+  roomSchedule: {
+    roomId: string;
+    room: {
+      roomName: string;
+    };
+    day: string;
+  };
+  timeIn: Date;
+  timeOut: Date;
+}
+
 // export interface schedule {
 //   // id: number;
 //   attributes: scheduleAttributes;

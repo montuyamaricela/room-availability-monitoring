@@ -26,7 +26,6 @@ model User {
   password            String  
   image               String?
   status              String
-  ActivityLogs        ActivityLogs[]
 }
 
 model VerificationToken {
@@ -84,6 +83,7 @@ model RoomSchedule {
   isTemp      Boolean
   beginTime   DateTime @db.Time     
   endTime     DateTime @db.Time 
+  roomScheduleRecords RoomScheduleRecord[]
 }
 
 
@@ -98,11 +98,20 @@ model RoomLogs {
   careOf      String
 }
 
+
+model RoomScheduleRecord {
+  id            Int      @id @default(autoincrement())
+  roomScheduleId Int     
+  roomSchedule   RoomSchedule @relation(fields: [roomScheduleId], references: [id], onDelete: Cascade)
+  facultyName    String     
+  timeIn         DateTime 
+  timeOut        DateTime? 
+}
+
 model ActivityLogs {
   id          Int      @id @default(autoincrement())
   dateTime    DateTime @default(now())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
+  userName      String
   activity    String
 }
 

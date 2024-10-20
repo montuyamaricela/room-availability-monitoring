@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { z } from "zod";
+import { date, z } from "zod";
 
 import {
   createTRPCRouter,
@@ -64,6 +66,58 @@ export const scheduleRouter = createTRPCRouter({
       await new Promise((resolve) => setTimeout(resolve, 1000));
       return ctx.db.roomSchedule.delete({
         where: { id: input.id },
+      });
+    }),
+
+  GetScheduleRecord: protectedProcedure.query(({ ctx }) => {
+    return ctx.db.roomScheduleRecord.findMany({
+      orderBy: {
+        id: "desc",
+      },
+      include: {
+        roomSchedule: {
+          select: {
+            roomId: true,
+            day: true,
+            room: true,
+          },
+        },
+      },
+    });
+  }),
+
+  TimeIn: protectedProcedure
+    .input(
+      z.object({
+        roomScheduleId: z.number(),
+        facultyName: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.roomScheduleRecord.create({
+        data: {
+          facultyName: input.facultyName,
+          timeIn: new Date(),
+          roomScheduleId: input.roomScheduleId,
+          timeOut: null,
+        },
+      });
+    }),
+
+  TimeOut: protectedProcedure
+    .input(
+      z.object({
+        scheduleRecordId: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.roomScheduleRecord.update({
+        where: {
+          id: input.scheduleRecordId,
+        },
+        data: {
+          timeOut: new Date(),
+        },
       });
     }),
 });

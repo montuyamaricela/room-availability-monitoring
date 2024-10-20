@@ -112,7 +112,9 @@ export default function ProfileSettings() {
 
         if (session.data?.user.id) {
           logActivity(
-            session.data.user.id ?? "",
+            session.data?.user.firstName +
+              " " +
+              session?.data?.user?.lastName || "",
             "updated their profile information",
           );
           const exisitingImage = user?.image;
@@ -168,7 +170,7 @@ export default function ProfileSettings() {
                   width={120}
                 />
                 <div className="w-full md:w-fit">
-                  <div className="flex gap-3 mb-2">
+                  <div className="mb-2 flex gap-3">
                     <Label>Profile image</Label>
                     <TooltipProvider>
                       <Tooltip>
@@ -188,12 +190,8 @@ export default function ProfileSettings() {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-                  
-                  <Input
-                    id="image"
-                    type="file"
-                    {...form.register("image")}
-                  />
+
+                  <Input id="image" type="file" {...form.register("image")} />
                 </div>
               </div>
               <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">

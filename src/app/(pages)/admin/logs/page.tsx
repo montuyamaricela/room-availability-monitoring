@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useSession } from "next-auth/react";
@@ -13,15 +14,17 @@ import {
   type roomLogsAttributes,
   type activityLogsAttributes,
 } from "~/data/models/auditLogs";
+import { type scheduleRecordsAttributes } from "~/data/models/schedule";
 import { type PaginatedList } from "~/lib/types";
 import { useLogStore } from "~/store/useLogStore";
+import { useScheduleStore } from "~/store/useScheduleStore";
 import { api } from "~/trpc/react";
 
 export default function Page() {
   const session = useSession();
 
   const [loading, setLoading] = useState<boolean>(true); // Initially loading is true
-
+  const { setScheduleRecord } = useScheduleStore();
   const { setActivityLogs, setRoomLog } = useLogStore();
 
   const {
@@ -32,9 +35,16 @@ export default function Page() {
   } = api.logs.getActivityLogs.useQuery(undefined, {
     refetchInterval: 5000,
   });
-
+  const {
+    data: scheduleRecordsData,
+    error: scheduleRecordsError,
+    refetch: refetchScheduleRecords,
+  } = api.schedule.GetScheduleRecord.useQuery(undefined, {
+    refetchInterval: 5000,
+  });
   const {
     data: roomLogsData,
+    isLoading: isRoomLogsLoading,
     error: roomLogsError,
     refetch: refetchRoomLogs,
   } = api.logs.getRoomLogs.useQuery(undefined, {
@@ -60,8 +70,15 @@ export default function Page() {
       console.error("Error fetching room logs:", roomLogsError);
     }
 
+    if (scheduleRecordsData) {
+      setScheduleRecord(
+        scheduleRecordsData as unknown as PaginatedList<scheduleRecordsAttributes>,
+      );
+    }
+
     // Set loading to false after the first successful fetch
     setLoading(isActivityLogsLoading);
+    setLoading(isRoomLogsLoading);
   }, [
     activityLogsData,
     roomLogsData,
@@ -69,7 +86,13 @@ export default function Page() {
     setActivityLogs,
     activityLogsError,
     roomLogsError,
+    setRoomLog,
+    isRoomLogsLoading,
   ]);
+
+  if (session.status === "loading") {
+    return <Spinner />;
+  }
 
   if (session.data?.user.role != "Super Admin") {
     return <NotAllowed />;

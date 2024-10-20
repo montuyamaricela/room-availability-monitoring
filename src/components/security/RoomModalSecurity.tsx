@@ -20,12 +20,18 @@ type ModalWrapperTypes = {
   ButtonTrigger?: ReactNode;
   open: boolean;
   setOpen: (open: boolean) => void;
+  submittedFeedbackRecords: Set<number>;
+  setSubmittedFeedbackRecords: React.Dispatch<
+    React.SetStateAction<Set<number>>
+  >;
 };
 
 const RoomModalSecurity = ({
   ButtonTrigger,
   open,
   setOpen,
+  setSubmittedFeedbackRecords,
+  submittedFeedbackRecords,
 }: ModalWrapperTypes) => {
   const [loading, setLoading] = useState<boolean>(true);
   const form = useForm({
@@ -67,8 +73,10 @@ const RoomModalSecurity = ({
             faculty={faculties ?? []}
           />
 
-          {/* <Input type="text" id="search" placeholder="Search" className="" /> */}
           <ScheduleTable
+            setSubmittedFeedbackRecords={setSubmittedFeedbackRecords}
+            submittedFeedbackRecords={submittedFeedbackRecords}
+            setOpenModal={setOpen}
             setSubmitted={setSubmitted}
             isSubmitted={isSubmitted}
           />

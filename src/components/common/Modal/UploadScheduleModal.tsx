@@ -79,7 +79,12 @@ export default function UploadScheduleModal({
         toast.success(responseData?.message);
         form.reset();
         if (session) {
-          logActivity(session?.data?.user.id ?? "", "uploaded schedule");
+          logActivity(
+            session.data?.user.firstName +
+              " " +
+              session?.data?.user?.lastName || "",
+            "uploaded schedule",
+          );
         }
       } else {
         toast.error("File upload failed");

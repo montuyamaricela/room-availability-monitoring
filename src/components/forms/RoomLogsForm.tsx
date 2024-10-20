@@ -83,7 +83,8 @@ export default function RoomLogsForm({
           selectedRoom?.id,
         );
         activityLog(
-          session?.data?.user?.id,
+          session?.data?.user.firstName + " " + session?.data?.user.lastName ||
+            "",
           `added temporary schedule for Room ${selectedRoom.roomName}`,
         );
       }

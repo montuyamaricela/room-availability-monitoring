@@ -44,7 +44,7 @@ export const sendInvitationLink = async (email: string, token: string) => {
     subject: "Account Creation",
     html: `
     <h2>Hello,</h2>
-    <p>Thank you for registering with the BulSU - Room Availability Monitoring app. To complete your registration and gain full access to our platform, please verify your email address by clicking the link below:</p>
+    <p>Thank you for registering with the BulSU - Room Availability Monitoring app. To complete your registration and gain full access to our platform, please click the link below:</p>
     <a href="${invitationUrl}">Create your account</a>
     <p>If you didn't request an account, please ignore this email.</p>
     <p>Best regards,</p>
