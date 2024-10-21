@@ -257,7 +257,7 @@ export default function ScheduleTable({
             }}
             className="h-6 rounded-full bg-primary-green text-xs hover:bg-primary-green"
           >
-            Time In
+            Borrowed
           </Button>
 
           {/* disable the button if past the end time + 1 hour */}
@@ -292,7 +292,7 @@ export default function ScheduleTable({
                 }
                 className="hover h-6 rounded-full bg-green-light text-xs hover:bg-primary-green"
               >
-                Time Out
+                Returned
               </Button>
             }
           />

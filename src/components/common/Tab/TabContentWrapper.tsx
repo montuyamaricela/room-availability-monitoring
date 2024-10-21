@@ -62,7 +62,7 @@ export default function TabContentWrapper({
       <TabsContent
         value={activeTab}
         onClick={() => handleTabChange(activeTab)}
-        className="h-full p-5"
+        className="sm:h-[90%] p-5"
       >
         {renderItem()}
       </TabsContent>
