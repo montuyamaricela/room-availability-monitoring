@@ -24,7 +24,7 @@ const RoomModalAdmin = ({
   open,
   setOpen,
 }: ModalWrapperTypes) => {
-  const [activeTab, setActiveTab] = useState<string>("room-assignment");
+  const [activeTab, setActiveTab] = useState<string>("room-information");
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -38,7 +38,7 @@ const RoomModalAdmin = ({
           <DialogTitle>Room Modal Admin</DialogTitle>
         </VisuallyHidden.Root>
       </DialogHeader>
-      <DialogContent className="max-w-[95%] sm:max-w-[70%]">
+      <DialogContent className="max-w-[95%] md:max-w-[70%]">
         <TabWrapper activeTab={activeTab} setActiveTab={setActiveTab}>
           <TabContentWrapper
             activeTab={activeTab}

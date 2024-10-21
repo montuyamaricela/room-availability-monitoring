@@ -55,13 +55,13 @@ const RoomModalSecurity = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{ButtonTrigger}</DialogTrigger>
-      <DialogContent className="max-w-[60%]">
+      <DialogContent className="md:max-w-[70%] max-w-[95%] max-h-[95%] overflow-y-auto">
         <DialogHeader className="rounded-t-2xl bg-primary-green py-3">
           <DialogTitle className="text-center text-2xl font-medium uppercase text-white">
             Log
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-5 p-5">
+        <div className="space-y-5 p-5 sm:h-[90%]">
           <div>
             <p className="mb-5 text-center text-2xl font-semibold">
               {" "}

@@ -188,7 +188,7 @@ export default function RoomDetailsForm() {
     <div className="flex w-full flex-col-reverse sm:w-auto sm:flex-col">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="w-full gap-3 sm:grid-cols-2 md:grid lg:grid-cols-3">
+          <div className="w-full gap-5 flex-col flex sm:flex-row">
             <FormInput
               form={form}
               type="number"
@@ -201,6 +201,8 @@ export default function RoomDetailsForm() {
               name="ElectricFan"
               label="Electric Fan: "
             />
+          </div>
+          <div className="w-full gap-5 mt-5 flex-col flex sm:flex-row">
             <FormInput
               form={form}
               type="number"
