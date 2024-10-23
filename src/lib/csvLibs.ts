@@ -15,6 +15,8 @@ export function formattedBuilding(building: string) {
 export function formattedRoom(room: string) {
   if (room.includes("Hangar") || room.includes("MPG")) {
     return room;
+  } else if (room.includes("Lab")) {
+    return room;
   } else {
     if (room.split(" ").length > 1) {
       return room.split(" ")[1];
