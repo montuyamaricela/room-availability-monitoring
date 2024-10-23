@@ -47,125 +47,125 @@ export async function POST(request: NextRequest) {
         .on("data", (data) => results.push(data))
         .on("end", async () => {
           try {
-            // const missingRooms: any[] = [];
-            // const groupedSchedules = groupSchedulesByCommonDetailsCSV(results);
+            const missingRooms: any[] = [];
+            const groupedSchedules = groupSchedulesByCommonDetailsCSV(results);
 
-            // // Map over results to create promises for fetching rooms and schedules
-            // const promises = Object.values(groupedSchedules).map(
-            //   async (groupedRows: any[]) => {
-            //     const mergedRow = { ...groupedRows[0] };
-            //     if (groupedRows.length > 1) {
-            //       const mergedGroup = groupedRows
-            //         .map((row) => row.Section)
-            //         .sort((a, b) => {
-            //           if (a.includes("Group 1")) return -1;
-            //           if (b.includes("Group 1")) return 1;
-            //           return a.localeCompare(b);
-            //         })
-            //         .join(" and ");
+            // Map over results to create promises for fetching rooms and schedules
+            const promises = Object.values(groupedSchedules).map(
+              async (groupedRows: any[]) => {
+                const mergedRow = { ...groupedRows[0] };
+                if (groupedRows.length > 1) {
+                  const mergedGroup = groupedRows
+                    .map((row) => row.Section)
+                    .sort((a, b) => {
+                      if (a.includes("Group 1")) return -1;
+                      if (b.includes("Group 1")) return 1;
+                      return a.localeCompare(b);
+                    })
+                    .join(" and ");
 
-            //       mergedRow.section_group = mergedGroup;
-            //     }
+                  mergedRow.section_group = mergedGroup;
+                }
 
-            //     // get roomId first based on Room name and building from the csv
-            //     const getRoomId = await db.room.findFirst({
-            //       where: {
-            //         roomName: formattedRoom(mergedRow.Room),
-            //         building: formattedBuilding(mergedRow.Building),
-            //       },
-            //     });
+                // get roomId first based on Room name and building from the csv
+                const getRoomId = await db.room.findFirst({
+                  where: {
+                    roomName: formattedRoom(mergedRow.Room),
+                    building: formattedBuilding(mergedRow.Building),
+                  },
+                });
 
-            //     // skip processing this row if there's no match id
-            //     if (!getRoomId) {
-            //       missingRooms.push(
-            //         mergedRow.Room + " - " + mergedRow.Building,
-            //       );
-            //       return;
-            //     }
+                // skip processing this row if there's no match id
+                if (!getRoomId) {
+                  missingRooms.push(
+                    mergedRow.Room + " - " + mergedRow.Building,
+                  );
+                  return;
+                }
 
-            //     // Fetch the room
-            //     const room = await db.room.findUnique({
-            //       where: { id: getRoomId.id },
-            //     });
+                // Fetch the room
+                const room = await db.room.findUnique({
+                  where: { id: getRoomId.id },
+                });
 
-            //     if (!room) {
-            //       missingRooms.push(
-            //         mergedRow.Room + " - " + mergedRow.Building,
-            //       );
-            //       return;
-            //     }
+                if (!room) {
+                  missingRooms.push(
+                    mergedRow.Room + " - " + mergedRow.Building,
+                  );
+                  return;
+                }
 
-            //     // Fetch existing schedules for the same room and day
-            //     const existingSchedules = await db.roomSchedule.findMany({
-            //       where: {
-            //         roomId: room.id,
-            //         day: mergedRow.Day,
-            //       },
-            //     });
+                // Fetch existing schedules for the same room and day
+                const existingSchedules = await db.roomSchedule.findMany({
+                  where: {
+                    roomId: room.id,
+                    day: mergedRow.Day,
+                  },
+                });
 
-            //     // Check for overlaps with existing schedules
-            //     const hasOverlap = existingSchedules.some((existingSchedule) =>
-            //       isOverlapping(
-            //         parseTime(mergedRow["Start Time"]),
-            //         parseTime(mergedRow["End Time"]),
-            //         existingSchedule.beginTime,
-            //         existingSchedule.endTime,
-            //       ),
-            //     );
+                // Check for overlaps with existing schedules
+                const hasOverlap = existingSchedules.some((existingSchedule) =>
+                  isOverlapping(
+                    parseTime(mergedRow["Start Time"]),
+                    parseTime(mergedRow["End Time"]),
+                    existingSchedule.beginTime,
+                    existingSchedule.endTime,
+                  ),
+                );
 
-            //     if (hasOverlap) {
-            //       console.log(
-            //         `Overlapping schedule found for room ${room.id} on ${mergedRow.Day}`,
-            //       );
-            //       return; // Skip this schedule as it overlaps
-            //     }
+                if (hasOverlap) {
+                  console.log(
+                    `Overlapping schedule found for room ${room.id} on ${mergedRow.Day}`,
+                  );
+                  return; // Skip this schedule as it overlaps
+                }
 
-            //     // Insert the room schedule
-            //     await db.roomSchedule.createMany({
-            //       data: {
-            //         roomId: room.id,
-            //         facultyName: mergedRow.Instructor,
-            //         courseCode: mergedRow.Course,
-            //         section: mergedRow.Section + " " + mergedRow.Group,
-            //         day: mergedRow.Day,
-            //         beginTime: parseTime(mergedRow["Start Time"]),
-            //         department: mergedRow.Department,
-            //         endTime: parseTime(mergedRow["End Time"]),
-            //         isTemp: false,
-            //       },
-            //     });
-            //   },
-            // );
+                // Insert the room schedule
+                await db.roomSchedule.createMany({
+                  data: {
+                    roomId: room.id,
+                    facultyName: mergedRow.Instructor,
+                    courseCode: mergedRow.Course,
+                    section: mergedRow.Section + " " + mergedRow.Group,
+                    day: mergedRow.Day,
+                    beginTime: parseTime(mergedRow["Start Time"]),
+                    department: mergedRow.Department,
+                    endTime: parseTime(mergedRow["End Time"]),
+                    isTemp: false,
+                  },
+                });
+              },
+            );
 
-            // // Wait for all promises to resolve
-            // await Promise.all(promises);
+            // Wait for all promises to resolve
+            await Promise.all(promises);
 
-            // // Log any missing rooms
-            // if (missingRooms.length > 0) {
-            //   console.error(`Missing rooms: ${missingRooms.join(", ")}`);
-            // }
+            // Log any missing rooms
+            if (missingRooms.length > 0) {
+              console.error(`Missing rooms: ${missingRooms.join(", ")}`);
+            }
 
-            await db.room.createMany({
-              data: results.map((row) => ({
-                id: row.id,
-                roomName: row.roomName,
-                building: row.building,
-                floor: row.floor,
-                withTv: row.WithTv === "TRUE",
-                isLecture: row.isLecture === "TRUE",
-                isLaboratory: row.isLaboratory === "TRUE",
-                isAirconed: row.isAirconed === "TRUE",
-                capacity: parseInt(row.capacity, 10),
-                electricFans: parseInt(row.electricFans, 10),
-                functioningComputers: parseInt(row.functioningComputers, 10),
-                notFunctioningComputers: parseInt(
-                  row.notFunctioningComputers,
-                  10,
-                ),
-                status: row.status,
-                disable: row["disable "] === "TRUE",
-              })),
-            });
+            // await db.room.createMany({
+            //   data: results.map((row) => ({
+            //     id: row.id,
+            //     roomName: row.roomName,
+            //     building: row.building,
+            //     floor: row.floor,
+            //     withTv: row.WithTv === "TRUE",
+            //     isLecture: row.isLecture === "TRUE",
+            //     isLaboratory: row.isLaboratory === "TRUE",
+            //     isAirconed: row.isAirconed === "TRUE",
+            //     capacity: parseInt(row.capacity, 10),
+            //     electricFans: parseInt(row.electricFans, 10),
+            //     functioningComputers: parseInt(row.functioningComputers, 10),
+            //     notFunctioningComputers: parseInt(
+            //       row.notFunctioningComputers,
+            //       10,
+            //     ),
+            //     status: row.status,
+            //     disable: row["disable "] === "TRUE",
+            //   })),
+            // });
 
             resolve(
               NextResponse.json(
