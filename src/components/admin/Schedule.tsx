@@ -29,7 +29,7 @@ import RequestSchedule from "../common/Modal/RequestSchedule";
 export default function Schedule({ loading }: { loading: boolean }) {
   const session = useSession();
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize] = useState(30);
   const [open, setOpen] = useState<boolean>(false);
   const [openScheduleUpload, setOpenScheduleUpload] = useState<boolean>(false);
   const [openRequestScheduleModal, setOpenRequestScheduleModal] =
