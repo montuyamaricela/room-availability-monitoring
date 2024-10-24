@@ -15,7 +15,7 @@ import ComposeFeedBack from "../security/ComposeModal";
 import Pagination from "../common/Table/Pagination";
 import { useUserInfoStore } from "~/store/useUserInfoStore";
 
-const pageSize = 10; // Define the number of items per page
+const pageSize = 30; // Define the number of items per page
 
 export default function FeedBacks() {
   const session = useSession();

@@ -33,21 +33,39 @@ export default function RoomLogs({ loading }: Readonly<{ loading: boolean }>) {
     {
       id: "Activity",
       header: "Activity",
-      formatter: (row) => (
-        <span>
-          {row.loggedBy +
-            " " +
-            row.activity +
-            " " +
-            row.facultyName +
-            " at " +
-            row.roomId +
-            (row.careOf && row.careOf !== row.facultyName
-              ? " key borrowed by " + row.careOf
-              : "")}
-        </span>
-      ),
+      formatter: (row) => {
+        // Check if the key is being borrowed by a student for a faculty member
+        const isStudentBorrowingForFaculty =
+          row.careOf && row.careOf !== row.facultyName;
+
+        return (
+          <span>
+            {isStudentBorrowingForFaculty
+              ? `${row.careOf} borrowed the key to ${row.roomId} for ${row.facultyName} with assistance from ${row.loggedBy}.`
+              : `${row.facultyName} borrowed the key to ${row.roomId} with assistance from ${row.loggedBy}.`}
+          </span>
+        );
+      },
     },
+
+    // {
+    //   id: "Activity",
+    //   header: "Activity",
+    //   formatter: (row) => (
+    //     <span>
+    //       {row.loggedBy +
+    //         " " +
+    //         row.activity +
+    //         " " +
+    //         row.facultyName +
+    //         " at " +
+    //         row.roomId +
+    //         (row.careOf && row.careOf !== row.facultyName
+    //           ? " key borrowed by " + row.careOf
+    //           : "")}
+    //     </span>
+    //   ),
+    // },
     {
       id: "Date and Time",
       header: "Date and Time",

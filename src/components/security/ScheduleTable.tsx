@@ -142,7 +142,7 @@ export default function ScheduleTable({
             ) {
               console.log(rec.id);
 
-              const feedbackMessage = `${rec.facultyName} did not return the key after 15 mins of their scheduled Time Out at Room ${record.room.roomName}`;
+              const feedbackMessage = `${rec.facultyName} did not return the key after their scheduled Time Out at Room ${record.room.roomName}`;
               automateFeedback(record.department ?? "CICS", feedbackMessage);
 
               // Add the record ID to the set to prevent duplicate feedback

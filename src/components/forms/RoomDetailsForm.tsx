@@ -174,13 +174,22 @@ export default function RoomDetailsForm() {
   };
 
   useEffect(() => {
-    if (selectedRoom?.status === "AVAILABLE") {
+    console.log(selectedRoom?.status);
+
+    if (selectedRoom?.status == "AVAILABLE") {
+      console.log(selectedRoom?.status, "AVAILABLE neh");
+
       setIsAvailable(false);
       setTimeInAt(""), setTimeOutAt("");
       setFacultyName("");
       setSubjectAndSection("");
-    } else {
+    } else if (selectedRoom?.status == "OCCUPIED") {
       setIsAvailable(true);
+    } else {
+      setIsAvailable(false);
+      setTimeInAt(""), setTimeOutAt("");
+      setFacultyName("");
+      setSubjectAndSection("");
     }
   }, [selectedRoom?.status]);
 
@@ -188,7 +197,7 @@ export default function RoomDetailsForm() {
     <div className="flex w-full flex-col-reverse sm:w-auto sm:flex-col">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="w-full gap-5 flex-col flex sm:flex-row">
+          <div className="flex w-full flex-col gap-5 sm:flex-row">
             <FormInput
               form={form}
               type="number"
@@ -202,7 +211,7 @@ export default function RoomDetailsForm() {
               label="Electric Fan: "
             />
           </div>
-          <div className="w-full gap-5 mt-5 flex-col flex sm:flex-row">
+          <div className="mt-5 flex w-full flex-col gap-5 sm:flex-row">
             <FormInput
               form={form}
               type="number"
