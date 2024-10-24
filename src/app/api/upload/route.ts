@@ -217,7 +217,6 @@ import { authOptions } from "~/server/auth";
 import { isOverlapping, parseTime } from "~/lib/timeSchedule";
 import { formattedRoom, formattedBuilding } from "~/lib/csvLibs";
 import { groupSchedulesByCommonDetailsCSV } from "~/lib/groupSchedule";
-
 // Define chunk size for batch processing
 const CHUNK_SIZE = 20; // Adjust based on your needs
 
@@ -339,6 +338,9 @@ export async function POST(request: NextRequest) {
 
               // Wait for the current batch to complete
               await Promise.all(batchPromises);
+
+              // Introduce a slight delay to prevent overloading and hitting timeouts
+              await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 second delay between chunks
             }
 
             // Log any missing rooms

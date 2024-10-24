@@ -200,7 +200,7 @@ export async function POST(req: NextRequest) {
 
     if (process.env.BULSU_SMART_SCHEDULE_ENDPOINT === undefined) {
       return NextResponse.json(
-        { error: "ENV endpoint missing. " },
+        { error: "ENV endpoint missing." },
         { status: 400 },
       );
     }
@@ -209,28 +209,26 @@ export async function POST(req: NextRequest) {
       method: "GET",
     });
     const responseData = await data.json();
+
     if (data.ok) {
       const missingRooms: any[] = [];
 
-      // Check if responseData is empty
       if (!responseData || responseData.length === 0) {
         return NextResponse.json(
           {
             error:
               "No data available for the specified academic year and semester.",
           },
-          { status: 404 }, // Not Found
+          { status: 404 },
         );
       }
 
-      // Filter rows based on academic year and semester
       const filteredRows = responseData.filter(
         (row: any) =>
           row.academic_year === selectedSchoolYear &&
           row.semester === selectedSemester,
       );
 
-      // Check if filteredRows is empty
       if (filteredRows.length === 0) {
         return NextResponse.json(
           {
@@ -240,19 +238,15 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // Process the rows by grouping them first
       const groupedSchedules = groupSchedulesByCommonDetails(filteredRows);
       const groupedSchedulesLength = Object.keys(groupedSchedules).length;
 
-      // Define batch size for chunk processing
-      const chunkSize = 20;
+      const chunkSize = 20; // Process in smaller chunks
       const scheduleEntries = Object.values(groupedSchedules);
 
-      // Iterate over the grouped schedules in batches
       for (let i = 0; i < scheduleEntries.length; i += chunkSize) {
         const scheduleChunk = scheduleEntries.slice(i, i + chunkSize);
 
-        // Create an array of promises for processing each chunk
         const promises = scheduleChunk.map(async (groupedRows: any[]) => {
           const mergedRow = { ...groupedRows[0] };
 
@@ -265,7 +259,6 @@ export async function POST(req: NextRequest) {
                 return a.localeCompare(b);
               })
               .join(" and ");
-
             mergedRow.section_group = mergedGroup;
           }
 
@@ -276,7 +269,6 @@ export async function POST(req: NextRequest) {
             },
           });
 
-          // Skip if no room id is found
           if (!getRoomId) {
             missingRooms.push(mergedRow.room + " - " + mergedRow.room_building);
             return;
@@ -311,10 +303,9 @@ export async function POST(req: NextRequest) {
             console.log(
               `Overlapping schedule found for room ${room.id} on ${mergedRow.day}`,
             );
-            return; // Skip this schedule as it overlaps
+            return;
           }
 
-          // Insert the room schedule
           await db.roomSchedule.createMany({
             data: {
               roomId: room.id,
@@ -330,17 +321,18 @@ export async function POST(req: NextRequest) {
           });
         });
 
-        // Wait for all promises in the chunk to resolve
         await Promise.all(promises);
+
+        // Introduce a delay to avoid the timeout
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 second delay
       }
 
-      // Log any missing rooms
       if (missingRooms.length > 0) {
         console.error(`Missing rooms: ${missingRooms.join(", ")}`);
       }
 
       const totalSchedulesProcessed =
-        groupedSchedulesLength - missingRooms.length; // Calculate successfully processed schedules
+        groupedSchedulesLength - missingRooms.length;
 
       return NextResponse.json(
         {
