@@ -50,7 +50,6 @@ export async function POST(req: NextRequest) {
       Airconditioned,
       WithTv,
     } = body;
-
     // check if room exist
     const isRoomExisting = await db.room.findUnique({
       where: {

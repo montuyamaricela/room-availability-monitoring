@@ -122,7 +122,14 @@ export default function ScheduleTable({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDeleted]);
-
+  function isFacultyTimedIn(id: number) {
+    return roomScheduleRecords.some(
+      (record) =>
+        record.roomScheduleId === id &&
+        record.timeIn != null &&
+        record.timeOut == null,
+    );
+  }
   // Check if the faculty is 15 minutes past scheduled end time and did not return the key
   useEffect(() => {
     roomSchedule?.forEach((record) => {
@@ -140,8 +147,6 @@ export default function ScheduleTable({
               isPast(fifteenMinutesAfterEnd) &&
               !submittedFeedbackRecords.has(record.id)
             ) {
-              console.log(rec.id);
-
               const feedbackMessage = `${rec.facultyName} did not return the key after their scheduled Time Out at Room ${record.room.roomName}`;
               automateFeedback(record.department ?? "CICS", feedbackMessage);
 
@@ -202,31 +207,81 @@ export default function ScheduleTable({
       id: "facultyName",
       header: "Faculty Name",
       width: 100,
-      formatter: (row) => <span>{row?.facultyName}</span>,
+      formatter: (row) => (
+        <span
+          className={
+            isFacultyTimedIn(row.id)
+              ? "font-bold text-primary-green" // Color for timed-in faculty
+              : ""
+          }
+        >
+          {row.facultyName}
+        </span>
+      ),
     },
     {
       id: "section",
       header: "Section",
       width: 100,
-      formatter: (row) => <span>{row?.section}</span>,
+      formatter: (row) => (
+        <span
+          className={
+            isFacultyTimedIn(row.id)
+              ? "font-bold text-primary-green" // Color for timed-in faculty
+              : ""
+          }
+        >
+          {row?.section}
+        </span>
+      ),
     },
     {
       id: "Subject",
       header: "Subject",
       width: 100,
-      formatter: (row) => <span>{row?.courseCode}</span>,
+      formatter: (row) => (
+        <span
+          className={
+            isFacultyTimedIn(row.id)
+              ? "font-bold text-primary-green" // Color for timed-in faculty
+              : ""
+          }
+        >
+          {row?.courseCode}
+        </span>
+      ),
     },
     {
       id: "Begin Time",
       header: "Begin Time",
       width: 100,
-      formatter: (row) => <span>{formatTimetoLocal(row.beginTime)}</span>,
+      formatter: (row) => (
+        <span
+          className={
+            isFacultyTimedIn(row.id)
+              ? "font-bold text-primary-green" // Color for timed-in faculty
+              : ""
+          }
+        >
+          {formatTimetoLocal(row.beginTime)}
+        </span>
+      ),
     },
     {
       id: "End Time",
       header: "End Time",
       width: 100,
-      formatter: (row) => <span>{formatTimetoLocal(row.endTime)}</span>,
+      formatter: (row) => (
+        <span
+          className={
+            isFacultyTimedIn(row.id)
+              ? "font-bold text-primary-green" // Color for timed-in faculty
+              : ""
+          }
+        >
+          {formatTimetoLocal(row.endTime)}
+        </span>
+      ),
     },
     {
       id: "Action",

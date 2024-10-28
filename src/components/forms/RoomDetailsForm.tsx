@@ -155,6 +155,7 @@ export default function RoomDetailsForm() {
         ...data,
       }),
     });
+
     const responseData = await response.json();
 
     if (response.ok) {
@@ -174,11 +175,7 @@ export default function RoomDetailsForm() {
   };
 
   useEffect(() => {
-    console.log(selectedRoom?.status);
-
     if (selectedRoom?.status == "AVAILABLE") {
-      console.log(selectedRoom?.status, "AVAILABLE neh");
-
       setIsAvailable(false);
       setTimeInAt(""), setTimeOutAt("");
       setFacultyName("");
@@ -236,7 +233,7 @@ export default function RoomDetailsForm() {
             />
           </div>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:gap-5">
-            <FormCheckbox form={form} name="Disable" label="Disable" />
+            {/* <FormCheckbox form={form} name="Disabled" label="Disable" /> */}
             <FormCheckbox
               form={form}
               type="checkbox"
