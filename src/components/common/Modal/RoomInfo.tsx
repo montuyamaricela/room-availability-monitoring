@@ -7,6 +7,14 @@ export default function RoomInfo() {
   return (
     <div className="px-10 pb-10">
       <div className="space-y-1 font-medium">
+        <center>
+          <p
+            className={`w-44 rounded-full py-1 text-center capitalize text-sm font-medium text-white md:w-56 md:text-lg ${selectedRoom?.status === "OCCUPIED" ? "bg-primary-red" : "bg-primary-green"}`}
+          >
+            {selectedRoom?.status?.toLowerCase()}
+          </p>
+        </center>
+        
         {selectedRoom?.isLaboratory && <p>Laboratory</p>}
         {selectedRoom?.isLecture && <p>Lecture</p>}
 
@@ -23,12 +31,6 @@ export default function RoomInfo() {
                   selectedRoom?.notFunctioningComputers}
             </p>
           )}
-        <p>
-          Status:{" "}
-          <span className="capitalize">
-            {selectedRoom?.status?.toLowerCase()}
-          </span>
-        </p>
       </div>
     </div>
   );

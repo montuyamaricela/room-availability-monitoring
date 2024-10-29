@@ -131,9 +131,6 @@ export default function Signin() {
                   </div>
 
                   <div className="flex items-center justify-end gap-1">
-                    <h3 className="text-right text-sm font-medium text-gray-dark">
-                      Forgot password?
-                    </h3>
                     <ForgotPasswordModal />
                   </div>
 

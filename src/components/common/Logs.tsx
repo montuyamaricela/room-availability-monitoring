@@ -37,13 +37,13 @@ export default function Logs({ loading }: Readonly<{ loading: boolean }>) {
                   value="activityLogs"
                   className="rounded-t-2xl border-2 border-green-dark px-8 sm:px-16"
                 >
-                  ACTIVITY LOGS
+                  ACTIVITY
                 </TabsTrigger>
                 <TabsTrigger
                   value="roomLogs"
                   className="rounded-t-2xl border-2 border-green-dark px-10 sm:px-20"
                 >
-                  ROOM LOGS
+                  ROOM
                 </TabsTrigger>
               </TabsList>
               <RoomLogs loading={loading} />

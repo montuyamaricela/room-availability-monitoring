@@ -26,7 +26,7 @@ export default function RoomModal({ open, setOpen }: roomModalProps) {
             Room Details
           </DialogTitle>
         </DialogHeader>
-        <p className="text-center text-xl font-medium">
+        <p className="text-center text-xl font-bold">
           Room {selectedRoom?.roomName}
         </p>
         <RoomInfo />
