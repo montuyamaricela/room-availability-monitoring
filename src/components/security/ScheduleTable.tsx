@@ -169,13 +169,15 @@ export default function ScheduleTable({
 
   function canTimeOut(id: number) {
     let canTimeOut = false;
-    roomScheduleRecords?.map((item) => {
-      if (item.roomScheduleId === id) {
-        item.timeOut === null && item.timeIn != null
-          ? (canTimeOut = true)
-          : (canTimeOut = false);
-      }
-    });
+
+    const item = roomScheduleRecords?.find(
+      (item) => item.roomScheduleId === id,
+    );
+
+    if (item) {
+      canTimeOut = item.timeOut === null && item.timeIn != null;
+    }
+
     return canTimeOut;
   }
 
@@ -332,16 +334,16 @@ export default function ScheduleTable({
                       new Date(),
                     ),
                   ) ||
-                  isPast(
-                    addHours(
-                      parse(
-                        formatTimetoLocal(row.endTime),
-                        "h:mm a",
-                        new Date(),
-                      ),
-                      1,
-                    ),
-                  ) ||
+                  // isPast(
+                  //   addHours(
+                  //     parse(
+                  //       formatTimetoLocal(row.endTime),
+                  //       "h:mm a",
+                  //       new Date(),
+                  //     ),
+                  //     1,
+                  //   ),
+                  // ) ||
                   selectedRoom?.status === "AVAILABLE" ||
                   !canTimeOut(row.id)
                 }

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Table, { type TableColumn } from "./Table";
-import { type scheduleAttributes } from "~/data/models/schedule";
+import {
+  scheduleRecordsAttributes,
+  type scheduleAttributes,
+} from "~/data/models/schedule";
 import { useScheduleStore } from "~/store/useScheduleStore";
 import { formatTimetoLocal } from "~/lib/timeSchedule";
 import { useRoomStore } from "~/store/useRoomStore";
@@ -21,43 +24,50 @@ export default function RoomAssignmentTable({
   const [pageSize] = useState(10);
   const [loading, setLoading] = useState<boolean>(true);
   const [deleted, setDeleted] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const [roomSchedule, setRoomSchedule] = useState<scheduleAttributes[]>([]);
+
+  const [roomScheduleRecords, setRoomScheduleRecords] = useState<
+    scheduleRecordsAttributes[]
+  >([]);
+
   // const [selectedSchedule, setSelectedSchedule] =
   //   useState<scheduleAttributes>();
-  const { schedule } = useScheduleStore();
+  const { schedule, scheduleRecord } = useScheduleStore();
   const { selectedRoom } = useRoomStore();
 
   useEffect(() => {
     let filteredData = schedule.data;
+    let filteredRoomScheduleRecord =
+      (scheduleRecord as unknown as scheduleRecordsAttributes[]) ?? [];
+    const filteredScheduleRecords = filteredRoomScheduleRecord?.filter(
+      (record) =>
+        record?.roomSchedule?.room?.roomName &&
+        record.roomSchedule.room.roomName === selectedRoom?.roomName,
+    );
 
     // Filter by room name
     const filteredSched = filteredData.filter(
       (sched) => sched.room.roomName === selectedRoom?.roomName,
     );
 
-    // Filter by search query if provided
-    if (searchQuery) {
-      filteredData = filteredSched.filter((sched) =>
-        sched.facultyName.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
-    }
-
     // Filter by day
     if (day) {
       filteredData = filteredSched.filter((sched) => {
         return sched.day === day; // Return the comparison result
       });
+      filteredRoomScheduleRecord = filteredScheduleRecords.filter((rec) => {
+        return rec.roomSchedule.day === day;
+      });
     }
+    setRoomScheduleRecords(filteredRoomScheduleRecord);
 
     // Set filtered data to state
     setRoomSchedule(filteredData);
     setLoading(false);
-  }, [schedule.data, searchQuery, day, selectedRoom?.roomName, deleted]);
+  }, [schedule.data, day, scheduleRecord, selectedRoom?.roomName, deleted]);
   // Calculate total pages
   const totalRecords = roomSchedule.length;
   const pageCount = Math.ceil(totalRecords / pageSize);
-
   // Get records for the current page
   const paginatedRecords = roomSchedule.slice(
     (page - 1) * pageSize,
@@ -87,33 +97,92 @@ export default function RoomAssignmentTable({
     );
   };
 
+  function isFacultyTimedIn(id: number) {
+    return roomScheduleRecords.some(
+      (record) =>
+        record.roomScheduleId === id &&
+        record.timeIn != null &&
+        record.timeOut == null,
+    );
+  }
+
   const columns: TableColumn<scheduleAttributes>[] = [
     {
       id: "facultyName",
       header: "Faculty Name",
-      formatter: (row) => <span>{row.facultyName}</span>,
+      formatter: (row) => (
+        <span
+          className={
+            isFacultyTimedIn(row.id)
+              ? "font-bold text-primary-green" // Color for timed-in faculty
+              : ""
+          }
+        >
+          {row.facultyName}
+        </span>
+      ),
     },
     {
       id: "section",
       header: "Section",
-      formatter: (row) => <span>{row.section}</span>,
+      formatter: (row) => (
+        <span
+          className={
+            isFacultyTimedIn(row.id)
+              ? "font-bold text-primary-green" // Color for timed-in faculty
+              : ""
+          }
+        >
+          {row.section}
+        </span>
+      ),
     },
     {
       id: "Begin Time",
       header: "Begin Time",
       width: 100,
-      formatter: (row) => <span>{formatTimetoLocal(row.beginTime)}</span>,
+      formatter: (row) => (
+        <span
+          className={
+            isFacultyTimedIn(row.id)
+              ? "font-bold text-primary-green" // Color for timed-in faculty
+              : ""
+          }
+        >
+          {formatTimetoLocal(row.beginTime)}
+        </span>
+      ),
     },
     {
       id: "End Time",
       header: "End Time",
       width: 100,
-      formatter: (row) => <span>{formatTimetoLocal(row.endTime)}</span>,
+      formatter: (row) => (
+        <span
+          className={
+            isFacultyTimedIn(row.id)
+              ? "font-bold text-primary-green" // Color for timed-in faculty
+              : ""
+          }
+        >
+          {formatTimetoLocal(row.endTime)}
+        </span>
+      ),
     },
     {
       id: "day",
       header: "Day",
-      formatter: (row) => <span>{row.day}</span>,
+      formatter: (row) => (
+        <span
+          className={
+            isFacultyTimedIn(row.id)
+              ? "font-bold text-primary-green" // Color for timed-in faculty
+              : ""
+          }
+        >
+          {row.day}
+        </span>
+      ),
     },
     {
       id: "action",
