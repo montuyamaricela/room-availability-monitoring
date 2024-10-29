@@ -45,7 +45,7 @@ export default function ForgotPasswordModal() {
       title="Forgot Password"
       ButtonTrigger={
         <p className="cursor-pointer text-sm font-semibold text-primary-green underline">
-          Click Here
+          Forgot password?
         </p>
       }
     >

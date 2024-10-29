@@ -214,7 +214,7 @@ export default function RoomDetailsForm() {
               type="number"
               name="AvailableComputers"
               disabled={true}
-              label="Available Computers: "
+              label="Computers: "
             />
             {/* Conditional rendering of Functioning and Non-Functioning based on Lecture checkbox */}
             <FormInput
