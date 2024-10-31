@@ -13,6 +13,7 @@ import {
 } from "~/data/models/schedule";
 import { formatTimetoLocal } from "~/lib/timeSchedule";
 import { format } from "date-fns";
+import RoomInfo from "./RoomInfo";
 
 type roomModalProps = {
   open: boolean;
@@ -54,6 +55,18 @@ export default function TabletRoomModal({ open }: roomModalProps) {
         }
       }
     });
+
+
+    const getTimeIn = filterSchedBySelectedRoom?.filter((schedule) => {
+      console.log(schedule)
+        if (schedule.facultyName === filterScheduleByFacultyAndRoom[0]?.facultyName) {
+          return schedule;
+          
+      }
+    });
+
+    console.log(getTimeIn);
+    
     const getCurrentDayRoomSchedule = roomSchedule.filter((schedule) => {
       if (schedule.room.roomName === selectedRoom?.roomName) {
         if (schedule.day === format(currentDate, "EEEE")) {
@@ -76,12 +89,13 @@ export default function TabletRoomModal({ open }: roomModalProps) {
           filterScheduleByFacultyAndRoom[0]?.section || "-",
       );
       if (
-        filterScheduleByFacultyAndRoom[0]?.beginTime &&
+        getTimeIn[0]?.timeIn &&
         filterScheduleByFacultyAndRoom[0]?.endTime
       ) {
         setTimeInAt(
-          formatTimetoLocal(filterScheduleByFacultyAndRoom[0]?.beginTime),
+          format(getTimeIn[0]?.timeIn, "HH:mm a"),
         );
+        // {format(feedback.dateTime, "MMM dd, yyyy h:mm a")}
 
         setTimeOutAt(
           formatTimetoLocal(filterScheduleByFacultyAndRoom[0]?.endTime),
@@ -100,7 +114,7 @@ export default function TabletRoomModal({ open }: roomModalProps) {
 
   return (
     <Dialog open={open}>
-      <DialogContent className="max-w-[95%] md:max-w-[60%]">
+      <DialogContent className="max-w-[95%] max-h-[95%] lg:max-w-[80%] overflow-auto">
         <DialogHeader
           className={`rounded-t-2xl py-5 ${selectedRoom?.status === "OCCUPIED" ? "bg-[#C54F4F]" : "bg-primary-green"}`}
         >
@@ -109,35 +123,35 @@ export default function TabletRoomModal({ open }: roomModalProps) {
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col gap-5 px-5 pb-10 md:grid md:grid-cols-2 md:px-10 ">
-          <div className="">
-            <p className="flex justify-center text-center text-lg font-semibold md:hidden">
-              {format(currentDate, "EEEE")} Schedule
-            </p>
-            <div className="mt-5 space-y-5 sm:mb-0">
-              <div
-                className={`w-44 rounded-full py-1 text-center text-sm font-medium text-white md:w-56 md:text-lg ${selectedRoom?.status === "OCCUPIED" ? "bg-primary-red" : "bg-primary-green"}`}
-              >
-                <p>{selectedRoom?.status}</p>
+        <div className="flex flex-col gap-5 px-5 pb-10 md:grid md:grid-cols-2 lg:px-10 ">
+          <div className="mt-8">
+            <RoomInfo />
+            <div>
+              <div className="space-y-5 sm:mb-0 border-2 border-slate-300 rounded-lg p-2">
+                <div className="space-y-3">
+                  <p className="font-medium">Occupied By: <span className="font-semibold">{facultyName}</span></p>
+                  <p className="font-medium">
+                    Subject & Section: <span className="font-semibold">{subjectAndSection ?? ""}</span>
+                  </p>
+                  <div className="grid grid-rows md:grid-cols-2">
+                    <p className="font-medium">Timed In At: <span className="font-semibold">{timeInAt ?? ""}</span> </p>
+                    <p className="font-medium mt-2 md:mt-0">
+                      Scheduled out at: <span className="font-semibold">{timeOutAt ?? ""}</span>
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-3">
-                <p className="font-medium">Occupied By: {facultyName}</p>
-                <p className="font-medium">
-                  Subject & Section: {subjectAndSection ?? ""}
-                </p>
-                <p className="font-medium">Timed In At: {timeInAt ?? ""}</p>
-                <p className="font-medium">
-                  Scheduled out at: {timeOutAt ?? ""}
-                </p>
-              </div>
+              <p className="flex justify-center mt-5 text-center text-lg font-semibold md:hidden">
+                {format(currentDate, "EEEE")} Schedule
+              </p>
             </div>
           </div>
-          <div className="flex flex-col justify-center border-t border-primary-green md:border-l md:border-t-0 md:pl-10">
+          <div className="flex flex-col justify-center border-t border-primary-green md:border-l md:border-t-0 md:pl-12">
             <p className="hidden justify-center text-center text-lg font-semibold md:flex">
               {format(currentDate, "EEEE")} Schedule
             </p>
 
-            <div className="mt-5 space-y-5">
+            <div className="mt-8 space-y-5">
               {roomSchedule.map((item) => {
                 return (
                   <div key={item.id} className="grid grid-cols-2">

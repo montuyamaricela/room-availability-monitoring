@@ -29,7 +29,7 @@ export function Container({
 
   return (
     <div className={`relative ${className}`} style={style} id={id ? id : ""}>
-      <div className="container mx-auto px-5 py-10 text-black sm:py-16  ">
+      <div className="container m-auto px-5 py-10 text-black sm:py-16">
         {children}
       </div>
     </div>

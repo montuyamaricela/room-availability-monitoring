@@ -14,17 +14,10 @@ import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Form } from "~/components/ui/form";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
-import icon from "/public/images/icon/image.png";
-import Image from "next/image";
 import { type Header } from "../DynamicTable";
 import { useActivityLog } from "~/lib/createLogs";
 import { useSession } from "next-auth/react";
+import  {TooltipInformation} from "../TooltipInformation";
 
 type UploadScheduleModalProps = {
   open: boolean;
@@ -126,24 +119,12 @@ export default function UploadScheduleModal({
                         "Schedule"
                       )}
                       <div>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Image
-                                src={icon}
-                                alt="Information"
-                                className="cursor-pointer"
-                                width={15}
-                              />
-                            </TooltipTrigger>
-                            <TooltipContent className="text-xs font-normal">
-                              <p>
-                                This field only accepts{" "}
-                                <span className="font-medium">CSV format </span>
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <TooltipInformation>
+                          <p>
+                            This field only accepts{" "}
+                            <span className="font-medium">CSV format </span>
+                          </p>
+                        </TooltipInformation>
                       </div>
                     </label>
                     <Input

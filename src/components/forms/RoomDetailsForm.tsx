@@ -14,6 +14,7 @@ import { useActivityLog } from "~/lib/createLogs";
 import { useScheduleStore } from "~/store/useScheduleStore";
 import { type scheduleRecordsAttributes } from "~/data/models/schedule";
 import { formatTimetoLocal } from "~/lib/timeSchedule";
+import  {TooltipInformation} from "../common/TooltipInformation";
 
 export default function RoomDetailsForm() {
   const session = useSession();
@@ -191,48 +192,66 @@ export default function RoomDetailsForm() {
   }, [selectedRoom?.status]);
 
   return (
-    <div className="flex w-full flex-col-reverse sm:w-auto sm:flex-col">
+    <div className="flex w-full flex-col-reverse md:px-12 sm:mt-5 sm:w-auto sm:flex-col">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex w-full flex-col gap-5 sm:flex-row">
+          <div className="grid w-full grid-row gap-5 sm:grid-cols-3">
             <FormInput
               form={form}
               type="number"
               name="Capacity"
               label="Capacity: "
             />
-            <FormInput
-              form={form}
-              type="number"
-              name="ElectricFan"
-              label="Electric Fan: "
-            />
+            <div>
+              <label
+                htmlFor="Functioning"
+                className="flex items-center gap-2 text-sm font-medium"
+              > 
+                Electric Fan: 
+                <div>
+                  <TooltipInformation>
+                    <p>
+                      Only count the functional items <br/>
+                      to avoid any confusion
+                    </p>
+                  </TooltipInformation>
+                </div>
+              </label>
+              <FormInput
+                form={form}
+                type="number"
+                name="ElectricFan"
+                label=""
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="Functioning"
+                className="flex items-center gap-2 text-sm font-medium"
+              > 
+                Available Computers:
+                <div>
+                  <TooltipInformation>
+                    <p>
+                      Input a number if applicable,<br/> 
+                      retain the value of 0 if it&apos;s <br/> 
+                      not a computer laboratory. <br/> 
+                      Only count the functional items <br/> 
+                      to avoid any confusion
+                    </p>
+                  </TooltipInformation>
+                </div>
+              </label>
+              <FormInput
+                form={form}
+                type="number"
+                name="Functioning"
+                label=""
+                disabled={form.watch("Lecture") || !form.watch("Laboratory")}
+              />
+            </div>
           </div>
-          <div className="mt-5 flex w-full flex-col gap-5 sm:flex-row">
-            <FormInput
-              form={form}
-              type="number"
-              name="AvailableComputers"
-              disabled={true}
-              label="Computers: "
-            />
-            {/* Conditional rendering of Functioning and Non-Functioning based on Lecture checkbox */}
-            <FormInput
-              form={form}
-              type="number"
-              name="Functioning"
-              label="Functioning: "
-              disabled={form.watch("Lecture") || !form.watch("Laboratory")}
-            />
-            <FormInput
-              form={form}
-              type="number"
-              name="NonFunctioning"
-              label="Non-Functioning: "
-              disabled={form.watch("Lecture") || !form.watch("Laboratory")}
-            />
-          </div>
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:gap-5">
+          <div className="mt-5 sm:mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center sm:gap-5">
             {/* <FormCheckbox form={form} name="Disabled" label="Disable" /> */}
             <FormCheckbox
               form={form}
@@ -259,7 +278,7 @@ export default function RoomDetailsForm() {
               label="With TV"
             />
           </div>
-          <div className="my-6 flex justify-end">
+          <div className="my-8 flex justify-center">
             <div>
               <Button className="bg-green-light px-10 hover:bg-primary-green">
                 {isLoading ? "Saving..." : "Save"}
