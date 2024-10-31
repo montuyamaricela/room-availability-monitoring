@@ -40,7 +40,7 @@ export default function RoomInfo() {
                 </div>
               }
             >
-              <p> Capacity </p>
+              <p> Estimated Capacity </p>
             </Tooltips>
 
             <Tooltips

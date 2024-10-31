@@ -200,7 +200,7 @@ export default function RoomDetailsForm() {
               form={form}
               type="number"
               name="Capacity"
-              label="Capacity: "
+              label="Estimated Capacity: "
             />
             <div>
               <label
