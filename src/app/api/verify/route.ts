@@ -34,7 +34,9 @@ export async function GET(req: Request) {
       where: { token },
     });
 
-    return NextResponse.redirect(new URL("/admin", req.url));
+    return NextResponse.redirect(
+      new URL(`${process.env.NEXTAUTH_URL}/admin`, req.url),
+    );
   } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong" },

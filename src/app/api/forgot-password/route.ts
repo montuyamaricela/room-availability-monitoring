@@ -25,7 +25,7 @@ export async function GET(req: Request) {
     }
 
     return NextResponse.redirect(
-      new URL(`/forgot-password?token=${token}`, req.url),
+      `${process.env.NEXTAUTH_URL}/forgot-password?token=${token}`,
     );
   } catch (error) {
     return NextResponse.json(

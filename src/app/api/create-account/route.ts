@@ -24,7 +24,9 @@ export async function GET(req: Request) {
       );
     }
 
-    return NextResponse.redirect(new URL(`/signup?token=${token}`, req.url));
+    return NextResponse.redirect(
+      `${process.env.NEXTAUTH_URL}/signup?token=${token}`,
+    );
   } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong" },
