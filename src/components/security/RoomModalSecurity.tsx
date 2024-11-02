@@ -48,14 +48,17 @@ const RoomModalSecurity = ({
     new Set(data?.map((faculty) => faculty.facultyName)),
   ).map((facultyName) => ({ facultyName }));
 
-  const faculties = filteredFaculties?.map((item) => {
-    return { label: item.facultyName, value: item.facultyName };
-  });
+  const faculties =
+    filteredFaculties?.map((item) => {
+      return { label: item.facultyName, value: item.facultyName };
+    }) || [];
+
+  faculties.push({ label: "Other", value: "Other" });
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{ButtonTrigger}</DialogTrigger>
-      <DialogContent className="md:max-w-[70%] max-w-[95%] max-h-[95%] overflow-y-auto">
+      <DialogContent className="max-h-[95%] max-w-[95%] overflow-y-auto md:max-w-[70%]">
         <DialogHeader className="rounded-t-2xl bg-primary-green py-3">
           <DialogTitle className="text-center text-2xl font-medium uppercase text-white">
             Log

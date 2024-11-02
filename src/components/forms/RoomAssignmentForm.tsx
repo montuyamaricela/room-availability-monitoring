@@ -105,6 +105,8 @@ export default function RoomAssignmentForm({
   return (
     <>
       <RoomAssignmentFormConfirmation
+        isTemp={false}
+        action="Add Schedule"
         open={openAddScheduleModal}
         setOpen={setOpenAddScheduleModal}
         availableSlots={availableSlots}

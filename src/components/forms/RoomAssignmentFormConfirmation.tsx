@@ -28,6 +28,8 @@ type RoomAssignmentFormConfirmationProps = {
     value: string;
   }[];
 
+  action: string;
+  isTemp: boolean;
   open: boolean;
   setOpen: (open: boolean) => void;
 };
@@ -37,7 +39,9 @@ export default function RoomAssignmentFormConfirmation({
   availableSlots,
   userName,
   open,
+  isTemp,
   setOpen,
+  action,
 }: RoomAssignmentFormConfirmationProps) {
   const { selectedRoom } = useRoomStore();
   const { schedule } = useScheduleStore();
@@ -68,8 +72,8 @@ export default function RoomAssignmentFormConfirmation({
       body: JSON.stringify({
         roomId: selectedRoom?.id,
         roomName: selectedRoom?.roomName,
-        isTemp: false,
-        action: "Add Schedule",
+        isTemp,
+        action,
         ...data,
       }),
     });
@@ -79,7 +83,7 @@ export default function RoomAssignmentFormConfirmation({
       toast.success(responseData?.message);
       logActivity(
         userName || "",
-        `assigned schedule for ${data.facultyName} on ${data.Day} at Room ${selectedRoom?.roomName}`,
+        `${isTemp ? "assigned temporary schedule for" : "assigned schedule for"} ${data.facultyName} on ${data.Day} at Room ${selectedRoom?.roomName}`,
       );
     } else {
       toast.error(responseData?.error || "Something went wrong");

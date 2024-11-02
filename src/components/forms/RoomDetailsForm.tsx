@@ -14,7 +14,7 @@ import { useActivityLog } from "~/lib/createLogs";
 import { useScheduleStore } from "~/store/useScheduleStore";
 import { type scheduleRecordsAttributes } from "~/data/models/schedule";
 import { formatTimetoLocal } from "~/lib/timeSchedule";
-import  {TooltipInformation} from "../common/TooltipInformation";
+import { TooltipInformation } from "../common/TooltipInformation";
 
 export default function RoomDetailsForm() {
   const session = useSession();
@@ -144,7 +144,6 @@ export default function RoomDetailsForm() {
 
   const onSubmit = async (data: roomSchema.IRoomSchema) => {
     setIsLoading(true);
-
     const response = await fetch("/api/rooms", {
       method: "POST",
       headers: {
@@ -192,10 +191,10 @@ export default function RoomDetailsForm() {
   }, [selectedRoom?.status]);
 
   return (
-    <div className="flex w-full flex-col-reverse md:px-12 sm:mt-5 sm:w-auto sm:flex-col">
+    <div className="flex w-full flex-col-reverse sm:mt-5 sm:w-auto sm:flex-col md:px-12">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="grid w-full grid-row gap-5 sm:grid-cols-3">
+          <div className="grid-row grid w-full gap-5 sm:grid-cols-3">
             <FormInput
               form={form}
               type="number"
@@ -206,12 +205,12 @@ export default function RoomDetailsForm() {
               <label
                 htmlFor="Functioning"
                 className="flex items-center gap-2 text-sm font-medium"
-              > 
-                Electric Fan: 
+              >
+                Electric Fan:
                 <div>
                   <TooltipInformation>
                     <p>
-                      Only count the functional items <br/>
+                      Only count the functional items <br />
                       to avoid any confusion
                     </p>
                   </TooltipInformation>
@@ -228,15 +227,16 @@ export default function RoomDetailsForm() {
               <label
                 htmlFor="Functioning"
                 className="flex items-center gap-2 text-sm font-medium"
-              > 
+              >
                 Available Computers:
                 <div>
                   <TooltipInformation>
                     <p>
-                      Input a number if applicable,<br/> 
-                      retain the value of 0 if it&apos;s <br/> 
-                      not a computer laboratory. <br/> 
-                      Only count the functional items <br/> 
+                      Input a number if applicable,
+                      <br />
+                      retain the value of 0 if it&apos;s <br />
+                      not a computer laboratory. <br />
+                      Only count the functional items <br />
                       to avoid any confusion
                     </p>
                   </TooltipInformation>
@@ -251,7 +251,7 @@ export default function RoomDetailsForm() {
               />
             </div>
           </div>
-          <div className="mt-5 sm:mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center sm:gap-5">
+          <div className="mt-5 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:justify-center sm:gap-5">
             {/* <FormCheckbox form={form} name="Disabled" label="Disable" /> */}
             <FormCheckbox
               form={form}

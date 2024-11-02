@@ -202,7 +202,7 @@ export const FormCheckbox = ({
               <FormDescription>{description}</FormDescription>
             </div>
           </FormItem>
-          <FormMessage />
+          {/* <FormMessage /> */}
         </>
       )}
     />

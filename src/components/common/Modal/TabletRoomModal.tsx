@@ -56,17 +56,14 @@ export default function TabletRoomModal({ open }: roomModalProps) {
       }
     });
 
-
     const getTimeIn = filterSchedBySelectedRoom?.filter((schedule) => {
-      console.log(schedule)
-        if (schedule.facultyName === filterScheduleByFacultyAndRoom[0]?.facultyName) {
-          return schedule;
-          
+      if (
+        schedule.facultyName === filterScheduleByFacultyAndRoom[0]?.facultyName
+      ) {
+        return schedule;
       }
     });
 
-    console.log(getTimeIn);
-    
     const getCurrentDayRoomSchedule = roomSchedule.filter((schedule) => {
       if (schedule.room.roomName === selectedRoom?.roomName) {
         if (schedule.day === format(currentDate, "EEEE")) {
@@ -88,13 +85,8 @@ export default function TabletRoomModal({ open }: roomModalProps) {
           " " +
           filterScheduleByFacultyAndRoom[0]?.section || "-",
       );
-      if (
-        getTimeIn[0]?.timeIn &&
-        filterScheduleByFacultyAndRoom[0]?.endTime
-      ) {
-        setTimeInAt(
-          format(getTimeIn[0]?.timeIn, "HH:mm a"),
-        );
+      if (getTimeIn[0]?.timeIn && filterScheduleByFacultyAndRoom[0]?.endTime) {
+        setTimeInAt(format(getTimeIn[0]?.timeIn, "HH:mm a"));
         // {format(feedback.dateTime, "MMM dd, yyyy h:mm a")}
 
         setTimeOutAt(
@@ -114,7 +106,7 @@ export default function TabletRoomModal({ open }: roomModalProps) {
 
   return (
     <Dialog open={open}>
-      <DialogContent className="max-w-[95%] max-h-[95%] lg:max-w-[80%] overflow-auto">
+      <DialogContent className="max-h-[95%] max-w-[95%] overflow-auto lg:max-w-[80%]">
         <DialogHeader
           className={`rounded-t-2xl py-5 ${selectedRoom?.status === "OCCUPIED" ? "bg-[#C54F4F]" : "bg-primary-green"}`}
         >
@@ -127,21 +119,31 @@ export default function TabletRoomModal({ open }: roomModalProps) {
           <div className="mt-8">
             <RoomInfo />
             <div>
-              <div className="space-y-5 sm:mb-0 border-2 border-slate-300 rounded-lg p-2">
+              <div className="space-y-5 rounded-lg border-2 border-slate-300 p-2 sm:mb-0">
                 <div className="space-y-3">
-                  <p className="font-medium">Occupied By: <span className="font-semibold">{facultyName}</span></p>
                   <p className="font-medium">
-                    Subject & Section: <span className="font-semibold">{subjectAndSection ?? ""}</span>
+                    Occupied By:{" "}
+                    <span className="font-semibold">{facultyName}</span>
                   </p>
-                  <div className="grid grid-rows md:grid-cols-2">
-                    <p className="font-medium">Timed In At: <span className="font-semibold">{timeInAt ?? ""}</span> </p>
-                    <p className="font-medium mt-2 md:mt-0">
-                      Scheduled out at: <span className="font-semibold">{timeOutAt ?? ""}</span>
+                  <p className="font-medium">
+                    Subject & Section:{" "}
+                    <span className="font-semibold">
+                      {subjectAndSection ?? ""}
+                    </span>
+                  </p>
+                  <div className="grid-rows grid md:grid-cols-2">
+                    <p className="font-medium">
+                      Timed In At:{" "}
+                      <span className="font-semibold">{timeInAt ?? ""}</span>{" "}
+                    </p>
+                    <p className="mt-2 font-medium md:mt-0">
+                      Scheduled out at:{" "}
+                      <span className="font-semibold">{timeOutAt ?? ""}</span>
                     </p>
                   </div>
                 </div>
               </div>
-              <p className="flex justify-center mt-5 text-center text-lg font-semibold md:hidden">
+              <p className="mt-5 flex justify-center text-center text-lg font-semibold md:hidden">
                 {format(currentDate, "EEEE")} Schedule
               </p>
             </div>
