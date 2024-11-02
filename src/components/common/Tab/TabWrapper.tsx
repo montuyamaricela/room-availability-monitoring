@@ -15,7 +15,7 @@ export default function TabWrapper({
   return (
     <Tabs defaultValue={activeTab} className="">
       {/* <TabsList className="flex w-full rounded-t-2xl  border-2 border-primary-green bg-white px-0 lg:h-16"> */}
-      <TabsList className="grid h-10 rounded-t-2xl border-2 border-primary-green bg-primary-green sm:h-16 sm:grid-cols-2 sm:bg-white">
+      <TabsList className="grid h-10 rounded-t-2xl border-2 border-primary-green bg-white sm:h-16 grid-cols-2">
         <TabsTrigger
           value="room-information"
           onClick={() => setActiveTab && setActiveTab("room-information")}
@@ -26,7 +26,7 @@ export default function TabWrapper({
         <TabsTrigger
           value="room-assignment"
           onClick={() => setActiveTab && setActiveTab("room-assignment")}
-          className="hidden h-full w-full rounded-tr-xl text-xs sm:block sm:text-base"
+          className="h-full w-full rounded-tr-xl text-xs sm:text-base"
         >
           ROOM ASSIGNMENT
         </TabsTrigger>

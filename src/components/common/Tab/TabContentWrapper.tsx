@@ -36,7 +36,7 @@ export default function TabContentWrapper({
   const renderItem = () => {
     if (activeTab === "room-information") {
       return (
-        <div className="my-auto flex h-full w-full flex-col items-center justify-center ">
+        <div className="my-auto flex h-full w-full flex-col justify-center ">
           <p className="mb-5 text-center text-xl font-semibold">
             {" "}
             Room {selectedRoom?.roomName}

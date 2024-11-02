@@ -22,11 +22,11 @@ export default function RoomModal({ open, setOpen }: roomModalProps) {
         <DialogHeader
           className={`rounded-t-2xl py-5 ${selectedRoom?.status === "OCCUPIED" ? "bg-[#C54F4F]" : "bg-primary-green"}`}
         >
-          <DialogTitle className="text-center text-xl font-medium uppercase text-white">
+          <DialogTitle className="text-center text-2xl font-medium uppercase text-white">
             Room Details
           </DialogTitle>
         </DialogHeader>
-        <p className="text-center text-xl font-bold">
+        <p className="text-center text-2xl text-gray-dark font-bold">
           Room {selectedRoom?.roomName}
         </p>
         <RoomInfo />

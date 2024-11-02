@@ -11,7 +11,6 @@ import {
 } from "../../ui/dropdown-menu";
 
 import { Avatar } from "../../ui/avatar";
-import Image from "next/image";
 import avatar from "/public/images/avatar/image.png";
 import Link from "next/link";
 import { Button } from "../../ui/button";
@@ -65,52 +64,52 @@ export default function ModalMenu({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem>
-              <Link href="/admin">Home</Link>
-            </DropdownMenuItem>
+            <Link href="/admin">
+              <DropdownMenuItem>Home</DropdownMenuItem>
+            </Link>
 
             {role != "Security Guard" && role != "Room Viewer" && (
               <>
-                <DropdownMenuItem>
-                  <Link href="/admin/account-management">Manage Account</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/admin/schedule">Schedule</Link>
-                </DropdownMenuItem>
+                <Link href="/admin/account-management">
+                  <DropdownMenuItem>Manage Account</DropdownMenuItem>
+                </Link>
+                <Link href="/admin/schedule">
+                  <DropdownMenuItem>Schedule</DropdownMenuItem>
+                </Link>
               </>
             )}
             {role === "Super Admin" && (
               <>
-                <DropdownMenuItem>
-                  <Link href="/admin/logs">Logs</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/admin/barcode-list">Barcode List</Link>
-                </DropdownMenuItem>
+                <Link href="/admin/logs">
+                  <DropdownMenuItem>Logs</DropdownMenuItem>
+                </Link>
+                <Link href="/admin/barcode-list">
+                  <DropdownMenuItem>Barcode List</DropdownMenuItem>
+                </Link>
               </>
             )}
             {role != "Room Viewer" && (
               <>
-                <DropdownMenuItem>
-                  <Link href="/admin/feedback">Feedback</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/admin/profile-setting">Profile Settings</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/admin/change-password">Password Settings</Link>
-                </DropdownMenuItem>
+                <Link href="/admin/feedback">
+                  <DropdownMenuItem>Feedback</DropdownMenuItem>
+                </Link>
+                <Link href="/admin/profile-setting">
+                  <DropdownMenuItem>Profile Settings</DropdownMenuItem>
+                </Link>
+                <Link href="/admin/change-password">
+                  <DropdownMenuItem>Password Settings</DropdownMenuItem>
+                </Link>
               </>
             )}
 
-            <DropdownMenuItem>
-              <div
-                onClick={signOutHandler}
-                className="h-5 w-full  font-normal text-gray-dark hover:cursor-pointer"
-              >
+            <div
+              onClick={signOutHandler}
+              className="h-5 w-full  font-normal text-gray-dark hover:cursor-pointer"
+            >
+              <DropdownMenuItem>
                 Logout
-              </div>
-            </DropdownMenuItem>
+              </DropdownMenuItem>
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (

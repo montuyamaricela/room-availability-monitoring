@@ -10,13 +10,6 @@ import { FormCombobox, FormInput } from "../ui/form-components";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import avatar from "/public/images/avatar/image.png";
-import icon from "/public/images/icon/image.png";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
 import { departments } from "../authentications/Signup";
 import { getSession, signOut, useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
@@ -27,6 +20,7 @@ import { Input } from "../ui/input";
 import { useUserInfoStore } from "~/store/useUserInfoStore";
 import { Label } from "../ui/label";
 import { useActivityLog } from "~/lib/createLogs";
+import  {TooltipInformation} from "../common/TooltipInformation";
 
 export default function ProfileSettings() {
   const session = useSession();
@@ -172,25 +166,12 @@ export default function ProfileSettings() {
                 <div className="w-full md:w-fit">
                   <div className="mb-2 flex gap-3">
                     <Label>Profile image</Label>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Image
-                            src={icon}
-                            alt="Information"
-                            className="cursor-pointer"
-                            width={15}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent className="ml-5 text-xs font-normal">
-                          <p>
-                            Note! Only .jpeg, .jpg and .png images are accepted{" "}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    <TooltipInformation>
+                      <p>
+                        Note: Only .jpeg, .jpg and .png <br/>images are accepted{" "}
+                      </p>
+                    </TooltipInformation>
                   </div>
-
                   <Input id="image" type="file" {...form.register("image")} />
                 </div>
               </div>

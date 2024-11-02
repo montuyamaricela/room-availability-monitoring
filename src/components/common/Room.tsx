@@ -99,7 +99,7 @@ export function RoomLayout() {
       <div className="flex items-center justify-center">
         <div
           onClick={handleClick}
-          className="cursor-pointer overflow-x-scroll pb-5 lg:overflow-x-hidden"
+          className="cursor-pointer overflow-auto pb-5"
         >
           {BuildingComponent}
         </div>

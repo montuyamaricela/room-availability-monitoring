@@ -10,16 +10,8 @@ import {
 import { type scheduleAttributes } from "~/data/models/schedule";
 import { Form } from "~/components/ui/form";
 import { FormInput } from "~/components/ui/form-components";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
 import { useForm } from "react-hook-form";
 import * as scheduleSchema from "../../../validations/ScheduleSchema";
-import icon from "/public/images/icon/image.png";
-import Image from "next/image";
 import { Button } from "~/components/ui/button";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { formatTimetoLocal } from "~/lib/timeSchedule";
@@ -27,6 +19,7 @@ import toast from "react-hot-toast";
 import { useRoomLog } from "~/lib/createLogs";
 import { useSession } from "next-auth/react";
 import { useTimeIn } from "~/lib/roomScheduleLog";
+import  {TooltipInformation} from "../TooltipInformation";
 
 type TimeInConfirmationProps = {
   open: boolean;
@@ -147,31 +140,18 @@ export default function TimeInConfirmation({
                     >
                       Key borrowed By
                       <div>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Image
-                                src={icon}
-                                alt="Information"
-                                className="cursor-pointer"
-                                width={15}
-                              />
-                            </TooltipTrigger>
-                            <TooltipContent className="text-xs font-normal">
-                              <p>
-                                This field defaults to the faculty&apos;s name{" "}
-                                <br />
-                                who borrowed the key. If a student <br />
-                                borrowed the key, replace this with <br />
-                                the student&apos;s name and number <br />
-                                <span className="font-medium">
-                                  {" "}
-                                  (Eg: Juan Dela Cruz - 2021200xxx).
-                                </span>
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <TooltipInformation>
+                          <p>
+                            This field defaults to the faculty&apos;s name{" "}<br />
+                            who borrowed the key. If a student <br />
+                            borrowed the key, replace this with <br />
+                            the student&apos;s name and number <br />
+                            <span className="font-medium">
+                            {" "}
+                            (Eg: Juan Dela Cruz - 2021200xxx).
+                            </span>
+                          </p>
+                        </TooltipInformation>
                       </div>
                     </label>
                     <FormInput form={form} name="careOf" label="" />

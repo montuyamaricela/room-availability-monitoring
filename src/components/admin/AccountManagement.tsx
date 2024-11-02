@@ -119,7 +119,7 @@ export default function AccountManagement() {
   return (
     <Container>
       <div className="flex items-center justify-center">
-        <div className="w-full min-w-[367px] rounded border border-gray-light p-8 shadow-md drop-shadow-md">
+        <div className="w-full rounded border border-gray-light p-8 shadow-md drop-shadow-md">
           <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
             <h1 className="text-2xl font-semibold text-gray-dark">
               ACCOUNT MANAGEMENT
