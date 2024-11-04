@@ -70,8 +70,8 @@ export default function ScheduleTable({
       (scheduleRecord as unknown as scheduleRecordsAttributes[]) ?? [];
     const filteredScheduleRecords = filteredRoomScheduleRecord?.filter(
       (record) =>
-        record?.roomSchedule?.room?.roomName &&
-        record.roomSchedule.room.roomName === selectedRoom?.roomName,
+        record?.roomSchedule?.room?.id &&
+        record.roomSchedule.room.id === selectedRoom?.id,
     );
 
     filteredRoomScheduleRecord = filteredScheduleRecords?.filter((rec) => {
@@ -81,7 +81,7 @@ export default function ScheduleTable({
 
     // Filter by room name
     const filteredSched = filteredData.filter(
-      (sched) => sched.room.roomName === selectedRoom?.roomName,
+      (sched) => sched.roomId === selectedRoom?.id,
     );
 
     filteredData = filteredSched.filter((sched) => {

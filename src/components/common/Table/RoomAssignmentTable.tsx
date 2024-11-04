@@ -41,15 +41,13 @@ export default function RoomAssignmentTable({
       (scheduleRecord as unknown as scheduleRecordsAttributes[]) ?? [];
     const filteredScheduleRecords = filteredRoomScheduleRecord?.filter(
       (record) =>
-        record?.roomSchedule?.room?.roomName &&
-        record.roomSchedule.room.roomName === selectedRoom?.roomName,
+        record?.roomSchedule?.room?.id &&
+        record.roomSchedule.room.id === selectedRoom?.id,
     );
-
     // Filter by room name
     const filteredSched = filteredData.filter(
-      (sched) => sched.room.roomName === selectedRoom?.roomName,
+      (sched) => sched.roomId === selectedRoom?.id,
     );
-
     // Filter by day
     if (day) {
       filteredData = filteredSched.filter((sched) => {
@@ -64,7 +62,7 @@ export default function RoomAssignmentTable({
     // Set filtered data to state
     setRoomSchedule(filteredData);
     setLoading(false);
-  }, [schedule.data, day, scheduleRecord, selectedRoom?.roomName, deleted]);
+  }, [schedule.data, day, scheduleRecord, selectedRoom?.id, deleted]);
   // Calculate total pages
   const totalRecords = roomSchedule.length;
   const pageCount = Math.ceil(totalRecords / pageSize);

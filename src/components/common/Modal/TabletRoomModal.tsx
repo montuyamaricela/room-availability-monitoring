@@ -37,8 +37,8 @@ export default function TabletRoomModal({ open }: roomModalProps) {
     const filterSchedBySelectedRoom = filteredRoomScheduleRecord?.filter(
       (item) => {
         if (
-          item?.roomSchedule?.room?.roomName &&
-          item.roomSchedule.room.roomName === selectedRoom?.roomName &&
+          item?.roomSchedule?.room?.id &&
+          item.roomSchedule.room.id === selectedRoom?.id &&
           selectedRoom.status != "AVAILABLE"
         ) {
           if (item.timeOut === null && item.timeIn != null) {
@@ -47,9 +47,8 @@ export default function TabletRoomModal({ open }: roomModalProps) {
         }
       },
     );
-
     const filterScheduleByFacultyAndRoom = roomSchedule?.filter((schedule) => {
-      if (schedule.room.roomName === selectedRoom?.roomName) {
+      if (schedule.roomId === selectedRoom?.id) {
         if (schedule.id === filterSchedBySelectedRoom[0]?.roomScheduleId) {
           return schedule;
         }
@@ -65,7 +64,7 @@ export default function TabletRoomModal({ open }: roomModalProps) {
     });
 
     const getCurrentDayRoomSchedule = roomSchedule.filter((schedule) => {
-      if (schedule.room.roomName === selectedRoom?.roomName) {
+      if (schedule.roomId === selectedRoom?.id) {
         if (schedule.day === format(currentDate, "EEEE")) {
           return schedule;
         }
