@@ -14,11 +14,15 @@ import { Button } from "../ui/button";
 import { useActivityLog } from "~/lib/createLogs";
 import PrivacyPolicy from "../common/Modal/PrivacyPolicy";
 import TermsofServices from "../common/Modal/TermsofService";
+import { TooltipInformation } from "../common/TooltipInformation";
+import { EyeIcon } from "lucide-react";
 
 export default function Resetpassword() {
   const [isLoading, setIsLoading] = useState(true);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [isTokenValid, setIsTokenValid] = useState(false);
   const [token, setToken] = useState("");
@@ -95,6 +99,13 @@ export default function Resetpassword() {
     }
   };
 
+  const togglePassword = () => {
+    setShowPassword((current) => !current);
+  };
+  const toggleConfirmPassword = () => {
+    setShowConfirmPassword((current) => !current);
+  };
+
   return (
     <Container className="my-auto flex h-screen items-center bg-primary-green overflow-auto">
       <div className="flex items-center justify-center ">
@@ -126,20 +137,40 @@ export default function Resetpassword() {
                   defaultValue={email}
                 />
               </div>
-              <div className="">
-                <Label>Password</Label>
-                <Input
-                  name="password"
-                  type="password"
-                  onChange={(e) => setPassword(e.target.value)}
+              <div className="relative">
+                <div>
+                  <Label className="flex items-center gap-2 mb-2">
+                    Password
+                    <TooltipInformation>
+                      <p>
+                        Your password must contain: <br />
+                        At least 8 characters
+                      </p>
+                    </TooltipInformation>
+                  </Label>
+                  <Input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />  
+                </div>
+                <EyeIcon
+                  onClick={togglePassword}
+                  className={`absolute right-3 top-8 z-40 h-5 w-5 cursor-pointer ${showPassword ? "text-black" : "text-primary-gray"}`}
                 />
               </div>
-              <div className="">
-                <Label>Confirm Password</Label>
-                <Input
-                  name="confirm password"
-                  type="password"
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+              <div className="relative">
+                <div>
+                  <Label>Confirm Password</Label>
+                  <Input
+                    name="confirm password"
+                    type={showConfirmPassword ? "text" : "password"}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />  
+                </div>
+                <EyeIcon
+                  onClick={toggleConfirmPassword}
+                  className={`absolute right-3 top-8 z-40 h-5 w-5 cursor-pointer ${showConfirmPassword ? "text-black" : "text-primary-gray"}`}
                 />
               </div>
               <div className="flex justify-center">

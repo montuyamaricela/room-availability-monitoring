@@ -19,9 +19,13 @@ import { api } from "~/trpc/react";
 import Spinner from "../common/Spinner";
 import PrivacyPolicy from "../common/Modal/PrivacyPolicy";
 import TermsofServices from "../common/Modal/TermsofService";
+import { TooltipInformation } from "../common/TooltipInformation";
+import { EyeIcon } from "lucide-react";
 
 export default function Signup() {
   const [isLoading, setIsLoading] = useState(true); // Initially loading
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [isTokenValid, setIsTokenValid] = useState(false);
   const [token, setToken] = useState("");
@@ -120,6 +124,13 @@ export default function Signup() {
     return null;
   }
 
+  const togglePassword = () => {
+    setShowPassword((current) => !current);
+  };
+  const toggleConfirmPassword = () => {
+    setShowConfirmPassword((current) => !current);
+  };
+
   return (
     <Container className="my-auto flex items-center bg-primary-green md:h-screen overflow-auto">
       <div className="flex items-center justify-center ">
@@ -175,18 +186,46 @@ export default function Signup() {
                         disabled
                       />
                     </div>
-                    <FormInput
-                      form={form}
-                      type="password"
-                      name="password"
-                      label="Password"
-                    />
-                    <FormInput
-                      form={form}
-                      type="password"
-                      name="confirmPassword"
-                      label="Confirm Password"
-                    />
+                    <div className="relative">
+                      <div className="mt-[-6px]">
+                        <label
+                          htmlFor="password"
+                          className="flex items-center gap-2 text-sm font-medium"
+                        >
+                          Password
+                          <div>
+                            <TooltipInformation>
+                              <p>
+                              Your password must contain: <br />
+                              At least 8 characters
+                              </p>
+                            </TooltipInformation>
+                          </div>
+                        </label>
+                        <FormInput
+                          form={form}
+                          type={showPassword ? "text" : "password"}
+                          name="password"
+                          label=""
+                        />
+                      </div>
+                      <EyeIcon
+                        onClick={togglePassword}
+                        className={`absolute right-3 top-8 z-40 h-5 w-5 cursor-pointer ${showPassword ? "text-black" : "text-primary-gray"}`}
+                      />
+                    </div>
+                    <div className="relative">
+                      <FormInput
+                        form={form}
+                        name="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        label="Confirm Password"
+                      />
+                      <EyeIcon
+                        onClick={toggleConfirmPassword}
+                        className={`absolute right-3 top-8 z-40 h-5 w-5 cursor-pointer ${showConfirmPassword ? "text-black" : "text-primary-gray"}`}
+                      />
+                    </div>
                   </div>
 
                   <p className="mb-5 text-xs font-medium text-gray-dark">
