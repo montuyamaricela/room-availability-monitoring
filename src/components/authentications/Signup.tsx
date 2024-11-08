@@ -132,7 +132,7 @@ export default function Signup() {
   };
 
   return (
-    <Container className="my-auto flex items-center bg-primary-green md:h-screen overflow-auto">
+    <Container className="my-auto flex items-center bg-[url('/images/background/bsu.png')] md:h-screen overflow-auto">
       <div className="flex items-center justify-center ">
         <div className="flex w-full flex-col rounded-lg shadow-lg md:flex-row xl:w-4/5">
           <div className="flex flex-col items-center justify-center gap-2 rounded-t-2xl bg-gradient-to-b from-green-400 to-green-800 p-8 drop-shadow-md sm:gap-5 sm:p-10 md:w-1/2 md:items-start md:rounded-l-2xl md:rounded-tr-none lg:p-16">
