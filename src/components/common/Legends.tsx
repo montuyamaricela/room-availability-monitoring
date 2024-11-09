@@ -25,7 +25,7 @@ export function Legends() {
         <div className={`h-5 w-5 bg-secondary-available`} />
         <div className={`h-5 w-5 bg-secondary-occupied`} />
         <div className={`h-5 w-5 bg-secondary-other`} />
-        {/* <div className={`h-5 w-5 bg-secondary-filtered`} /> */}
+        <div className={`h-5 w-5 bg-secondary-filtered`} />
       </div>
     </div>
   );
@@ -47,9 +47,9 @@ const legends = [
     color: "secondary-other",
     title: "Offices",
   },
-  // {
-  //   id: 4,
-  //   color: "secondary-filtered",
-  //   title: "Filtered",
-  // },
+  {
+    id: 4,
+    color: "secondary-filtered",
+    title: "Filtered Selection",
+  },
 ];

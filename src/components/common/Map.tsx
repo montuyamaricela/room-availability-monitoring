@@ -1,11 +1,16 @@
 "use client";
+import React, { useState } from "react";
 import { Container } from "./Container";
 import { ComboboxDemo } from "../ui/dropdown";
 import { Legends } from "../common/Legends";
 import { RoomLayout } from "../common/Room";
 import { useFilterStore } from "~/store/useFilterStore";
+
+import PendingKeyModal from "./Modal/PendingKeyModal";
+import { PENDINGKEY } from "./FacultyRoomDetails";
 export default function Map() {
   const { filters, toggleFilter } = useFilterStore();
+  const [open, setOpen] = useState(false);
   return (
     <Container className="text-black">
       <div className="flex flex-col-reverse justify-between gap-3 md:flex-row md:items-center md:gap-0">
@@ -35,6 +40,15 @@ export default function Map() {
         <Legends />
         <RoomLayout />
       </div>
+      {/* <div className="flex justify-end">
+        <button
+            onClick={() => setOpen(true)}
+            className="bg-transparent hover:bg-transparent"
+          >
+            <PENDINGKEY />
+        </button>
+      </div> */}
+      <PendingKeyModal setOpen={setOpen} open={open} />
     </Container>
   );
 }

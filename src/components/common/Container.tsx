@@ -3,20 +3,20 @@ import React from "react";
 export function Container({
   id,
   children,
-  backgroundImage = "",
+  // backgroundImage = "",
   position,
   styling = {},
   className = "",
 }: {
   id?: string;
   children?: React.ReactNode;
-  backgroundImage?: string;
+  // backgroundImage?: string;
   styling?: object;
   position?: string;
   className?: string;
 }) {
   let style: object = {
-    backgroundImage: `url('${backgroundImage}')`,
+    // backgroundImage: `url('${backgroundImage}')`,
     backgroundPosition: position ?? "center",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
