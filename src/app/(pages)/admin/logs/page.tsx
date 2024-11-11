@@ -17,6 +17,7 @@ import {
 import { type scheduleRecordsAttributes } from "~/data/models/schedule";
 import { type PaginatedList } from "~/lib/types";
 import { useLogStore } from "~/store/useLogStore";
+import { Room, useRoomStore } from "~/store/useRoomStore";
 import { useScheduleStore } from "~/store/useScheduleStore";
 import { api } from "~/trpc/react";
 
@@ -26,6 +27,7 @@ export default function Page() {
   const [loading, setLoading] = useState<boolean>(true); // Initially loading is true
   const { setScheduleRecord } = useScheduleStore();
   const { setActivityLogs, setRoomLog } = useLogStore();
+  const { rooms, setRooms } = useRoomStore();
 
   const {
     data: activityLogsData,
@@ -52,50 +54,65 @@ export default function Page() {
   });
 
   useEffect(() => {
-    if (activityLogsData) {
-      // Assuming the data you get is a list of activity logs
-      setActivityLogs(
-        activityLogsData as unknown as PaginatedList<activityLogsAttributes>,
-      );
-    }
-    if (activityLogsError) {
-      console.error("Error fetching activity logs:", activityLogsData);
-    }
+    const fetchData = async () => {
+      try {
+        const roomResponse = await fetch("/api/rooms", { method: "GET" });
 
-    if (roomLogsData) {
-      // Assuming the data you get is a list of activity logs
-      setRoomLog(roomLogsData as unknown as PaginatedList<roomLogsAttributes>);
-    }
-    if (roomLogsError) {
-      console.error("Error fetching room logs:", roomLogsError);
-    }
+        if (!roomResponse.ok) throw new Error("Failed to fetch rooms");
 
-    if (scheduleRecordsData) {
-      setScheduleRecord(
-        scheduleRecordsData as unknown as PaginatedList<scheduleRecordsAttributes>,
-      );
-    }
+        const roomData = await roomResponse.json();
+        // Update rooms only if there are changes
+        if (JSON.stringify(roomData.rooms) !== JSON.stringify(rooms)) {
+          setRooms(roomData.rooms as unknown as Room[]);
+        }
 
-    // Set loading to false after the first successful fetch
-    setLoading(isActivityLogsLoading);
-    setLoading(isRoomLogsLoading);
+        if (activityLogsData) {
+          setActivityLogs(
+            activityLogsData as unknown as PaginatedList<activityLogsAttributes>,
+          );
+        }
+        if (activityLogsError) {
+          console.error("Error fetching activity logs:", activityLogsData);
+        }
+
+        if (roomLogsData) {
+          setRoomLog(
+            roomLogsData as unknown as PaginatedList<roomLogsAttributes>,
+          );
+        }
+        if (roomLogsError) {
+          console.error("Error fetching room logs:", roomLogsError);
+        }
+
+        if (scheduleRecordsData) {
+          setScheduleRecord(
+            scheduleRecordsData as unknown as PaginatedList<scheduleRecordsAttributes>,
+          );
+        }
+
+        // Set loading to false after the first successful fetch
+        if (!isActivityLogsLoading && !isRoomLogsLoading) {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching rooms or schedule:", error);
+      }
+    };
+
+    fetchData(); // Call fetchData only once
   }, [
     activityLogsData,
     roomLogsData,
-    isActivityLogsLoading,
     setActivityLogs,
     activityLogsError,
     roomLogsError,
     setRoomLog,
-    isRoomLogsLoading,
+    setScheduleRecord,
+    rooms,
   ]);
 
   if (session.status === "loading") {
     return <Spinner />;
-  }
-
-  if (session.data?.user.role != "Super Admin") {
-    return <NotAllowed />;
   }
 
   return <>{loading ? <Spinner /> : <Logs loading={loading} />}</>;

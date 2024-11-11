@@ -6,7 +6,11 @@ import { db } from "~/server/db";
 
 export async function GET(req: NextRequest) {
   try {
-    const rooms = await db.room.findMany();
+    const rooms = await db.room.findMany({
+      orderBy: {
+        id: "asc",
+      },
+    });
     if (rooms.length === 0) {
       // If no rooms are found, return a 404 response
       return NextResponse.json(

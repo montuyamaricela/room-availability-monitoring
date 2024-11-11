@@ -4,12 +4,13 @@ import { useLogStore } from "~/store/useLogStore";
 import Table, { type TableColumn } from "./Table";
 import { format } from "date-fns";
 import { TabsContent } from "~/components/ui/tabs";
+import { Button } from "~/components/ui/button";
 
 export default function RoomLogs({ loading }: Readonly<{ loading: boolean }>) {
   const { roomLog } = useLogStore();
 
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(100);
+  const [pageSize] = useState(10);
   // Calculate total pages
   const [log, setLog] = useState<roomLogsAttributes[]>([]);
 

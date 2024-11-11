@@ -24,6 +24,7 @@ export interface scheduleRecordsAttributes {
     room: {
       roomName: string;
       id: string;
+      building: string;
     };
     day: string;
   };

@@ -53,7 +53,7 @@ export default function Page() {
     error: scheduleRecordsError,
     refetch: refetchScheduleRecords,
   } = api.schedule.GetScheduleRecord.useQuery(undefined, {
-    refetchInterval: 5000,
+    refetchInterval: 1000,
   });
 
   useEffect(() => {

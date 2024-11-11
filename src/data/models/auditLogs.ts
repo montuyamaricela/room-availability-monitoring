@@ -13,4 +13,6 @@ export interface roomLogsAttributes {
   loggedBy: string;
   activity: string;
   careOf: string;
+  borrowedAt?: Date;
+  returnedAt?: Date;
 }

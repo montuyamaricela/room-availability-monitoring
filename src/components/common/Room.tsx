@@ -70,6 +70,10 @@ export function RoomLayout() {
     }
   });
   useEffect(() => {
+    // Create a Set of filtered room IDs for easy lookup
+    const filteredRoomIds = new Set(filteredRooms?.map((room: Room) => room.id));
+  
+    // Apply colors to rooms based on occupancy status and filters
     filteredRoomsByBuilding?.forEach((room: Room) => {
       const pathElement = document.getElementById(room.id);
       if (pathElement) {
@@ -82,7 +86,8 @@ export function RoomLayout() {
         }
       }
     });
-
+  
+    // Apply specific color for filtered rooms
     if (filters.length !== 0) {
       filteredRooms?.forEach((room: Room) => {
         const pathElement = document.getElementById(room.id);
@@ -91,8 +96,44 @@ export function RoomLayout() {
           pathElement.setAttribute("stroke", "#73AED8");
         }
       });
+          // Set unfiltered rooms to gray color
+    filteredRoomsByBuilding?.forEach((room: Room) => {
+      const pathElement = document.getElementById(room.id);
+      if (pathElement && !filteredRoomIds.has(room.id)) {
+        pathElement.setAttribute("fill", "#C0C0C0"); // Gray fill color
+        pathElement.setAttribute("stroke", "#A9A9A9"); // Gray stroke color
+      }
+    });
     }
-  }, [filteredRoomsByBuilding, filteredRooms, filters.length]); // Dependency array to run the effect when filteredRooms or filters change
+  
+
+  
+  }, [filteredRoomsByBuilding, filteredRooms, filters.length]);
+  
+  // useEffect(() => {
+  //   filteredRoomsByBuilding?.forEach((room: Room) => {
+  //     const pathElement = document.getElementById(room.id);
+  //     if (pathElement) {
+  //       if (room.status === "OCCUPIED") {
+  //         pathElement.setAttribute("fill", "#FF8383");
+  //         pathElement.setAttribute("stroke", "#C54F4F");
+  //       } else {
+  //         pathElement.setAttribute("fill", "#43D370");
+  //         pathElement.setAttribute("stroke", "#38A35A");
+  //       }
+  //     }
+  //   });
+
+  //   if (filters.length !== 0) {
+  //     filteredRooms?.forEach((room: Room) => {
+  //       const pathElement = document.getElementById(room.id);
+  //       if (pathElement && room.status !== "OCCUPIED") {
+  //         pathElement.setAttribute("fill", "#91D1FF");
+  //         pathElement.setAttribute("stroke", "#73AED8");
+  //       }
+  //     });
+  //   }
+  // }, [filteredRoomsByBuilding, filteredRooms, filters.length]); // Dependency array to run the effect when filteredRooms or filters change
 
   return (
     <div className="w-full">

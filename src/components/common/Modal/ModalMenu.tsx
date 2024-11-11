@@ -78,15 +78,13 @@ export default function ModalMenu({
                 </Link>
               </>
             )}
+            <Link href="/admin/logs">
+              <DropdownMenuItem>Logs</DropdownMenuItem>
+            </Link>
             {role === "Super Admin" && (
-              <>
-                <Link href="/admin/logs">
-                  <DropdownMenuItem>Logs</DropdownMenuItem>
-                </Link>
-                <Link href="/admin/barcode-list">
-                  <DropdownMenuItem>Barcode List</DropdownMenuItem>
-                </Link>
-              </>
+              <Link href="/admin/barcode-list">
+                <DropdownMenuItem>Barcode List</DropdownMenuItem>
+              </Link>
             )}
             {role != "Room Viewer" && (
               <>
@@ -106,9 +104,7 @@ export default function ModalMenu({
               onClick={signOutHandler}
               className="h-5 w-full  font-normal text-gray-dark hover:cursor-pointer"
             >
-              <DropdownMenuItem>
-                Logout
-              </DropdownMenuItem>
+              <DropdownMenuItem>Logout</DropdownMenuItem>
             </div>
           </DropdownMenuContent>
         </DropdownMenu>

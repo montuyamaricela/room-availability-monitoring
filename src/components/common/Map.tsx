@@ -12,7 +12,7 @@ export default function Map() {
   const { filters, toggleFilter } = useFilterStore();
   const [open, setOpen] = useState(false);
   return (
-    <Container className="text-black">
+    <Container className="relative text-black">
       <div className="flex flex-col-reverse justify-between gap-3 md:flex-row md:items-center md:gap-0">
         <div className="items-center gap-5 md:flex">
           <p className="font-semibold">FILTER: </p>
@@ -40,14 +40,14 @@ export default function Map() {
         <Legends />
         <RoomLayout />
       </div>
-      {/* <div className="flex justify-end">
+      <div className="fixed bottom-10 right-20">
         <button
-            onClick={() => setOpen(true)}
-            className="bg-transparent hover:bg-transparent"
-          >
-            <PENDINGKEY />
+          onClick={() => setOpen(true)}
+          className="bg-transparent hover:bg-transparent"
+        >
+          <PENDINGKEY />
         </button>
-      </div> */}
+      </div>
       <PendingKeyModal setOpen={setOpen} open={open} />
     </Container>
   );
