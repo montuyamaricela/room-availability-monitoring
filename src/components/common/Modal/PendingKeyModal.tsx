@@ -49,14 +49,14 @@ export default function PendingKeyModal({ open, setOpen }: roomModalProps) {
           {pendingKeyRecords && pendingKeyRecords.length > 0 ? (
             pendingKeyRecords.map((item) => (
               <div key={item.id}>
-                <p className="font-semibold text-primary-green">
+                <p className="font-semibold">
                   {`${item.roomSchedule.room.roomName} ${item.roomSchedule.room.building} - ${item.facultyName}`}
                 </p>
               </div>
             ))
           ) : (
             <div>
-              <p className="font-semibold text-primary-green">
+              <p className="font-semibold">
                 No Pending Key Returns
               </p>
             </div>

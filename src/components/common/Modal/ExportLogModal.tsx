@@ -139,7 +139,7 @@ const ExportLogModal = ({
   return (
     <Dialog>
       <DialogTrigger asChild>{ButtonTrigger}</DialogTrigger>
-      <DialogContent className=" max-w-[95%] md:max-w-[70%]">
+      <DialogContent className=" max-w-[95%] md:max-w-[70%] max-h-[95%] overflow-y-auto">
         <DialogHeader className="rounded-t-2xl bg-primary-green py-5">
           <DialogTitle className="text-center text-xl font-medium uppercase text-white">
             Export Room Logs
@@ -149,7 +149,7 @@ const ExportLogModal = ({
         <div className="px-10 pb-10 pt-5">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="mb-5 grid grid-cols-2 items-end gap-4 md:gap-4">
+              <div className="mb-5 grid sm:grid-cols-2 items-end gap-4 md:gap-4">
                 <FormCombobox
                   label="Faculty Name"
                   form={form}
@@ -175,7 +175,7 @@ const ExportLogModal = ({
             </form>
           </Form>
         </div>
-        <div className="mx-10 mb-10 flex h-[50vh] flex-col items-end">
+        <div className="mx-10 mb-10 flex flex-col items-end">
           <div className="w-full">
             <ExportRoomLogs loading={loading} roomLogs={roomLogs} />
           </div>
