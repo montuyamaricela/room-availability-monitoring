@@ -17,7 +17,7 @@ import {
 import { type scheduleRecordsAttributes } from "~/data/models/schedule";
 import { type PaginatedList } from "~/lib/types";
 import { useLogStore } from "~/store/useLogStore";
-import { Room, useRoomStore } from "~/store/useRoomStore";
+import { type Room, useRoomStore } from "~/store/useRoomStore";
 import { useScheduleStore } from "~/store/useScheduleStore";
 import { api } from "~/trpc/react";
 
@@ -115,5 +115,8 @@ export default function Page() {
     return <Spinner />;
   }
 
+  if (session?.data?.user?.role === "Room Viewer") {
+    return <NotAllowed />;
+  }
   return <>{loading ? <Spinner /> : <Logs loading={loading} />}</>;
 }

@@ -14,8 +14,11 @@ import RoomModalAdmin from "../admin/RoomModalAdmin";
 import { useSession } from "next-auth/react";
 import RoomModalSecurity from "../security/RoomModalSecurity";
 
-export function RoomLayout() {
-  // Create a Set to store the record IDs or faculty names that already received feedback
+export function RoomLayout({
+  selectedLaboratoryType,
+}: {
+  selectedLaboratoryType: string;
+}) {
   const [submittedFeedbackRecords, setSubmittedFeedbackRecords] = useState<
     Set<number>
   >(new Set());
@@ -24,16 +27,20 @@ export function RoomLayout() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const roomID = searchParams.get("room");
+  const pathname = usePathname();
 
   const [open, setOpen] = useState(false);
   const { rooms, setSelectedRoom, selectedRoom } = useRoomStore();
   const { filters } = useFilterStore();
-  const pathname = usePathname();
-
+  const { selectedBuilding } = useBuildingStore();
+  const BuildingComponent = getBuildingComponent(selectedBuilding);
+  const filteredRoomsByBuilding = filterRoomsByBuilding(
+    rooms,
+    selectedBuilding,
+  );
   const handleClick = (event: any) => {
     if (event.target.tagName === "path") {
       const roomId = event.target.getAttribute("id");
-
       filteredRoomsByBuilding.map((item: Room) => {
         if (item.id === roomId) {
           setOpen(true);
@@ -42,13 +49,6 @@ export function RoomLayout() {
       });
     }
   };
-  const { selectedBuilding } = useBuildingStore();
-  const BuildingComponent = getBuildingComponent(selectedBuilding);
-  const filteredRoomsByBuilding = filterRoomsByBuilding(
-    rooms,
-    selectedBuilding,
-  );
-
   useEffect(() => {
     if (!rooms || !roomID) return; // Only run if roomID exists and modal is closed
 
@@ -63,16 +63,28 @@ export function RoomLayout() {
     }
   }, [roomID, rooms, setSelectedRoom]); // Dependencies: rooms, roomID, open
 
-  // Filter the rooms based on the active filters
   const filteredRooms = filteredRoomsByBuilding?.filter((room: any) => {
     if (filters.length >= 1) {
-      return filters?.every((filter) => room[filter] === true);
+      // Ensure the filter logic includes checks for laboratoryType
+      const matchesFilters = filters?.every((filter) => {
+        if (filter === "isLaboratory" && room.laboratoryType) {
+          return (
+            selectedLaboratoryType === "" ||
+            room.laboratoryType === selectedLaboratoryType
+          );
+        } else {
+          return room[filter] === true;
+        }
+      });
+      return matchesFilters;
     }
   });
+
   useEffect(() => {
-    // Create a Set of filtered room IDs for easy lookup
-    const filteredRoomIds = new Set(filteredRooms?.map((room: Room) => room.id));
-  
+    const filteredRoomIds = new Set(
+      filteredRooms?.map((room: Room) => room.id),
+    );
+
     // Apply colors to rooms based on occupancy status and filters
     filteredRoomsByBuilding?.forEach((room: Room) => {
       const pathElement = document.getElementById(room.id);
@@ -86,54 +98,39 @@ export function RoomLayout() {
         }
       }
     });
-  
-    // Apply specific color for filtered rooms
+
+    // Apply specific colors based on filters
     if (filters.length !== 0) {
       filteredRooms?.forEach((room: Room) => {
         const pathElement = document.getElementById(room.id);
-        if (pathElement && room.status !== "OCCUPIED") {
-          pathElement.setAttribute("fill", "#91D1FF");
-          pathElement.setAttribute("stroke", "#73AED8");
+        if (pathElement) {
+          if (room.status === "OCCUPIED") {
+            // Set gray color for occupied filtered rooms
+            pathElement.setAttribute("fill", "#C0C0C0");
+            pathElement.setAttribute("stroke", "#A9A9A9");
+          } else {
+            // Set blue color for non-occupied filtered rooms
+            pathElement.setAttribute("fill", "#91D1FF");
+            pathElement.setAttribute("stroke", "#73AED8");
+          }
         }
       });
-          // Set unfiltered rooms to gray color
-    filteredRoomsByBuilding?.forEach((room: Room) => {
-      const pathElement = document.getElementById(room.id);
-      if (pathElement && !filteredRoomIds.has(room.id)) {
-        pathElement.setAttribute("fill", "#C0C0C0"); // Gray fill color
-        pathElement.setAttribute("stroke", "#A9A9A9"); // Gray stroke color
-      }
-    });
+
+      // Set unfiltered rooms to gray color
+      filteredRoomsByBuilding?.forEach((room: Room) => {
+        const pathElement = document.getElementById(room.id);
+        if (pathElement && !filteredRoomIds.has(room.id)) {
+          pathElement.setAttribute("fill", "#C0C0C0");
+          pathElement.setAttribute("stroke", "#A9A9A9");
+        }
+      });
     }
-  
-
-  
-  }, [filteredRoomsByBuilding, filteredRooms, filters.length]);
-  
-  // useEffect(() => {
-  //   filteredRoomsByBuilding?.forEach((room: Room) => {
-  //     const pathElement = document.getElementById(room.id);
-  //     if (pathElement) {
-  //       if (room.status === "OCCUPIED") {
-  //         pathElement.setAttribute("fill", "#FF8383");
-  //         pathElement.setAttribute("stroke", "#C54F4F");
-  //       } else {
-  //         pathElement.setAttribute("fill", "#43D370");
-  //         pathElement.setAttribute("stroke", "#38A35A");
-  //       }
-  //     }
-  //   });
-
-  //   if (filters.length !== 0) {
-  //     filteredRooms?.forEach((room: Room) => {
-  //       const pathElement = document.getElementById(room.id);
-  //       if (pathElement && room.status !== "OCCUPIED") {
-  //         pathElement.setAttribute("fill", "#91D1FF");
-  //         pathElement.setAttribute("stroke", "#73AED8");
-  //       }
-  //     });
-  //   }
-  // }, [filteredRoomsByBuilding, filteredRooms, filters.length]); // Dependency array to run the effect when filteredRooms or filters change
+  }, [
+    filteredRoomsByBuilding,
+    filteredRooms,
+    filters.length,
+    selectedLaboratoryType,
+  ]);
 
   return (
     <div className="w-full">

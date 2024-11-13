@@ -14,6 +14,7 @@ import { useRoomStore } from "~/store/useRoomStore";
 
 export default function Logs({ loading }: Readonly<{ loading: boolean }>) {
   const session = useSession();
+
   const { rooms } = useRoomStore();
   const { data, isLoading, error, refetch } =
     api.schedule.getAllFaculty.useQuery();

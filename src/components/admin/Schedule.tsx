@@ -7,11 +7,7 @@ import { type TableColumn } from "../common/Table/Table";
 import { useEffect, useState } from "react";
 import { type scheduleAttributes } from "~/data/models/schedule";
 import { useScheduleStore } from "~/store/useScheduleStore";
-import {
-  days,
-  DepartmentDropdown,
-  departments,
-} from "../ui/department-dropdown";
+import { days, DepartmentDropdown } from "../ui/department-dropdown";
 import { Label } from "../ui/label";
 import DeleteConfirmation from "../common/Modal/DeleteConfirmation";
 import ScheduleModal from "../common/Modal/ScheduleModal";
@@ -45,6 +41,24 @@ export default function Schedule({ loading }: { loading: boolean }) {
   const [selectedSchedule, setSelectedSchedule] =
     useState<scheduleAttributes>();
   const { schedule, clearSchedule } = useScheduleStore();
+
+  const filteredDepartment = Array.from(
+    new Set(
+      schedule?.data
+        ?.map((item) => item.department)
+        .filter(
+          (department) => department !== null && department !== undefined,
+        ),
+    ),
+  ).map((department) => ({ department }));
+
+  const departments =
+    filteredDepartment?.map((item) => {
+      return { label: item?.department ?? "", value: item?.department ?? "" };
+    }) || [];
+
+  departments.unshift({ label: "All", value: "" });
+
   useEffect(() => {
     let filteredData = schedule.data;
     // Filter by search query if provided
@@ -56,9 +70,9 @@ export default function Schedule({ loading }: { loading: boolean }) {
 
     // Filter by department if selected
     if (department) {
-      filteredData = filteredData.filter(
-        (sched) => sched.department === department,
-      );
+      filteredData = filteredData.filter((sched) => {
+        return sched.department === department;
+      });
     }
 
     if (day) {

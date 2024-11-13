@@ -19,15 +19,25 @@ export const RoomSchema = z
     Laboratory: z.boolean(),
     Airconditioned: z.boolean(),
     WithTv: z.boolean(),
+    laboratoryType: z.string().optional(), // This will be conditionally required
   })
   .refine((data) => data.Lecture || data.Laboratory, {
     message: "Either Lecture or Laboratory must be selected",
     path: ["Lecture", "Laboratory"], // Error message applies to both fields
   })
-  .refine((data) => data.Lecture || data.Laboratory, {
-    message: "Either Lecture or Laboratory must be selected",
-    path: ["Laboratory"], // Error message applies to both fields
-  });
+  .refine(
+    (data) => {
+      // If Laboratory is true, laboratoryType is required
+      if (data.Laboratory && !data.laboratoryType) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Laboratory Type is required when Laboratory is selected",
+      path: ["laboratoryType"],
+    },
+  );
 
 export type IRoomSchema = z.infer<typeof RoomSchema>;
 export const RoomSchemaResolver = zodResolver(RoomSchema);
@@ -42,4 +52,5 @@ export const RoomSchemaDefaultValues = {
   Laboratory: false,
   Airconditioned: false,
   WithTv: false,
+  laboratoryType: "", // Default value as empty string
 };

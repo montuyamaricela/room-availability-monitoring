@@ -25,15 +25,17 @@ export default function PendingKeyModal({ open, setOpen }: roomModalProps) {
     const pendingRecords =
       (scheduleRecord as unknown as scheduleRecordsAttributes[]) ?? [];
 
-    const filteredRecords = pendingRecords.filter((item) => {
-      if (item.timeOut === null && item.timeIn != null) {
-        if (item.roomSchedule.day === format(currentDate, "EEEE")) {
-          return item;
+    if (pendingRecords.length > 0) {
+      const filteredRecords = pendingRecords?.filter((item) => {
+        if (item.timeOut === null && item.timeIn != null) {
+          if (item.roomSchedule.day === format(currentDate, "EEEE")) {
+            return item;
+          }
         }
-      }
-    });
+      });
 
-    setPendingKeyRecords(filteredRecords);
+      setPendingKeyRecords(filteredRecords);
+    }
   }, [scheduleRecord]);
   return (
     <Dialog open={open} onOpenChange={setOpen}>

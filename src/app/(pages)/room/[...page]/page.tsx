@@ -61,21 +61,27 @@ export default function Page({ params }: PageProps) {
           setRooms(roomData.rooms as unknown as Room[]);
         }
 
-        rooms.map((room) => {
-          if (room.id === page[0]?.toUpperCase()) {
-            setSelectedRoom(room);
-          }
-        }),
-          // Update schedule
-          setSchedule(scheduleData);
-        // Update schedule records if available
-        setScheduleRecord(
-          scheduleRecordsData as unknown as PaginatedList<scheduleRecordsAttributes>,
-        );
+        if (page[0]) {
+          const decodedRoomId = decodeURIComponent(page[0])
+            .replace(/\s{2,}/g, " ")
+            .toUpperCase();
 
-        // Handle any errors in fetching schedule records
-        if (scheduleRecordsError) {
-          console.error("Error fetching activity logs:", scheduleRecordsError);
+          rooms.map((room) => {
+            if (room.id.toUpperCase().includes(decodedRoomId)) {
+              setSelectedRoom(room);
+            }
+          }),
+            setSchedule(scheduleData);
+          setScheduleRecord(
+            scheduleRecordsData as unknown as PaginatedList<scheduleRecordsAttributes>,
+          );
+
+          if (scheduleRecordsError) {
+            console.error(
+              "Error fetching activity logs:",
+              scheduleRecordsError,
+            );
+          }
         }
       } catch (error) {
         console.error("Error fetching rooms or schedule:", error);

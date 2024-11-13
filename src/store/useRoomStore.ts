@@ -9,6 +9,7 @@ export interface Room {
   isLecture: boolean;
   isLaboratory: boolean;
   isAirconed: boolean;
+  laboratoryType: string;
   capacity: number;
   electricFans: number;
   functioningComputers: number;

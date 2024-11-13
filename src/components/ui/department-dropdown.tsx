@@ -103,3 +103,13 @@ export const feedBackStatus = [
   { label: "Acknowledged", value: "Acknowledged" },
   { label: "Unread", value: "False" },
 ];
+
+export const LaboratoryType = [
+  { label: "All", value: "" },
+  { label: "Computer Laboratory", value: "Computer Laboratory" },
+  { label: "Kitchen Laboratory", value: "Kitchen Laboratory" },
+  { label: "Physics Laboratory", value: "Physics Laboratory" },
+  { label: "Chemistry Laboratory", value: "Chemistry Laboratory" },
+  { label: "Biology Laboratory", value: "Biology Laboratory" },
+  { label: "Other", value: "Other" },
+];

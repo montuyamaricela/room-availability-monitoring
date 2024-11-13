@@ -24,27 +24,28 @@ export default function Page() {
   const [loading, setLoading] = useState<boolean>(true);
   const { setSchedule, setScheduleRecord } = useScheduleStore();
   const [qrCodeBuffer, setQrCodeBuffer] = useState("");
+  const SCAN_COMPLETE_DELAY = 100;
+  let scanTimeout: string | number | NodeJS.Timeout | undefined;
 
   useHotkeys("*", (e) => {
-    // Prevent capturing certain keys like Shift, Alt, etc.
     if (e.key.length === 1) {
-      setQrCodeBuffer((prevBuffer) => prevBuffer + e.key);
+      setQrCodeBuffer((prevBuffer) => {
+        const updatedBuffer = prevBuffer + e.key;
+        clearTimeout(scanTimeout);
+        scanTimeout = setTimeout(() => {
+          handleQRCodeScan(updatedBuffer);
+        }, SCAN_COMPLETE_DELAY);
+
+        return updatedBuffer;
+      });
     }
 
-    // console.log(e.key);
-
-    if (e.key === "Enter") {
-      handleQRCodeScan();
-      e.preventDefault(); // Optional: Prevent default "Enter" behavior
-    }
+    e.preventDefault();
   });
 
-  const handleQRCodeScan = () => {
-    const query = `?room=${encodeURIComponent(qrCodeBuffer)}`;
-
+  const handleQRCodeScan = (buffer: string) => {
+    const query = `?room=${encodeURIComponent(buffer)}`;
     router.push(`${pathname}${query}`);
-
-    // Reset the QR code buffer after navigating
     setQrCodeBuffer("");
   };
 

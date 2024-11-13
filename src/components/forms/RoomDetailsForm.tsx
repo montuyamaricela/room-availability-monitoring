@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { Form } from "../ui/form";
-import { FormCheckbox, FormInput } from "../ui/form-components";
+import { FormCheckbox, FormCombobox, FormInput } from "../ui/form-components";
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import * as roomSchema from "../../validations/roomSchema";
@@ -20,6 +22,8 @@ export default function RoomDetailsForm() {
   const session = useSession();
   const { logActivity } = useActivityLog();
   const { scheduleRecord, schedule } = useScheduleStore();
+  const { rooms } = useRoomStore();
+
   const [facultyName, setFacultyName] = useState<string>("");
   const [subjectAndSection, setSubjectAndSection] = useState<string>("");
   const [timeInAt, setTimeInAt] = useState<string>("");
@@ -34,6 +38,27 @@ export default function RoomDetailsForm() {
   const { selectedRoom } = useRoomStore();
   const [isLoading, setIsLoading] = useState(false);
 
+  const filteredLabType = Array.from(
+    new Set(
+      rooms
+        ?.map((item) => item.laboratoryType)
+        .filter(
+          (laboratoryType) =>
+            laboratoryType !== null &&
+            laboratoryType !== undefined &&
+            laboratoryType !== "", // Exclude empty strings
+        ),
+    ),
+  ).map((laboratoryType) => ({ laboratoryType }));
+  const laboratoryType =
+    filteredLabType?.map((item) => {
+      return {
+        label: item?.laboratoryType ?? "",
+        value: item?.laboratoryType ?? "",
+      };
+    }) || [];
+
+  laboratoryType.push({ label: "Other", value: "Other" });
   useEffect(() => {
     const filteredRoomScheduleRecord =
       (scheduleRecord as unknown as scheduleRecordsAttributes[]) ?? [];
@@ -110,6 +135,7 @@ export default function RoomDetailsForm() {
       form.setValue("Laboratory", selectedRoom?.isLaboratory ?? false);
       form.setValue("Airconditioned", selectedRoom?.isAirconed ?? false);
       form.setValue("WithTv", selectedRoom?.withTv ?? false);
+      form.setValue("laboratoryType", selectedRoom.laboratoryType);
     }
   }, [form, selectedRoom]);
 
@@ -118,7 +144,6 @@ export default function RoomDetailsForm() {
     const nonFunctioning = form.watch("NonFunctioning");
     const functioningValue = Number(functioning) || 0; // Default to 0 if NaN
     const nonFunctioningValue = Number(nonFunctioning) || 0; // Default to 0 if NaN
-
     const availableComputers = functioningValue + nonFunctioningValue;
 
     form.setValue("AvailableComputers", availableComputers);
@@ -131,6 +156,7 @@ export default function RoomDetailsForm() {
       form.setValue("Laboratory", false);
       form.setValue("Functioning", 0);
       form.setValue("NonFunctioning", 0);
+      form.setValue("laboratoryType", "");
     }
   }, [form.getValues("Lecture")]);
 
@@ -248,6 +274,32 @@ export default function RoomDetailsForm() {
                 name="Functioning"
                 label=""
                 disabled={form.watch("Lecture") || !form.watch("Laboratory")}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="Functioning"
+                className="flex items-center gap-2 text-sm font-medium"
+              >
+                Laboratory Type
+                <div>
+                  <TooltipInformation>
+                    <p>
+                      Select a laboratory type. <br /> If none applies, choose
+                      &quot;Other&quot;.
+                    </p>
+                  </TooltipInformation>
+                </div>
+              </label>
+
+              <FormCombobox
+                label=""
+                form={form}
+                placeholder="Select Laboratory Type"
+                name={"laboratoryType"}
+                data={laboratoryType}
+                disabled={!form.watch("Laboratory")}
               />
             </div>
           </div>

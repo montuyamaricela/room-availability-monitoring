@@ -52,6 +52,11 @@ const ExportLogModal = ({
     resolver: exportSchema.logExportResolver,
     defaultValues: exportSchema.LogExportDefaultValues,
   });
+
+  // Add "All" option to faculties and roomIds
+  const facultiesOptions = [{ label: "All", value: "" }, ...faculties];
+  const roomIdsOptions = [{ label: "All", value: "" }, ...roomIds];
+
   const onSubmit = async (data: exportSchema.ILogExport) => {
     setLoading(true);
     try {
@@ -150,14 +155,14 @@ const ExportLogModal = ({
                   form={form}
                   placeholder="Select Faculty"
                   name={"facultyName"}
-                  data={faculties}
+                  data={facultiesOptions}
                 />
                 <FormCombobox
                   label="Room Name/ID"
                   form={form}
                   placeholder="Select Room"
                   name={"roomID"}
-                  data={roomIds}
+                  data={roomIdsOptions}
                 />
                 <div className="space-y-1">
                   <Label>Start Date & End Date</Label>

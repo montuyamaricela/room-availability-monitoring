@@ -78,9 +78,11 @@ export default function ModalMenu({
                 </Link>
               </>
             )}
-            <Link href="/admin/logs">
-              <DropdownMenuItem>Logs</DropdownMenuItem>
-            </Link>
+            {role != "Room Viewer" && (
+              <Link href="/admin/logs">
+                <DropdownMenuItem>Logs</DropdownMenuItem>
+              </Link>
+            )}
             {role === "Super Admin" && (
               <Link href="/admin/barcode-list">
                 <DropdownMenuItem>Barcode List</DropdownMenuItem>

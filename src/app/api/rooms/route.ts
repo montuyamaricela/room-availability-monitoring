@@ -51,6 +51,7 @@ export async function POST(req: NextRequest) {
       Disabled,
       Lecture,
       Laboratory,
+      laboratoryType,
       Airconditioned,
       WithTv,
     } = body;
@@ -82,6 +83,7 @@ export async function POST(req: NextRequest) {
         isLecture: Lecture,
         isLaboratory: Laboratory,
         isAirconed: Airconditioned,
+        laboratoryType: laboratoryType,
         withTv: WithTv,
         disable: Disabled,
       },
