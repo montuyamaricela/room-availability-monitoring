@@ -26,15 +26,12 @@ export default function RoomInfo() {
           <div
             className={`mt-8 flex items-center justify-center gap-5 text-gray-dark ${modalWidth <= 480 && test ? " flex-col " : " "}`}
           >
-            {selectedRoom?.isLaboratory ? (
-              selectedRoom?.laboratoryType ? (
+            {selectedRoom?.isLaboratory &&
+              (selectedRoom?.laboratoryType ? (
                 <p>{selectedRoom.laboratoryType}</p>
               ) : (
                 <p>Laboratory</p>
-              )
-            ) : (
-              <p>Laboratory</p>
-            )}
+              ))}
             {selectedRoom?.isLecture && <p>Lecture</p>}
 
             {selectedRoom?.isAirconed && (
