@@ -76,6 +76,9 @@ export default function ModalMenu({
                 <Link href="/admin/schedule">
                   <DropdownMenuItem>Schedule</DropdownMenuItem>
                 </Link>
+                <Link href="/admin/faculty">
+                  <DropdownMenuItem>Faculty</DropdownMenuItem>
+                </Link>
               </>
             )}
             {role != "Room Viewer" && (

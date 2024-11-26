@@ -104,7 +104,7 @@ export default function ScheduleTable({
 
   useEffect(() => {
     if (selectedSchedule?.roomId) {
-      let facultyName = selectedSchedule.facultyName;
+      let facultyName = selectedSchedule.faculty.facultyName;
       roomScheduleRecords?.map((item) => {
         if (item.roomScheduleId === selectedSchedule.id) {
           facultyName = item.facultyName;
@@ -142,13 +142,13 @@ export default function ScheduleTable({
       roomScheduleRecords.forEach((rec) => {
         // If it's past the time and the record hasn't had feedback submitted yet
         if (rec.timeIn != null && rec.timeOut === null) {
-          if (rec.facultyName === record.facultyName) {
+          if (rec.facultyName === record.faculty.facultyName) {
             if (
               isPast(fifteenMinutesAfterEnd) &&
               !submittedFeedbackRecords.has(record.id)
             ) {
               const feedbackMessage = `${rec.facultyName} did not return the key after their scheduled Time Out at Room ${record.room.roomName}`;
-              automateFeedback(record.department ?? "CICS", feedbackMessage);
+              automateFeedback(record.faculty.department ?? "CICS", feedbackMessage);
 
               // Add the record ID to the set to prevent duplicate feedback
               setSubmittedFeedbackRecords((prevSet) =>
@@ -184,7 +184,7 @@ export default function ScheduleTable({
   function timeOutSchedule(row: scheduleAttributes | null) {
     if (!row) return;
 
-    let facultyName = row?.facultyName;
+    let facultyName = row?.faculty.facultyName;
     roomScheduleRecords?.map((item: scheduleRecordsAttributes) => {
       if (item.roomScheduleId === row?.id) {
         timeOutRoom(item.id);
@@ -217,7 +217,7 @@ export default function ScheduleTable({
               : ""
           }
         >
-          {row.facultyName}
+          {row.faculty.facultyName}
         </span>
       ),
     },

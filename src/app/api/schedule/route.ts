@@ -16,6 +16,12 @@ export async function GET(req: NextRequest) {
             building: true,
           },
         },
+        faculty: {
+          select: {
+            facultyName: true,
+            department: true
+          }
+        }
       },
     });
     if (roomSchedule.length === 0) {
@@ -48,7 +54,14 @@ export async function POST(req: NextRequest) {
 
   try {
     const deleteSchedule = await db.roomSchedule.deleteMany();
-
+    await db.room.updateMany({
+      where: {
+        status: "OCCUPIED",
+      },
+      data: {
+        status: "AVAILABLE",
+      },
+    });
     if (!deleteSchedule) {
       return NextResponse.json(
         { error: "Something went wrong." },

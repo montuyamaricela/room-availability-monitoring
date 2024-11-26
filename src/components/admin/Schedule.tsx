@@ -45,7 +45,7 @@ export default function Schedule({ loading }: { loading: boolean }) {
   const filteredDepartment = Array.from(
     new Set(
       schedule?.data
-        ?.map((item) => item.department)
+        ?.map((item) => item.faculty.department)
         .filter(
           (department) => department !== null && department !== undefined,
         ),
@@ -64,14 +64,14 @@ export default function Schedule({ loading }: { loading: boolean }) {
     // Filter by search query if provided
     if (searchQuery) {
       filteredData = filteredData.filter((sched) =>
-        sched.facultyName.toLowerCase().includes(searchQuery.toLowerCase()),
+        sched.faculty.facultyName.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
 
     // Filter by department if selected
     if (department) {
       filteredData = filteredData.filter((sched) => {
-        return sched.department === department;
+        return sched.faculty.department === department;
       });
     }
 
@@ -97,13 +97,13 @@ export default function Schedule({ loading }: { loading: boolean }) {
       id: "facultyName",
       header: "Faculty Name",
       width: 100,
-      formatter: (row) => <span>{row?.facultyName}</span>,
+      formatter: (row) => <span>{row?.faculty.facultyName}</span>,
     },
     {
       id: "department",
       header: "Department",
       width: 60,
-      formatter: (row) => <span>{row?.department}</span>,
+      formatter: (row) => <span>{row?.faculty.department}</span>,
     },
     {
       id: "section",

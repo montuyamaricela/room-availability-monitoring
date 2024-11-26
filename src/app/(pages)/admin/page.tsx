@@ -15,6 +15,7 @@ import { useScheduleStore } from "~/store/useScheduleStore";
 import { api } from "~/trpc/react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { usePathname, useRouter } from "next/navigation";
+import { checkAndNotifyPendingKeyReturns } from "~/lib/notifyPendingKey";
 
 export default function Page() {
   const router = useRouter();
@@ -111,6 +112,13 @@ export default function Page() {
     setSchedule,
     setScheduleRecord,
   ]);
+
+
+  //checks pending key return
+  setInterval(() => {
+    checkAndNotifyPendingKeyReturns().catch(console.error);
+  }, 60000); // Run every 60 seconds
+  
 
   return <>{loading ? <Spinner /> : <Map />}</>;
 }

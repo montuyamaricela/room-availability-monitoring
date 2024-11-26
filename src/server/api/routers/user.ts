@@ -85,6 +85,39 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
+    deleteFaculty: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.faculty.delete({
+        where: { id: input.id },
+      });
+    }),
+
+    updateFaculty: protectedProcedure
+    .input(z.object({ id: z.number(), facultyName: z.string(), email: z.string(), department: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.faculty.update({
+        where: { id: input.id },
+        data: {
+          facultyName: input.facultyName,
+          email: input.email,
+          department: input.department
+        }
+      });
+    }),
+
+    createFaculty: protectedProcedure
+    .input(z.object({ facultyName: z.string(), email: z.string(), department: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.faculty.create({
+        data: {
+          facultyName: input.facultyName,
+          email: input.email,
+          department: input.department
+        }
+      });
+    }),
+
   getUserStatus: publicProcedure
     .input(z.object({ email: z.string().email() }))
     .mutation(async ({ ctx, input }) => {

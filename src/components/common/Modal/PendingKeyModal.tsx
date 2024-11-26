@@ -33,10 +33,10 @@ export default function PendingKeyModal({ open, setOpen }: roomModalProps) {
           }
         }
       });
-
       setPendingKeyRecords(filteredRecords);
     }
   }, [scheduleRecord]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="md:max-w-4/5 w-[90%] ">
@@ -50,7 +50,7 @@ export default function PendingKeyModal({ open, setOpen }: roomModalProps) {
             pendingKeyRecords.map((item) => (
               <div key={item.id}>
                 <p className="font-semibold">
-                  {`${item.roomSchedule.room.roomName} ${item.roomSchedule.room.building} - ${item.facultyName}`}
+                  {`${item.roomSchedule.room.roomName} ${item.roomSchedule.room.building} - ${item?.facultyName}`}
                 </p>
               </div>
             ))

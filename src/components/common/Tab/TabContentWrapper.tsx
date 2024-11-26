@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { TabsContent } from "../../ui/tabs";
 import RoomAssignmentForm from "../../forms/RoomAssignmentForm";
 import RoomDetailsForm from "../../forms/RoomDetailsForm";
@@ -21,7 +25,7 @@ export default function TabContentWrapper({
   const { data } = api.schedule.getAllFaculty.useQuery();
 
   const filteredFaculties = Array.from(
-    new Set(data?.map((faculty) => faculty.facultyName)),
+    new Set(data?.map((faculty) => faculty?.facultyName)),
   ).map((facultyName) => ({ facultyName }));
 
   const faculties =

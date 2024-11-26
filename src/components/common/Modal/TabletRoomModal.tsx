@@ -57,7 +57,7 @@ export default function TabletRoomModal({ open }: roomModalProps) {
 
     const getTimeIn = filterSchedBySelectedRoom?.filter((schedule) => {
       if (
-        schedule.facultyName === filterScheduleByFacultyAndRoom[0]?.facultyName
+        schedule.facultyName === filterScheduleByFacultyAndRoom[0]?.faculty.facultyName
       ) {
         return schedule;
       }
@@ -156,7 +156,7 @@ export default function TabletRoomModal({ open }: roomModalProps) {
               {roomSchedule.map((item) => {
                 return (
                   <div key={item.id} className="grid grid-cols-2">
-                    <p>{item.facultyName}</p>
+                    <p>{item.faculty.facultyName}</p>
                     <div className="grid grid-cols-2">
                       <p>{formatTimetoLocal(item.beginTime)}</p>
                       <p>{formatTimetoLocal(item.endTime)}</p>

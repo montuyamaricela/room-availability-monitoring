@@ -1,7 +1,5 @@
 export interface scheduleAttributes {
   id: number;
-  facultyName: string;
-  department?: string;
   roomId: string;
   section: string;
   courseCode: string;
@@ -9,6 +7,10 @@ export interface scheduleAttributes {
     roomName: string;
     building: string;
   };
+  faculty: {
+    facultyName: string;
+    department: string
+  }
   day: string;
   beginTime: Date;
   endTime: Date;
@@ -17,8 +19,8 @@ export interface scheduleAttributes {
 
 export interface scheduleRecordsAttributes {
   id: number;
-  facultyName: string;
   roomScheduleId: number;
+  facultyName: string;
   roomSchedule: {
     roomId: string;
     room: {
@@ -32,7 +34,9 @@ export interface scheduleRecordsAttributes {
   timeOut: Date;
 }
 
-// export interface schedule {
-//   // id: number;
-//   attributes: scheduleAttributes;
-// }
+export interface facultyAttributes {
+  id: number;
+  facultyName: string;
+  department: string;
+  email: string;
+}

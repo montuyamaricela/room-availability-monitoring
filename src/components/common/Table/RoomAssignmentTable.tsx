@@ -116,7 +116,7 @@ export default function RoomAssignmentTable({
               : ""
           }
         >
-          {row.facultyName}
+          {row.faculty.facultyName}
         </span>
       ),
     },
@@ -190,7 +190,7 @@ export default function RoomAssignmentTable({
           deleteHandler={() =>
             handleDelete(
               row ? row?.id : 0,
-              row.facultyName,
+              row.faculty.facultyName,
               row.day,
               row.room.roomName,
             )

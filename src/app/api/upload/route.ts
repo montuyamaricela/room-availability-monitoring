@@ -120,8 +120,8 @@ import { authOptions } from "~/server/auth";
 import { isOverlapping, parseTime } from "~/lib/timeSchedule";
 import { formattedRoom, formattedBuilding } from "~/lib/csvLibs";
 import { groupSchedulesByCommonDetailsCSV } from "~/lib/groupSchedule";
-// Define chunk size for batch processing
-const CHUNK_SIZE = 20; // Adjust based on your needs
+
+const CHUNK_SIZE = 20; 
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
   if (!file) {
     return NextResponse.json(
       { error: "File blob is required." },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
@@ -153,11 +153,42 @@ export async function POST(request: NextRequest) {
         .on("data", (data) => results.push(data))
         .on("end", async () => {
           try {
-            const missingRooms: any[] = [];
+            const facultyData = results.map((row) => ({
+              facultyName: row.Instructor,
+              department: row.Department || "Unknown", 
+            }));
+
+            const uniqueFacultyData = Array.from(
+              new Map(
+                facultyData.map((item) => [item.facultyName, item])
+              ).values()
+            );
+
+            const facultyMap: Record<string, any> = {};
+            for (const { facultyName, department } of uniqueFacultyData) {
+              if (!facultyName) continue; 
+
+              let faculty = await db.faculty.findFirst({
+                where: { facultyName },
+              });
+
+              if (!faculty) {
+                faculty = await db.faculty.create({
+                  data: {
+                    facultyName,
+                    email: `${facultyName.replace(/\s+/g, ".")}@example.com`.toLowerCase(),
+                    department,
+                  },
+                });
+              }
+
+              facultyMap[facultyName] = faculty.id;
+            }
+
+            const missingRooms: string[] = [];
             const groupedSchedules = groupSchedulesByCommonDetailsCSV(results);
             const groupedSchedulesArray = Object.values(groupedSchedules);
 
-            // Process the data in batches
             for (let i = 0; i < groupedSchedulesArray.length; i += CHUNK_SIZE) {
               const batch = groupedSchedulesArray.slice(i, i + CHUNK_SIZE);
 
@@ -176,30 +207,21 @@ export async function POST(request: NextRequest) {
                   mergedRow.section_group = mergedGroup;
                 }
 
-                const getRoomId = await db.room.findFirst({
+                const room = await db.room.findFirst({
                   where: {
                     roomName: formattedRoom(mergedRow.Room),
                     building: formattedBuilding(mergedRow.Building),
                   },
                 });
 
-                if (!getRoomId) {
-                  missingRooms.push(
-                    mergedRow.Room + " - " + mergedRow.Building,
-                  );
-                  return;
-                }
-
-                const room = await db.room.findUnique({
-                  where: { id: getRoomId.id },
-                });
-
                 if (!room) {
                   missingRooms.push(
-                    mergedRow.Room + " - " + mergedRow.Building,
+                    `${mergedRow.Room} - ${mergedRow.Building}`
                   );
                   return;
                 }
+
+                const facultyID = facultyMap[mergedRow.Instructor];
 
                 const existingSchedules = await db.roomSchedule.findMany({
                   where: {
@@ -213,26 +235,25 @@ export async function POST(request: NextRequest) {
                     parseTime(mergedRow["Start Time"]),
                     parseTime(mergedRow["End Time"]),
                     existingSchedule.beginTime,
-                    existingSchedule.endTime,
-                  ),
+                    existingSchedule.endTime
+                  )
                 );
 
                 if (hasOverlap) {
                   console.log(
-                    `Overlapping schedule found for room ${room.id} on ${mergedRow.Day}`,
+                    `Overlapping schedule found for room ${room.id} on ${mergedRow.Day}`
                   );
-                  return; // Skip this schedule as it overlaps
+                  return;
                 }
 
-                await db.roomSchedule.createMany({
+                await db.roomSchedule.create({
                   data: {
                     roomId: room.id,
-                    facultyName: mergedRow.Instructor,
+                    facultyID,
                     courseCode: mergedRow.Course,
                     section: mergedRow.Section + " " + mergedRow.Group,
                     day: mergedRow.Day,
                     beginTime: parseTime(mergedRow["Start Time"]),
-                    department: mergedRow.Department,
                     endTime: parseTime(mergedRow["End Time"]),
                     isTemp: false,
                   },
@@ -246,7 +267,6 @@ export async function POST(request: NextRequest) {
               await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 second delay between chunks
             }
 
-            // Log any missing rooms
             if (missingRooms.length > 0) {
               console.error(`Missing rooms: ${missingRooms.join(", ")}`);
             }
@@ -254,16 +274,16 @@ export async function POST(request: NextRequest) {
             resolve(
               NextResponse.json(
                 { message: "Data successfully stored.", data: results },
-                { status: 200 },
-              ),
+                { status: 200 }
+              )
             );
           } catch (error) {
             console.error("Error saving data:", error);
             resolve(
               NextResponse.json(
                 { error: "Error saving data" },
-                { status: 500 },
-              ),
+                { status: 500 }
+              )
             );
           }
         })
@@ -272,8 +292,8 @@ export async function POST(request: NextRequest) {
           resolve(
             NextResponse.json(
               { error: "Error processing CSV file" },
-              { status: 500 },
-            ),
+              { status: 500 }
+            )
           );
         });
     });
@@ -281,10 +301,11 @@ export async function POST(request: NextRequest) {
     console.error("Error processing file:", e);
     return NextResponse.json(
       { error: "Something went wrong." },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
+
 
 // await db.room.createMany({
 //   data: results.map((row) => ({

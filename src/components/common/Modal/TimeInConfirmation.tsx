@@ -87,13 +87,13 @@ export default function TimeInConfirmation({
 
   useEffect(() => {
     if (selectedSchedule) {
-      form.setValue("facultyName", selectedSchedule.facultyName);
+      form.setValue("facultyName", selectedSchedule.faculty.facultyName);
       form.setValue("Room", selectedSchedule.room.roomName);
       form.setValue("Day", selectedSchedule.day);
       form.setValue("Section", selectedSchedule?.section);
       form.setValue("Subject", selectedSchedule?.courseCode);
       form.setValue("beginTime", formatTimetoLocal(selectedSchedule.beginTime));
-      form.setValue("careOf", selectedSchedule.facultyName);
+      form.setValue("careOf", selectedSchedule.faculty.facultyName);
       form.setValue("endTime", formatTimetoLocal(selectedSchedule.endTime));
     }
   }, [form, selectedSchedule]);

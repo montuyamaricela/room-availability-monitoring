@@ -20,7 +20,7 @@ export default async function roomTimeOut(
         roomId: selectedSchedule ? selectedSchedule.roomId : "",
         action: "Returned the key",
         id: selectedSchedule ? selectedSchedule.id : null,
-        careOf: selectedSchedule ? selectedSchedule.facultyName : "",
+        careOf: selectedSchedule ? selectedSchedule.faculty.facultyName : "",
         ...selectedSchedule,
       }),
     });

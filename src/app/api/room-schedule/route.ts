@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -47,10 +48,25 @@ export async function POST(req: NextRequest) {
             throw new Error("Time conflict. Please try again.");
           }
 
+
+          let faculty = await db.faculty.findFirst({
+            where: { facultyName: body.facultyName },
+          });
+
+          if (!faculty){
+            faculty = await db.faculty.create({
+              data: {
+                facultyName: body.facultyName,
+                email: `${body?.facultyName.replace(/\s+/g, ".")}@example.com`.toLowerCase(),
+                department: "unknown"
+              }
+            })
+          }
+
           await db.roomSchedule.create({
             data: {
               roomId: room.id,
-              facultyName: body.facultyName,
+              facultyID: faculty.id,
               courseCode: body.Subject,
               section: body.Section,
               day: body.Day,
@@ -89,10 +105,24 @@ export async function POST(req: NextRequest) {
             throw new Error("Time conflict. Please try again.");
           }
 
+          let faculty = await db.faculty.findFirst({
+            where: { facultyName: body.facultyName },
+          });
+
+          if (!faculty){
+            faculty = await db.faculty.create({
+              data: {
+                facultyName: body.facultyName,
+                email: `${body?.facultyName.replace(/\s+/g, ".")}@example.com`.toLowerCase(),
+                department: "unknown"
+              }
+            })
+          }
+
           await db.roomSchedule.create({
             data: {
               roomId: room.id,
-              facultyName: body.facultyName,
+              facultyID: faculty?.id,
               courseCode: body.Subject,
               section: body.Section,
               day: body.Day,
@@ -137,7 +167,6 @@ export async function POST(req: NextRequest) {
               id: body.scheduleID,
             },
             data: {
-              facultyName: body.facultyName,
               courseCode: body.Subject,
               section: body.Section,
               day: body.Day,

@@ -76,17 +76,25 @@ model RoomSchedule {
   id          Int    @id @default(autoincrement())
   roomId      String 
   room        Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  facultyName String
+  facultyID   Int
   courseCode  String
   section     String
   day         String
-  department  String?
   isTemp      Boolean
   beginTime   DateTime @db.Time     
   endTime     DateTime @db.Time 
   roomScheduleRecords RoomScheduleRecord[]
+  faculty Faculty @relation(fields: [facultyID], references: [id], onDelete: Cascade)
 }
 
+
+model Faculty {
+  id          Int    @id @default(autoincrement())
+  facultyName String
+  email       String
+  department  String
+  schedule               RoomSchedule[]
+}
 
 
 model RoomLogs {
@@ -107,6 +115,8 @@ model RoomScheduleRecord {
   facultyName    String     
   timeIn         DateTime 
   timeOut        DateTime? 
+  notificationSent Boolean  @default(false) // New field
+
 }
 
 model ActivityLogs {

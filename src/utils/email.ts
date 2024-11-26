@@ -86,3 +86,29 @@ export const sendForgotPasswordLink = async (email: string, token: string) => {
     throw new Error("Error sending verification email");
   }
 };
+
+
+export const sendPendingKeyReturn = async (email: string, facultyName: string, roomName: string) => {
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Pending Room Key Return Notification",
+    html: `
+    <h2>Hello, ${facultyName}</h2>
+    <p>We would like to remind you that the key for <strong>${roomName}</strong> has not been returned yet. Please ensure that the key is returned as soon as possible to avoid any inconvenience.</p>
+    <p>If you have already returned the key, kindly disregard this message. If you have any questions or need assistance, please contact the administration office.</p>
+    <p>Thank you for your cooperation.</p>
+    <p>Best regards,</p>
+    <p>BulSU - Room Availability Monitoring Team</p>
+    `,
+  };
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+    throw new Error("Error sending verification email");
+  }
+};

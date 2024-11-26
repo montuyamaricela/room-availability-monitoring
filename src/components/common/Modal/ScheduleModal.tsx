@@ -90,7 +90,7 @@ export default function ScheduleModal({
 
   useEffect(() => {
     if (selectedSchedule) {
-      form.setValue("facultyName", selectedSchedule?.facultyName);
+      form.setValue("facultyName", selectedSchedule?.faculty.facultyName);
       form.setValue("Section", selectedSchedule?.section);
       form.setValue("Subject", selectedSchedule?.courseCode);
       form.setValue("Day", selectedSchedule?.day);
@@ -108,7 +108,7 @@ export default function ScheduleModal({
           logActivity(
             session.data.user.firstName + " " + session.data.user.lastName ||
               "",
-            `deleted ${selectedSchedule?.facultyName}'s schedule on ${selectedSchedule?.day} in Room ${selectedSchedule?.room.roomName}`,
+            `deleted ${selectedSchedule?.faculty.facultyName}'s schedule on ${selectedSchedule?.day} in Room ${selectedSchedule?.room.roomName}`,
           );
         }
       },

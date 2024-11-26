@@ -80,7 +80,7 @@ export default function RoomDetailsForm() {
 
     const filterScheduleByFacultyAndRoom = roomSchedule?.filter((schedule) => {
       if (
-        schedule.facultyName === filterSchedBySelectedRoom[0]?.facultyName &&
+        schedule.faculty.facultyName === filterSchedBySelectedRoom[0]?.facultyName &&
         schedule.room.roomName === selectedRoom?.roomName
       ) {
         if (schedule.id === filterSchedBySelectedRoom[0].roomScheduleId) {

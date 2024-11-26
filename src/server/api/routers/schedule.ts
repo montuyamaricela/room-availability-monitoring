@@ -12,10 +12,13 @@ import {
 export const scheduleRouter = createTRPCRouter({
   getAllFaculty: protectedProcedure.query(({ ctx }) => {
     // Check if the user is an admin
-    return ctx.db.roomSchedule.findMany({
+    return ctx.db.faculty.findMany({
       orderBy: { facultyName: "asc" },
       select: {
+        id: true,
         facultyName: true,
+        department: true,
+        email: true,
       },
     });
   }),
