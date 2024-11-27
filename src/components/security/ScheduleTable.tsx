@@ -148,9 +148,6 @@ export default function ScheduleTable({
               isPast(fifteenMinutesAfterEnd) &&
               !submittedFeedbackRecords.has(record.id) && rec.roomScheduleId === record.id
             ) {
-              console.log(":facukty", rec.facultyName)
-
-            console.log(isPast(fifteenMinutesAfterEnd), fifteenMinutesAfterEnd)
               const feedbackMessage = `${rec.facultyName} did not return the key after their scheduled Time Out at Room ${record.room.roomName}`;
               automateFeedback(record.faculty.department ?? "BSIT (CICS)", feedbackMessage);
 
