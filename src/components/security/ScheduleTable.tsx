@@ -130,7 +130,7 @@ export default function ScheduleTable({
         record.timeOut == null,
     );
   }
-  // Check if the faculty is 15 minutes past scheduled end time and did not return the key
+
   useEffect(() => {
     roomSchedule?.forEach((record) => {
       const endTime = parse(
@@ -143,10 +143,14 @@ export default function ScheduleTable({
         // If it's past the time and the record hasn't had feedback submitted yet
         if (rec.timeIn != null && rec.timeOut === null) {
           if (rec.facultyName === record.faculty.facultyName) {
+            
             if (
               isPast(fifteenMinutesAfterEnd) &&
-              !submittedFeedbackRecords.has(record.id)
+              !submittedFeedbackRecords.has(record.id) && rec.roomScheduleId === record.id
             ) {
+              console.log(":facukty", rec.facultyName)
+
+            console.log(isPast(fifteenMinutesAfterEnd), fifteenMinutesAfterEnd)
               const feedbackMessage = `${rec.facultyName} did not return the key after their scheduled Time Out at Room ${record.room.roomName}`;
               automateFeedback(record.faculty.department ?? "BSIT (CICS)", feedbackMessage);
 

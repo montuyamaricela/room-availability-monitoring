@@ -79,23 +79,23 @@ export default function RoomDetailsForm() {
     );
 
     const filterScheduleByFacultyAndRoom = roomSchedule?.filter((schedule) => {
-      if (
-        schedule.faculty.facultyName === filterSchedBySelectedRoom[0]?.facultyName &&
-        schedule.room.roomName === selectedRoom?.roomName
-      ) {
-        if (schedule.id === filterSchedBySelectedRoom[0].roomScheduleId) {
-          return schedule;
-        }
-      }
+      return filterSchedBySelectedRoom.some((item) => {
+        return (
+          schedule.faculty.facultyName === item?.facultyName &&
+          schedule.roomId === selectedRoom?.id &&
+          schedule.id === item.roomScheduleId
+        );
+      });
     });
 
-    if (filterSchedBySelectedRoom[0]) {
+
+    if (filterSchedBySelectedRoom) {
       setSubjectAndSection(
         filterScheduleByFacultyAndRoom[0]?.courseCode +
           " " +
           filterScheduleByFacultyAndRoom[0]?.section || "-",
       );
-      setFacultyName(filterSchedBySelectedRoom[0]?.facultyName ?? "");
+      setFacultyName(filterScheduleByFacultyAndRoom[0]?.faculty?.facultyName ?? "");
       setSubjectAndSection(
         filterScheduleByFacultyAndRoom[0]?.courseCode +
           " " +

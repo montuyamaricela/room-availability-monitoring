@@ -48,19 +48,19 @@ export async function POST(req: NextRequest) {
             throw new Error("Time conflict. Please try again.");
           }
 
-
           let faculty = await db.faculty.findFirst({
             where: { facultyName: body.facultyName },
           });
 
-          if (!faculty){
+          if (!faculty) {
             faculty = await db.faculty.create({
               data: {
                 facultyName: body.facultyName,
-                email: `${body?.facultyName.replace(/\s+/g, ".")}@example.com`.toLowerCase(),
-                department: "unknown"
-              }
-            })
+                email:
+                  `${body?.facultyName.replace(/\s+/g, ".")}@example.com`.toLowerCase(),
+                department: "unknown",
+              },
+            });
           }
 
           await db.roomSchedule.create({
@@ -109,14 +109,15 @@ export async function POST(req: NextRequest) {
             where: { facultyName: body.facultyName },
           });
 
-          if (!faculty){
+          if (!faculty) {
             faculty = await db.faculty.create({
               data: {
                 facultyName: body.facultyName,
-                email: `${body?.facultyName.replace(/\s+/g, ".")}@example.com`.toLowerCase(),
-                department: "unknown"
-              }
-            })
+                email:
+                  `${body?.facultyName.replace(/\s+/g, ".")}@example.com`.toLowerCase(),
+                department: "unknown",
+              },
+            });
           }
 
           await db.roomSchedule.create({
@@ -190,15 +191,18 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      // update room status
-      await db.room.update({
-        where: {
-          id: body.roomId,
-        },
-        data: {
-          status: body.action === "Borrowed the key" ? "OCCUPIED" : "AVAILABLE",
-        },
-      });
+      if (body.action != "Update Schedule") {
+        // update room status
+        await db.room.update({
+          where: {
+            id: body.roomId,
+          },
+          data: {
+            status:
+              body.action === "Borrowed the key" ? "OCCUPIED" : "AVAILABLE",
+          },
+        });
+      }
     }
 
     return NextResponse.json({

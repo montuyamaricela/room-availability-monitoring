@@ -11,7 +11,6 @@ import {
 } from "../ui/dialog";
 import { Form } from "../ui/form";
 import { FormCombobox, FormTextarea } from "../ui/form-components";
-import { departments } from "../authentications/Signup";
 import { Button } from "../ui/button";
 import { PlusIcon } from "lucide-react";
 import * as feedbackSchema from "../../validations/feedbackSchema";
@@ -20,6 +19,7 @@ import { api } from "~/trpc/react";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { useActivityLog } from "~/lib/createLogs";
+import { departmentList } from "../common/Modal/AddFacultyModal";
 
 export default function ComposeFeedBack({
   firstName,
@@ -85,7 +85,7 @@ export default function ComposeFeedBack({
                 form={form}
                 placeholder="Select Department"
                 name={"department"}
-                data={departments}
+                data={departmentList}
               />
             </div>
             <div className="">
