@@ -148,7 +148,7 @@ export default function ScheduleTable({
               !submittedFeedbackRecords.has(record.id)
             ) {
               const feedbackMessage = `${rec.facultyName} did not return the key after their scheduled Time Out at Room ${record.room.roomName}`;
-              automateFeedback(record.faculty.department ?? "CICS", feedbackMessage);
+              automateFeedback(record.faculty.department ?? "BSIT (CICS)", feedbackMessage);
 
               // Add the record ID to the set to prevent duplicate feedback
               setSubmittedFeedbackRecords((prevSet) =>

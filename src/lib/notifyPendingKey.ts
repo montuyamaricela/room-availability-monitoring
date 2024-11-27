@@ -1,9 +1,11 @@
 "use server";
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { addMinutes, isAfter } from "date-fns";
+import { addMinutes, isPast, parse } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 import { db } from "~/server/db";
 import { sendPendingKeyReturn } from "~/utils/email";
+import { formatTimetoLocal } from "./timeSchedule";
 
 export const checkAndNotifyPendingKeyReturns = async () => {
     try {
@@ -15,15 +17,17 @@ export const checkAndNotifyPendingKeyReturns = async () => {
         },
       });
   
-      const now = new Date();
-  
       for (const schedule of roomSchedules) {
         const { roomScheduleRecords, faculty, room, endTime } = schedule;
-  
+        const formattedEndTime = parse(
+          formatTimetoLocal(endTime),
+          "h:mm a",
+          new Date(),
+        );
+        const fifteenMinutesAfterEnd = addMinutes(formattedEndTime, 15);
         for (const record of roomScheduleRecords) {
           if (record.notificationSent) continue;
-  
-          if (!record.timeOut && isAfter(now, addMinutes(new Date(endTime), 15))) {
+          if (!record.timeOut && isPast(fifteenMinutesAfterEnd)) {
             await sendPendingKeyReturn(
               faculty.email, 
               faculty.facultyName,

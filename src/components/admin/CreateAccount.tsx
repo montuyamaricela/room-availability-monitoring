@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import { departments, role } from "../authentications/Signup";
 import { useRouter } from "next/navigation";
 import { useActivityLog } from "~/lib/createLogs";
+import { departmentList } from "../common/Modal/AddFacultyModal";
 
 export default function CreateAccount({
   firstName,
@@ -107,7 +108,7 @@ export default function CreateAccount({
                   form={form}
                   placeholder="Select Department"
                   name={"department"}
-                  data={departments}
+                  data={departmentList}
                 />
               ) : (
                 <FormCombobox
@@ -115,7 +116,7 @@ export default function CreateAccount({
                   form={form}
                   placeholder="Select Department"
                   name={"department"}
-                  data={departments}
+                  data={departmentList}
                 />
               )}
 

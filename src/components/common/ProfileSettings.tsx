@@ -8,10 +8,8 @@ import { Container } from "../common/Container";
 import { Form } from "../ui/form";
 import { FormCombobox, FormInput } from "../ui/form-components";
 import { Button } from "../ui/button";
-import Image from "next/image";
 import avatar from "/public/images/avatar/image.png";
-import { departments } from "../authentications/Signup";
-import { getSession, signOut, useSession } from "next-auth/react";
+import {  signOut, useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import * as userSchema from "../../validations/userSchema";
 import { useEffect, useState } from "react";
@@ -21,6 +19,7 @@ import { useUserInfoStore } from "~/store/useUserInfoStore";
 import { Label } from "../ui/label";
 import { useActivityLog } from "~/lib/createLogs";
 import  {TooltipInformation} from "../common/TooltipInformation";
+import { departmentList1 } from "./Modal/AddFacultyModal";
 
 export default function ProfileSettings() {
   const session = useSession();
@@ -184,8 +183,8 @@ export default function ProfileSettings() {
                   form={form}
                   placeholder="Select Department"
                   name={"department"}
-                  data={departments}
-                  disabled={session?.data?.user.role === "Security Guard"}
+                  data={departmentList1}
+                  disabled={session?.data?.user.role === "Security Guard" || session?.data?.user.role === "Super Admin"}
                 />
                 <FormInput form={form} name="email" label="Email" />
               </div>

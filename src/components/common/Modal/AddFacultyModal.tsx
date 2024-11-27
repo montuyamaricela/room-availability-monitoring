@@ -104,6 +104,24 @@ export default function AddFacultyModal() {
   );
 }
 
+
+export const departmentList1 = [
+  {label: "All", value: ""},
+  { label: "BEED (COED)", value: "BEED (COED)" },
+  { label: "BPED (COED)", value: "BPED (COED)" },
+  { label: "BSBA (CBEA)", value: "BSBA (CBEA)" },
+  { label: "BSCE (COE)", value: "BSCE (COE)" },
+  { label: "BSCS (CICS)", value: "BSCS (CICS)" },
+  { label: "BSED (COED)", value: "BSED (COED)" },
+  { label: "BSEN (CBEA)", value: "BSEN (CBEA)" },
+  { label: "BSIE (COE)", value: "BSIE (COE)" },
+  { label: "BSIT (CICS)", value: "BSIT (CICS)" },
+  { label: "BTLED (COED)", value: "BTLED (COED)" },
+  { label: "CIT", value: "CIT" },
+  { label: "GE (GEARD)", value: "GE (GEARD)" },
+];
+
+
 export const departmentList = [
   { label: "BEED (COED)", value: "BEED (COED)" },
   { label: "BPED (COED)", value: "BPED (COED)" },

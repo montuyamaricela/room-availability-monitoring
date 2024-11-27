@@ -7,13 +7,13 @@ import { format } from "date-fns";
 import { Label } from "../ui/label";
 import {
   DepartmentDropdown,
-  departments,
   feedBackStatus,
 } from "../ui/department-dropdown";
 import OpenFeedbackModal from "./ClickedFeedback";
 import ComposeFeedBack from "../security/ComposeModal";
 import Pagination from "../common/Table/Pagination";
 import { useUserInfoStore } from "~/store/useUserInfoStore";
+import {  departmentList1 } from "../common/Modal/AddFacultyModal";
 
 const pageSize = 30; // Define the number of items per page
 
@@ -88,7 +88,7 @@ export default function FeedBacks() {
                 <div className="flex flex-col gap-2">
                   <Label>Department: </Label>
                   <DepartmentDropdown
-                    data={departments}
+                    data={departmentList1}
                     setDropdownValue={setDepartment}
                   />
                 </div>
