@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
                 faculty = await db.faculty.create({
                   data: {
                     facultyName,
-                    email: `${facultyName.replace(/\s+/g, ".")}@example.com`.toLowerCase(),
+                    email: `${facultyName.replace(/\s+/g, "").toLowerCase()}@example.com`,
                     department,
                   },
                 });

@@ -7,6 +7,9 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+   pool: true, // Enables connection pooling
+    maxConnections: 5, // Maximum simultaneous connections
+    maxMessages: 100, // Maximum messages per connection
 });
 
 export const sendVerificationEmail = async (email: string, token: string) => {
@@ -108,7 +111,43 @@ export const sendPendingKeyReturn = async (email: string, facultyName: string, r
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     await transporter.sendMail(mailOptions);
   } catch (error) {
-    console.error("Error sending verification email:", error);
-    throw new Error("Error sending verification email");
+    console.error("Error sending pending notification email:", error);
+    throw new Error("Error sending pending notification email");
   }
 };
+
+
+// export const sendPendingKeyReturn = async (
+//   emailData: { email: string; facultyName: string; roomName: string }[]
+// ) => {
+
+//   try {
+//     console.log(emailData)
+//     // Prepare bulk email promises
+//     const emailPromises = emailData.map(({ email, facultyName, roomName }) =>
+//       transporter.sendMail({
+//         from: `"BulSU - Room Monitoring Team" <${process.env.EMAIL_USER}>`,
+//         to: email,
+//         subject: "Pending Room Key Return Notification",
+//         html: generateEmailHTML(facultyName, roomName),
+//       })
+//     );
+
+//     // Send all emails concurrently
+//     await Promise.all(emailPromises);
+//     console.log("All emails sent successfully.");
+//   } catch (error) {
+//     console.error("Failed to send bulk notifications:", error);
+//     throw new Error("Failed to send one or more emails.");
+//   }
+// };
+
+// Helper function to generate email HTML
+const generateEmailHTML = (facultyName: string, roomName: string): string => `
+  <h2>Hello, ${facultyName}</h2>
+  <p>We would like to remind you that the key for <strong>${roomName}</strong> has not been returned yet. Please ensure that the key is returned as soon as possible to avoid any inconvenience.</p>
+  <p>If you have already returned the key, kindly disregard this message. If you have any questions or need assistance, please contact the administration office.</p>
+  <p>Thank you for your cooperation.</p>
+  <p>Best regards,</p>
+  <p>BulSU - Room Availability Monitoring Team</p>
+`;

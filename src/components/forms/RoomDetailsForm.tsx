@@ -81,9 +81,8 @@ export default function RoomDetailsForm() {
     const filterScheduleByFacultyAndRoom = roomSchedule?.filter((schedule) => {
       return filterSchedBySelectedRoom.some((item) => {
         return (
-          schedule.faculty.facultyName === item?.facultyName &&
           schedule.roomId === selectedRoom?.id &&
-          schedule.id === item.roomScheduleId
+          schedule.id === item?.roomScheduleId
         );
       });
     });

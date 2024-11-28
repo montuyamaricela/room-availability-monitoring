@@ -15,7 +15,6 @@ import { useScheduleStore } from "~/store/useScheduleStore";
 import { api } from "~/trpc/react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { usePathname, useRouter } from "next/navigation";
-import { checkAndNotifyPendingKeyReturns } from "~/lib/notifyPendingKey";
 
 export default function Page() {
   const router = useRouter();
@@ -58,6 +57,7 @@ export default function Page() {
     refetchInterval: 1000,
   });
 
+  // Fetch rooms and schedule data with polling every 5 seconds
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
@@ -97,13 +97,15 @@ export default function Page() {
       }
     };
 
+    // Polling for room and schedule data every 5 seconds
+    intervalId = setInterval(fetchRooms, 5000);
+
     // Initial fetch
     void fetchRooms().finally(() => setLoading(false));
 
-    // Polling for data every 5 seconds
-    intervalId = setInterval(fetchRooms, 5000);
-
-    return () => clearInterval(intervalId);
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [
     rooms,
     scheduleRecordsData,
@@ -113,13 +115,22 @@ export default function Page() {
     setScheduleRecord,
   ]);
 
+  // Fetch pending notifications only once when the component mounts
+  useEffect(() => {
+    const fetchPendingNotifications = async () => {
+      try {
+        const response = await fetch("/api/pending-notif", { method: "GET" });
+        if (!response.ok)
+          throw new Error("Failed to fetch pending notifications");
+        console.log("Fetched pending notifications successfully");
+      } catch (error) {
+        console.error("Error fetching pending notifications:", error);
+      }
+    };
 
-
-  //checks pending key return
-  setInterval(() => {
-    checkAndNotifyPendingKeyReturns().catch(console.error);
-  }, 60000); // Run every 60 seconds
-  
+    // Fetch once when the component mounts
+    void fetchPendingNotifications();
+  }, []);
 
   return <>{loading ? <Spinner /> : <Map />}</>;
 }

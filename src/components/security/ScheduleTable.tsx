@@ -22,7 +22,7 @@ import { useScheduleStore } from "~/store/useScheduleStore";
 import { useSession } from "next-auth/react";
 import { useRoomLog } from "~/lib/createLogs";
 import { useTimeOut } from "~/lib/roomScheduleLog";
-import { useFeedbackAutomation } from "~/lib/feedbackAutomation";
+// import { useFeedbackAutomation } from "~/lib/feedbackAutomation";
 
 export default function ScheduleTable({
   isSubmitted,
@@ -43,7 +43,7 @@ export default function ScheduleTable({
   const session = useSession();
   const { logActivity } = useRoomLog();
   const { timeOutRoom } = useTimeOut();
-  const { automateFeedback } = useFeedbackAutomation();
+  // const { automateFeedback } = useFeedbackAutomation();
   const { rooms, selectedRoom } = useRoomStore();
   const [loading, setLoading] = useState<boolean>(true);
   const [isDeleted, setDeleted] = useState<boolean>(false);
@@ -131,42 +131,42 @@ export default function ScheduleTable({
     );
   }
 
-  useEffect(() => {
-    roomSchedule?.forEach((record) => {
-      const endTime = parse(
-        formatTimetoLocal(record.endTime),
-        "h:mm a",
-        new Date(),
-      );
-      const fifteenMinutesAfterEnd = addMinutes(endTime, 15);
-      roomScheduleRecords.forEach((rec) => {
-        // If it's past the time and the record hasn't had feedback submitted yet
-        if (rec.timeIn != null && rec.timeOut === null) {
-          if (rec.facultyName === record.faculty.facultyName) {
+  // useEffect(() => {
+  //   roomSchedule?.forEach((record) => {
+  //     const endTime = parse(
+  //       formatTimetoLocal(record.endTime),
+  //       "h:mm a",
+  //       new Date(),
+  //     );
+  //     const fifteenMinutesAfterEnd = addMinutes(endTime, 15);
+  //     roomScheduleRecords.forEach((rec) => {
+  //       // If it's past the time and the record hasn't had feedback submitted yet
+  //       if (rec.timeIn != null && rec.timeOut === null) {
+  //         if (rec.facultyName === record.faculty.facultyName) {
             
-            if (
-              isPast(fifteenMinutesAfterEnd) &&
-              !submittedFeedbackRecords.has(record.id) && rec.roomScheduleId === record.id
-            ) {
-              const feedbackMessage = `${rec.facultyName} did not return the key after their scheduled Time Out at Room ${record.room.roomName}`;
-              automateFeedback(record.faculty.department ?? "BSIT (CICS)", feedbackMessage);
+  //           if (
+  //             isPast(fifteenMinutesAfterEnd) &&
+  //             !submittedFeedbackRecords.has(record.id) && rec.roomScheduleId === record.id
+  //           ) {
+  //             const feedbackMessage = `${rec.facultyName} did not return the key after their scheduled Time Out at Room ${record.room.roomName}`;
+  //             automateFeedback(record.faculty.department ?? "BSIT (CICS)", feedbackMessage);
 
-              // Add the record ID to the set to prevent duplicate feedback
-              setSubmittedFeedbackRecords((prevSet) =>
-                new Set(prevSet).add(record.id),
-              );
-            }
-          }
-        }
-      });
-    });
-  }, [
-    automateFeedback,
-    roomSchedule,
-    roomScheduleRecords,
-    setSubmittedFeedbackRecords,
-    submittedFeedbackRecords,
-  ]);
+  //             // Add the record ID to the set to prevent duplicate feedback
+  //             setSubmittedFeedbackRecords((prevSet) =>
+  //               new Set(prevSet).add(record.id),
+  //             );
+  //           }
+  //         }
+  //       }
+  //     });
+  //   });
+  // }, [
+  //   automateFeedback,
+  //   roomSchedule,
+  //   roomScheduleRecords,
+  //   setSubmittedFeedbackRecords,
+  //   submittedFeedbackRecords,
+  // ]);
 
   function canTimeOut(id: number) {
     let canTimeOut = false;
