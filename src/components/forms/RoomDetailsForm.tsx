@@ -225,7 +225,7 @@ export default function RoomDetailsForm() {
               form={form}
               type="number"
               name="Capacity"
-              label="Seating Capacity: "
+              label="Number of Chairs: "
             />
             <div>
               <label
