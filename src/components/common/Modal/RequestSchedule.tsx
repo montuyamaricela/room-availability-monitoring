@@ -141,4 +141,5 @@ export default function RequestSchedule({
 const semester = [
   { label: "First Semester", value: "1st" },
   { label: "Second Semester", value: "2nd" },
+  { label: "Mid Year", value: "mid-year" },
 ];
